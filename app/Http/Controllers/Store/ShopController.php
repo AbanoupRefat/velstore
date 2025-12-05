@@ -18,7 +18,7 @@ class ShopController extends Controller
             'category' => $request->input('category', []),
             'brand' => $request->input('brand', []),
             'price_min' => $request->input('price_min', 0),
-            'price_max' => $request->input('price_max', 1000),
+            'price_max' => $request->input('price_max', 5000),
             'color' => $request->input('color', []),
             'size' => $request->input('size', []),
         ];
@@ -62,10 +62,33 @@ class ShopController extends Controller
         $brands = Brand::with('translation')->withCount('products')->get();
         $categories = Category::with('translation')->withCount('products')->get();
 
+        // Dynamic Filter Data
+        $minPrice = \App\Models\ProductVariant::whereHas('product', function($q) {
+            $q->where('status', 1);
+        })->min('price') ?? 0;
+
+        $maxPrice = \App\Models\ProductVariant::whereHas('product', function($q) {
+            $q->where('status', 1);
+        })->max('price') ?? 5000;
+
+        // Fetch used colors
+        $colors = \App\Models\AttributeValue::whereHas('attribute', function($q) {
+            $q->where('name', 'Color');
+        })->whereHas('products', function($q) {
+            $q->where('status', 1);
+        })->with('translations')->get()->unique('value');
+
+        // Fetch used sizes
+        $sizes = \App\Models\AttributeValue::whereHas('attribute', function($q) {
+            $q->where('name', 'Size');
+        })->whereHas('products', function($q) {
+            $q->where('status', 1);
+        })->with('translations')->get()->unique('value');
+
         if ($request->ajax()) {
             return view('themes.xylo.partials.product-list', compact('products'))->render();
         }
 
-        return view('themes.xylo.shop', compact('products', 'categories', 'brands'));
+        return view('themes.xylo.shop', compact('products', 'categories', 'brands', 'minPrice', 'maxPrice', 'colors', 'sizes'));
     }
 }

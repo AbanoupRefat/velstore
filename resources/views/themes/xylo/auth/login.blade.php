@@ -1,78 +1,330 @@
 @extends('themes.xylo.layouts.auth')
 
 @section('content')
-<div class="login-page min-vh-100 d-flex align-items-center justify-content-center mt-4">
-    <div class="row w-100 g-0">
+<style>
+    /* Modern 2025 Login Page Styles */
+    .modern-login-container {
+        min-height: 100vh;
+        background: linear-gradient(135deg, #FAF9F6 0%, #F4E4C1 100%);
+        position: relative;
+        overflow: hidden;
+    }
 
-        {{-- Left Section: Dark Area --}}
-        <div class="col-lg-6 d-flex flex-column justify-content-center text-white px-5 py-5"
-             style="background-color: #0e0e0e;">
-            
-            {{-- Accent Symbol --}}
-            <div class="mb-5 fs-1 fw-bold text-warning">*</div>
+    /* Animated Background Elements */
+    .modern-login-container::before {
+        content: '';
+        position: absolute;
+        width: 500px;
+        height: 500px;
+        background: radial-gradient(circle, rgba(128, 0, 32, 0.1) 0%, transparent 70%);
+        border-radius: 50%;
+        top: -250px;
+        right: -250px;
+        animation: float 20s ease-in-out infinite;
+    }
 
-            {{-- Main Greeting --}}
-            <div class="fw-bold display-4 mb-3 lh-sm">
-                {{ __('store.login.hello') }} <br> {{ __('store.login.theme_name') }}
-            </div>
+    .modern-login-container::after {
+        content: '';
+        position: absolute;
+        width: 400px;
+        height: 400px;
+        background: radial-gradient(circle, rgba(160, 21, 62, 0.08) 0%, transparent 70%);
+        border-radius: 50%;
+        bottom: -200px;
+        left: -200px;
+        animation: float 15s ease-in-out infinite reverse;
+    }
 
-            {{-- Subheading --}}
-            <div class="fs-2 fw-semibold mb-4 text-light">
-                {{ __('store.login.login_now') }}
-            </div>
+    @keyframes float {
+        0%, 100% { transform: translate(0, 0) scale(1); }
+        50% { transform: translate(30px, 30px) scale(1.1); }
+    }
 
-            {{-- Supporting Text --}}
-            <p class="text-light mb-5 opacity-75 fs-6">
-                {{ __('store.login.login_description') }}
-            </p>
+    /* Login Card */
+    .login-card {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(20px);
+        border-radius: 24px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.8);
+        max-width: 440px;
+        width: 100%;
+        padding: 48px 40px;
+        position: relative;
+        z-index: 1;
+        animation: slideUp 0.6s ease-out;
+    }
 
-            {{-- Footer --}}
-            <div class="mt-auto text-center w-100 text-secondary small opacity-75 pt-4 border-top border-secondary">
-                 {{ __('store.login.copyright') }}
-            </div>
+    @keyframes slideUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* Logo */
+    .login-logo {
+        text-align: center;
+        margin-bottom: 32px;
+    }
+
+    .login-logo img {
+        max-width: 140px;
+        height: auto;
+        filter: drop-shadow(0 4px 12px rgba(128, 0, 32, 0.15));
+        transition: transform 0.3s ease;
+    }
+
+    .login-logo img:hover {
+        transform: scale(1.05);
+    }
+
+    /* Heading */
+    .login-heading {
+        font-size: 28px;
+        font-weight: 700;
+        color: var(--deep-charcoal);
+        margin-bottom: 8px;
+        text-align: center;
+        letter-spacing: -0.5px;
+    }
+
+    .login-subheading {
+        font-size: 14px;
+        color: #6B7280;
+        text-align: center;
+        margin-bottom: 32px;
+        font-weight: 400;
+    }
+
+    /* Form Inputs */
+    .modern-input-group {
+        margin-bottom: 20px;
+        position: relative;
+    }
+
+    .modern-input {
+        width: 100%;
+        padding: 14px 16px;
+        border: 2px solid #E5E7EB;
+        border-radius: 12px;
+        font-size: 15px;
+        transition: all 0.3s ease;
+        background: white;
+        color: var(--deep-charcoal);
+    }
+
+    .modern-input:focus {
+        outline: none;
+        border-color: var(--burgundy-main);
+        box-shadow: 0 0 0 4px rgba(128, 0, 32, 0.1);
+        transform: translateY(-1px);
+    }
+
+    .modern-input::placeholder {
+        color: #9CA3AF;
+    }
+
+    /* Login Button */
+    .modern-login-btn {
+        width: 100%;
+        padding: 14px;
+        background: linear-gradient(135deg, var(--burgundy-main) 0%, var(--burgundy-light) 100%);
+        border: none;
+        border-radius: 12px;
+        color: white;
+        font-size: 15px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+        margin-top: 8px;
+    }
+
+    .modern-login-btn::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+        transition: left 0.5s ease;
+    }
+
+    .modern-login-btn:hover::before {
+        left: 100%;
+    }
+
+    .modern-login-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px rgba(128, 0, 32, 0.3);
+    }
+
+    .modern-login-btn:active {
+        transform: translateY(0);
+    }
+
+    /* Links */
+    .login-links {
+        text-align: center;
+        margin-top: 24px;
+        font-size: 14px;
+        color: #6B7280;
+    }
+
+    .login-links a {
+        color: var(--burgundy-main);
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.2s ease;
+        position: relative;
+    }
+
+    .login-links a::after {
+        content: '';
+        position: absolute;
+        bottom: -2px;
+        left: 0;
+        width: 0;
+        height: 2px;
+        background: var(--burgundy-main);
+        transition: width 0.3s ease;
+    }
+
+    .login-links a:hover::after {
+        width: 100%;
+    }
+
+    .login-links a:hover {
+        color: var(--burgundy-dark);
+    }
+
+    .divider {
+        margin: 16px 0;
+        color: #D1D5DB;
+    }
+
+    /* Error Messages */
+    .error-message {
+        color: #DC2626;
+        font-size: 13px;
+        margin-top: 6px;
+        display: block;
+        animation: shake 0.3s ease;
+    }
+
+    @keyframes shake {
+        0%, 100% { transform: translateX(0); }
+        25% { transform: translateX(-4px); }
+        75% { transform: translateX(4px); }
+    }
+
+    /* Mobile Responsive */
+    @media (max-width: 768px) {
+        .login-card {
+            padding: 32px 24px;
+            margin: 20px;
+            border-radius: 20px;
+        }
+
+        .login-heading {
+            font-size: 24px;
+        }
+
+        .modern-login-container::before,
+        .modern-login-container::after {
+            width: 300px;
+            height: 300px;
+        }
+    }
+
+    /* Forgot Password Link */
+    .forgot-password {
+        display: block;
+        text-align: right;
+        margin-top: -8px;
+        margin-bottom: 20px;
+        font-size: 13px;
+    }
+
+    .forgot-password a {
+        color: var(--burgundy-main);
+        text-decoration: none;
+        font-weight: 500;
+        transition: color 0.2s ease;
+    }
+
+    .forgot-password a:hover {
+        color: var(--burgundy-dark);
+    }
+</style>
+
+<div class="modern-login-container d-flex align-items-center justify-content-center">
+    <div class="login-card">
+        <!-- Logo -->
+        <div class="login-logo">
+            <img src="{{ asset('images/website_logo.png') }}" alt="Pekaboo Logo">
         </div>
 
-        {{-- Right Section: Login Form --}}
-        <div class="col-lg-6 d-flex flex-column justify-content-center align-items-center bg-white p-5">
-            
-            {{-- Logo --}}
-            <div class="text-center mb-4">
-                <img src="{{ asset('storage/brands/logo-ready.png') }}" width="160" alt="Main Logo">
+        <!-- Heading -->
+        <h1 class="login-heading">Welcome Back</h1>
+        <p class="login-subheading">Sign in to continue your shopping journey</p>
+
+        <!-- Login Form -->
+        <form method="POST" action="{{ route('customer.login') }}">
+            @csrf
+
+            <!-- Email Input -->
+            <div class="modern-input-group">
+                <input 
+                    type="email" 
+                    name="email" 
+                    value="{{ old('email') }}" 
+                    placeholder="Email address" 
+                    class="modern-input"
+                    required
+                    autocomplete="email"
+                >
+                @error('email') 
+                    <span class="error-message">{{ $message }}</span> 
+                @enderror
             </div>
 
-            {{-- Heading --}}
-            <h2 class="fw-semibold mb-2 text-dark">{{ __('store.login.welcome_back') }}</h2>
-            <p class="text-muted mb-4 text-center px-3">
-                {{ __('store.login.form_subtitle') }}
-            </p>
+            <!-- Password Input -->
+            <div class="modern-input-group">
+                <input 
+                    type="password" 
+                    name="password" 
+                    placeholder="Password" 
+                    class="modern-input"
+                    required
+                    autocomplete="current-password"
+                >
+                @error('password') 
+                    <span class="error-message">{{ $message }}</span> 
+                @enderror
+            </div>
 
-            {{-- Login Form --}}
-            <form class="w-100" method="POST" action="{{ route('customer.login') }}">
-                @csrf
+            <!-- Forgot Password -->
+            <div class="forgot-password">
+                <a href="{{ route('customer.password.request') }}">Forgot password?</a>
+            </div>
 
-                <div class="mb-3">
-                    <input type="text" name="email" value="{{ old('email') }}" placeholder="{{ __('store.login.email') }}" class="form-control rounded-3 p-2">
-                    @error('email') <span class="text-danger small">{{ $message }}</span> @enderror
-                </div>
+            <!-- Login Button -->
+            <button type="submit" class="modern-login-btn">
+                Sign In
+            </button>
+        </form>
 
-                <div class="mb-4">
-                    <input type="password" name="password" placeholder="{{ __('store.login.password') }}" class="form-control rounded-3 p-2">
-                    @error('password') <span class="text-danger small">{{ $message }}</span> @enderror
-                </div>
-
-                <button type="submit" 
-                        class="btn w-100 py-2 rounded-3 fw-semibold text-uppercase text-white border-0"
-                        style="background-color: #0e0e0e; transition: all 0.3s ease;">
-                    {{ __('store.login.login_btn') }}
-                </button>
-            </form>
-
-            <p class="mt-4 mb-0 text-muted text-center">
-                {{ __('store.login.dont_have_account') }}
-                <a href="{{ route('customer.register') }}" class="text-decoration-none fw-semibold">{{ __('store.login.signup') }}</a>
-                <br>
-                <a href="{{ route('customer.password.request') }}" class="text-decoration-none">{{ __('store.login.forgot_password') }}</a>
-            </p>
+        <!-- Links -->
+        <div class="login-links">
+            Don't have an account? <a href="{{ route('customer.register') }}">Create one</a>
         </div>
     </div>
 </div>

@@ -2,7 +2,7 @@
 
 return [
     'header' => [
-        'top_bar_message' => 'Free shipping on orders over $50 | Support | Store Locator',
+        'top_bar_message' => 'Welcome to Bekabo | Your first choice of quality',
         'search_placeholder' => 'Search for a product',
     ],
 
@@ -97,6 +97,7 @@ return [
         'L' => 'Large',
         'price_range' => ':min - :max',
         'added_to_cart' => 'Product added to cart successfully!',
+        'filter' => 'Filter',
     ],
 
     'cart' => [
@@ -184,7 +185,13 @@ return [
         'order_failed' => 'Something went wrong. Please try again.',
         'payment_required' => 'Please select a payment method before continuing.',
         'paypal_instructions' => 'Please complete payment using the PayPal button.',
-
+        'cash_on_delivery' => 'Cash on Delivery',
+        'cod_description' => 'Pay with cash upon delivery.',
+        'instapay' => 'InstaPay',
+        'instapay_description' => 'Pay via InstaPay and upload the receipt.',
+        'payment_proof' => 'Payment Receipt',
+        'upload_proof' => 'Upload Screenshot',
+        'instapay_instructions' => 'Please send the total amount to: 01xxxxxxxxx and upload the screenshot here.',
     ],
 
     'profile' => [
@@ -200,6 +207,23 @@ return [
         'save' => 'Save',
         'success' => 'Success',
         'profile_updated' => 'profile updated successfully.',
+        
+        // Added Keys
+        'my_account' => 'My Account',
+        'my_orders' => 'My Orders',
+        'settings' => 'Settings',
+        'order_history' => 'Order History',
+        'order_number' => 'Order #:number',
+        'tracking_number' => 'Tracking Number',
+        'items_count' => 'Items (:count)',
+        'more_items' => 'and :count more items...',
+        'view_details' => 'View Details',
+        'no_orders' => 'No orders yet',
+        'no_orders_desc' => 'When you place an order, it will appear here',
+        'start_shopping' => 'Start Shopping',
+        'account_settings' => 'Account Settings',
+        'save_changes' => 'Save Changes',
+        'leave_blank' => 'Leave blank to keep current password',
     ],
 
     'category' => [
@@ -244,7 +268,7 @@ return [
 
     'login' => [
         'hello' => 'Welcome Back',
-        'theme_name' => 'Xylo-Theme 👋',
+        'theme_name' => 'Xylo-Theme ',
         'login_now' => 'Login to Your Account',
         'login_description' => 'Access your account to manage orders, wishlist, and enjoy personalized shopping.',
         'copyright' => '© 2025 Xylo-Theme. All rights reserved.',
@@ -256,5 +280,66 @@ return [
         'dont_have_account' => "Don't have an account?",
         'signup' => 'Create Account',
         'forgot_password' => 'Forgot Password?',
+    ],
+
+    'faq' => [
+        'breadcrumb_home' => 'Home',
+        'breadcrumb_faq' => 'FAQ',
+        'title' => 'FREQUENTLY ASKED QUESTIONS',
+        
+        'q1_title' => '1. How can I make an exchange?',
+        'q1_answer' => "Exchanges are allowed within 1 week of receiving your order. Item availability is not guaranteed, kindly make sure to check if the new size you're requesting is currently in stock online before making your request. The item must be sent back with all tags attached, in the same condition as you received it. Kindly send an email to support@bekabo.com with the following details:\n\nFirst & last name / Order Number / Phone Number / Item(s) being exchanged / New size requested / Exact delivery address / Reason for Exchange\n\nAll exchanges have a 100 EGP processing & handling fee.",
+        
+        'q2_title' => '2. How can I make a return/refund?',
+        'q2_answer' => "Returns are allowed within 1 week of receiving your order. All tags must still be attached, item must be unworn, in the same condition as you received it. Otherwise, your return/refund will not be accepted. All returns have a 100 EGP processing & handling fee.\n\nKindly send an email to support@bekabo.com with the following details:\nReason for return / Order Number / Phone Number / Item(s) being returned / Exact delivery address\n\n*Returns/refunds/exchanges take up to 7 business days to be completed once your request is approved. The only way to process your request is through email. We do not process returns/exchanges through Instagram.*",
+        
+        'q3_title' => '3. How can I ensure my item is authentic?',
+        'q3_answer' => "Our items are available exclusively on bekabo.com or at pop-up shops that we announce publicly. That's the only way to authenticate your items.",
+        
+        'q4_title' => '4. How do I know my size?',
+        'q4_answer' => "Please check the size guide before placing your order.",
+        
+        'q5_title' => '5. How long do orders take to be delivered?',
+        'q5_answer' => "Cairo: 2-3 business days.\nAll other cities in Egypt: 4-6 business days.",
+        
+        'still_have_questions' => 'Still Have Questions?',
+        'contact_support_text' => 'Our support team is here to help you with any inquiries.',
+        'contact_us' => 'Contact Us',
+    ],
+
+    'checkout' => [
+        'breadcrumb_home' => 'Home',
+        'breadcrumb_category' => 'Category',
+        'breadcrumb_checkout' => 'Checkout',
+        'shipping_information' => 'Shipping Information',
+        'first_name' => 'First Name',
+        'last_name' => 'Last Name',
+        'address' => 'Address',
+        'use_as_billing' => 'Use as billing address',
+        'contact_information' => 'Contact Information',
+        'email' => 'Email Address',
+        'phone' => 'Phone Number',
+        'payment_method' => 'Payment Method',
+        'cash_on_delivery' => 'Cash on Delivery',
+        'cod_description' => 'Pay with cash when your order is delivered.',
+        'instapay' => 'InstaPay',
+        'instapay_description' => 'Transfer to our InstaPay account and upload proof of payment.',
+        'instapay_instructions' => 'Please transfer the total amount to our InstaPay and upload a screenshot of the transaction.',
+        'upload_proof' => 'Upload Payment Proof',
+        'order_summary' => 'Order Summary',
+        'subtotal' => 'Subtotal',
+        'shipping' => 'Shipping',
+        'total' => 'Total',
+        'place_order' => 'Place Order',
+        'proceed' => 'Proceed',
+        'login_reminder_title' => 'Did You Know?',
+        'login_reminder_message' => 'Using your account on our website allows you to track your orders easily through order history!',
+        'benefit_track_orders' => 'Track your orders in real-time from your account dashboard',
+        'benefit_faster_checkout' => 'Faster checkout with saved shipping addresses',
+        'benefit_order_history' => 'Access complete order history and reorder with one click',
+        'guest_limitation' => 'Guest orders can be placed, but tracking them later will be more difficult without an account.',
+        'dont_show_again' => "Don't show this again",
+        'login_now' => 'Login Now',
+        'continue_as_guest' => 'Continue as Guest',
     ],
 ];

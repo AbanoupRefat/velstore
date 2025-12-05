@@ -83,4 +83,95 @@ class ProductController extends Controller
             return response()->json(['success' => false]);
         }
     }
+
+    public function quickView($id)
+    {
+        $product = Product::with([
+            'translations',
+            'thumbnail',
+            'attributeValues.attribute',
+            'attributeValues.translations',
+            'variants',
+            'reviews'
+        ])->withCount('reviews')
+          ->findOrFail($id);
+
+        $currency = activeCurrency();
+        
+        // Get sizes and colors
+        $sizes = [];
+        $colors = [];
+        
+        foreach ($product->attributeValues as $attrValue) {
+            $attribute = $attrValue->attribute;
+            if ($attribute) {
+                $data = [
+                    'id' => $attrValue->id,
+                    'value' => $attrValue->translation->value ?? $attrValue->value,
+                    'attribute_id' => $attribute->id,
+                ];
+                
+                if (strtolower($attribute->name) === 'size' || strtolower($attribute->translation->name ?? '') === 'size') {
+                    $sizes[] = $data;
+                } elseif (strtolower($attribute->name) === 'color' || strtolower($attribute->translation->name ?? '') === 'color') {
+                    $data['hex_value'] = $attrValue->hex_value;
+                    $colors[] = $data;
+                }
+            }
+        }
+
+        // Get price range
+        $minPrice = $product->variants->min('converted_price');
+        $maxPrice = $product->variants->max('converted_price');
+        
+        if ($minPrice != $maxPrice) {
+            $priceRange = $currency->symbol . ' ' . number_format($minPrice, 2) . ' - ' . $currency->symbol . ' ' . number_format($maxPrice, 2);
+            $price = null;
+        } else {
+            $priceRange = null;
+            $price = $currency->symbol . ' ' . number_format($minPrice, 2);
+        }
+
+        // Get product images
+        $images = [];
+        if ($product->thumbnail) {
+            $images[] = [
+                'url' => \Storage::url($product->thumbnail->image_url),
+                'alt' => $product->translation->name ?? 'Product'
+            ];
+        }
+        
+        // Add additional images
+        foreach ($product->images as $image) {
+            $images[] = [
+                'url' => \Storage::url($image->image_url),
+                'alt' => $product->translation->name ?? 'Product'
+            ];
+        }
+
+        // Build variant map for price lookup
+        $variantMap = [];
+        foreach ($product->variants as $variant) {
+            $attrIds = $variant->attributeValues->pluck('id')->sort()->values()->toArray();
+            $variantMap[] = [
+                'attributes' => $attrIds,
+                'price' => $currency->symbol . ' ' . number_format($variant->converted_price, 2),
+                'id' => $variant->id
+            ];
+        }
+
+        return response()->json([
+            'id' => $product->id,
+            'name' => $product->translation->name ?? 'Product',
+            'image' => \Storage::url(optional($product->thumbnail)->image_url ?? 'default.jpg'),
+            'images' => $images,
+            'price' => $price,
+            'price_range' => $priceRange,
+            'reviews_count' => $product->reviews_count,
+            'sizes' => $sizes,
+            'colors' => $colors,
+            'url' => route('product.show', $product->slug),
+            'variant_map' => $variantMap,
+        ]);
+    }
 }

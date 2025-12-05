@@ -1,96 +1,339 @@
 @extends('themes.xylo.layouts.auth')
 
 @section('content')
-<div class="login-page min-vh-100 d-flex align-items-center justify-content-center mt-4">
-    <div class="row w-100 g-0">
+<style>
+    /* Modern 2025 Register Page Styles */
+    .modern-register-container {
+        min-height: 100vh;
+        background: linear-gradient(135deg, #FAF9F6 0%, #F4E4C1 100%);
+        position: relative;
+        overflow: hidden;
+        padding: 40px 20px;
+    }
 
-        {{-- Left Section: Dark Area --}}
-        <div class="col-lg-6 d-flex flex-column justify-content-center text-white px-5 py-5"
-             style="background-color: #0e0e0e;">
-            
-            {{-- Small Accent Symbol --}}
-            <div class="mb-5 fs-1 fw-bold text-warning">*</div>
+    /* Animated Background Elements */
+    .modern-register-container::before {
+        content: '';
+        position: absolute;
+        width: 500px;
+        height: 500px;
+        background: radial-gradient(circle, rgba(128, 0, 32, 0.1) 0%, transparent 70%);
+        border-radius: 50%;
+        top: -250px;
+        right: -250px;
+        animation: float 20s ease-in-out infinite;
+    }
 
-            {{-- Main Greeting --}}
-            <div class="fw-bold display-4 mb-3 lh-sm">
-                {{ __('store.register.hello') }} <br> {{ __('store.register.theme_name') }}
-            </div>
+    .modern-register-container::after {
+        content: '';
+        position: absolute;
+        width: 400px;
+        height: 400px;
+        background: radial-gradient(circle, rgba(160, 21, 62, 0.08) 0%, transparent 70%);
+        border-radius: 50%;
+        bottom: -200px;
+        left: -200px;
+        animation: float 15s ease-in-out infinite reverse;
+    }
 
-            {{-- Sub Heading --}}
-            <div class="fs-2 fw-semibold mb-4 text-light">
-                {{ __('store.register.signup_now') }}
-            </div>
+    @keyframes float {
+        0%, 100% { transform: translate(0, 0) scale(1); }
+        50% { transform: translate(30px, 30px) scale(1.1); }
+    }
 
-            {{-- Description Text --}}
-            <p class="text-light mb-5 opacity-75 fs-6">
-                {{ __('store.register.signup_description') }}
-            </p>
+    /* Register Card */
+    .register-card {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(20px);
+        border-radius: 24px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.8);
+        max-width: 480px;
+        width: 100%;
+        padding: 48px 40px;
+        position: relative;
+        z-index: 1;
+        animation: slideUp 0.6s ease-out;
+    }
 
-            {{-- Footer --}}
-            <div class="mt-auto text-center w-100 text-secondary small opacity-75 pt-4 border-top border-secondary">
-                 {{ __('store.register.copyright') }}
-            </div>
+    @keyframes slideUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* Logo */
+    .register-logo {
+        text-align: center;
+        margin-bottom: 32px;
+    }
+
+    .register-logo img {
+        max-width: 140px;
+        height: auto;
+        filter: drop-shadow(0 4px 12px rgba(128, 0, 32, 0.15));
+        transition: transform 0.3s ease;
+    }
+
+    .register-logo img:hover {
+        transform: scale(1.05);
+    }
+
+    /* Heading */
+    .register-heading {
+        font-size: 28px;
+        font-weight: 700;
+        color: var(--deep-charcoal);
+        margin-bottom: 8px;
+        text-align: center;
+        letter-spacing: -0.5px;
+    }
+
+    .register-subheading {
+        font-size: 14px;
+        color: #6B7280;
+        text-align: center;
+        margin-bottom: 32px;
+        font-weight: 400;
+    }
+
+    /* Form Inputs */
+    .modern-input-group {
+        margin-bottom: 18px;
+        position: relative;
+    }
+
+    .modern-input {
+        width: 100%;
+        padding: 14px 16px;
+        border: 2px solid #E5E7EB;
+        border-radius: 12px;
+        font-size: 15px;
+        transition: all 0.3s ease;
+        background: white;
+        color: var(--deep-charcoal);
+    }
+
+    .modern-input:focus {
+        outline: none;
+        border-color: var(--burgundy-main);
+        box-shadow: 0 0 0 4px rgba(128, 0, 32, 0.1);
+        transform: translateY(-1px);
+    }
+
+    .modern-input::placeholder {
+        color: #9CA3AF;
+    }
+
+    /* Register Button */
+    .modern-register-btn {
+        width: 100%;
+        padding: 14px;
+        background: linear-gradient(135deg, var(--burgundy-main) 0%, var(--burgundy-light) 100%);
+        border: none;
+        border-radius: 12px;
+        color: white;
+        font-size: 15px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+        margin-top: 8px;
+    }
+
+    .modern-register-btn::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+        transition: left 0.5s ease;
+    }
+
+    .modern-register-btn:hover::before {
+        left: 100%;
+    }
+
+    .modern-register-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px rgba(128, 0, 32, 0.3);
+    }
+
+    .modern-register-btn:active {
+        transform: translateY(0);
+    }
+
+    /* Links */
+    .register-links {
+        text-align: center;
+        margin-top: 24px;
+        font-size: 14px;
+        color: #6B7280;
+    }
+
+    .register-links a {
+        color: var(--burgundy-main);
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.2s ease;
+        position: relative;
+    }
+
+    .register-links a::after {
+        content: '';
+        position: absolute;
+        bottom: -2px;
+        left: 0;
+        width: 0;
+        height: 2px;
+        background: var(--burgundy-main);
+        transition: width 0.3s ease;
+    }
+
+    .register-links a:hover::after {
+        width: 100%;
+    }
+
+    .register-links a:hover {
+        color: var(--burgundy-dark);
+    }
+
+    /* Error Messages */
+    .error-message {
+        color: #DC2626;
+        font-size: 13px;
+        margin-top: 6px;
+        display: block;
+        animation: shake 0.3s ease;
+    }
+
+    @keyframes shake {
+        0%, 100% { transform: translateX(0); }
+        25% { transform: translateX(-4px); }
+        75% { transform: translateX(4px); }
+    }
+
+    /* Mobile Responsive */
+    @media (max-width: 768px) {
+        .register-card {
+            padding: 32px 24px;
+            margin: 20px;
+            border-radius: 20px;
+        }
+
+        .register-heading {
+            font-size: 24px;
+        }
+
+        .modern-register-container::before,
+        .modern-register-container::after {
+            width: 300px;
+            height: 300px;
+        }
+    }
+
+    /* Password Strength Indicator (Optional Enhancement) */
+    .password-hint {
+        font-size: 12px;
+        color: #6B7280;
+        margin-top: 4px;
+        display: block;
+    }
+</style>
+
+<div class="modern-register-container d-flex align-items-center justify-content-center">
+    <div class="register-card">
+        <!-- Logo -->
+        <div class="register-logo">
+            <img src="{{ asset('images/website_logo.png') }}" alt="Pekaboo Logo">
         </div>
 
-        {{-- Right Section: Signup Form --}}
-        <div class="col-lg-6 d-flex flex-column justify-content-center align-items-center bg-white p-5">
-            
-            {{-- Logo --}}
-            <div class="text-center mb-4">
-                <img src="{{ asset('storage/brands/logo-ready.png') }}" width="160" alt="Main Logo">
+        <!-- Heading -->
+        <h1 class="register-heading">Create Account</h1>
+        <p class="register-subheading">Join us and start your shopping experience</p>
+
+        <!-- Register Form -->
+        <form method="POST" action="{{ route('customer.register') }}">
+            @csrf
+
+            <!-- Name Input -->
+            <div class="modern-input-group">
+                <input 
+                    type="text" 
+                    name="name" 
+                    value="{{ old('name') }}" 
+                    placeholder="Full name" 
+                    class="modern-input"
+                    required
+                    autocomplete="name"
+                >
+                @error('name') 
+                    <span class="error-message">{{ $message }}</span> 
+                @enderror
             </div>
 
-            <h2 class="fw-semibold mb-2 text-dark">
-                {{ __('store.register.welcome_back') }}
-            </h2>
+            <!-- Email Input -->
+            <div class="modern-input-group">
+                <input 
+                    type="email" 
+                    name="email" 
+                    value="{{ old('email') }}" 
+                    placeholder="Email address" 
+                    class="modern-input"
+                    required
+                    autocomplete="email"
+                >
+                @error('email') 
+                    <span class="error-message">{{ $message }}</span> 
+                @enderror
+            </div>
 
-            <p class="text-muted mb-4 text-center px-3">
-                {{ __('store.register.form_subtitle') }}
-            </p>
+            <!-- Password Input -->
+            <div class="modern-input-group">
+                <input 
+                    type="password" 
+                    name="password" 
+                    placeholder="Password" 
+                    class="modern-input"
+                    required
+                    autocomplete="new-password"
+                >
+                @error('password') 
+                    <span class="error-message">{{ $message }}</span> 
+                @else
+                    <span class="password-hint">At least 8 characters</span>
+                @enderror
+            </div>
 
-            <form class="w-100" method="POST" action="{{ route('customer.register') }}">
-                @csrf
+            <!-- Confirm Password Input -->
+            <div class="modern-input-group">
+                <input 
+                    type="password" 
+                    name="password_confirmation" 
+                    placeholder="Confirm password" 
+                    class="modern-input"
+                    required
+                    autocomplete="new-password"
+                >
+            </div>
 
-                <div class="mb-3">
-                    <input type="text" name="name" value="{{ old('name') }}" 
-                           placeholder="{{ __('store.register.name') }}" 
-                           class="form-control rounded-3 p-2">
-                    @error('name') <span class="text-danger small">{{ $message }}</span> @enderror
-                </div>
+            <!-- Register Button -->
+            <button type="submit" class="modern-register-btn">
+                Create Account
+            </button>
+        </form>
 
-                <div class="mb-3">
-                    <input type="email" name="email" value="{{ old('email') }}" 
-                           placeholder="{{ __('store.register.email') }}" 
-                            class="form-control rounded-3 p-2">
-                    @error('email') <span class="text-danger small">{{ $message }}</span> @enderror
-                </div>
-
-                <div class="mb-3">
-                    <input type="password" name="password" 
-                           placeholder="{{ __('store.register.password') }}" 
-                            class="form-control rounded-3 p-2">
-                    @error('password') <span class="text-danger small">{{ $message }}</span> @enderror
-                </div>
-
-                <div class="mb-4">
-                    <input type="password" name="password_confirmation" 
-                           placeholder="{{ __('store.register.confirm_password') }}" 
-                            class="form-control rounded-3 p-2">
-                </div>
-
-                <button type="submit" 
-                        class="btn w-100 py-2 rounded-3 fw-semibold text-white border-0"
-                        style="background-color: #0e0e0e; transition: all 0.3s ease;">
-                    {{ __('store.register.signup_btn') }}
-                </button>
-            </form>
-
-            <p class="mt-4 mb-0 text-muted">
-                {{ __('store.register.already_account') }}
-                <a href="{{ route('customer.login') }}" class="text-decoration-none fw-semibold">
-                    {{ __('store.register.login_here') }}
-                </a>
-            </p>
+        <!-- Links -->
+        <div class="register-links">
+            Already have an account? <a href="{{ route('customer.login') }}">Sign in</a>
         </div>
     </div>
 </div>

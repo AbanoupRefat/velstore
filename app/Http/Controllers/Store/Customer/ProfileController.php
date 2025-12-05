@@ -4,18 +4,46 @@ namespace App\Http\Controllers\Store\Customer;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Customer\UpdateProfileRequest;
+use App\Models\Order;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
 class ProfileController extends Controller
 {
+    /**
+     * Show customer profile with order history
+     */
     public function edit()
     {
         $customer = Auth::guard('customer')->user();
+        
+        // Get customer's orders with details
+        $orders = Order::where('customer_id', $customer->id)
+            ->with(['details.product.translation', 'details.productVariant'])
+            ->orderBy('created_at', 'desc')
+            ->paginate(10);
 
-        return view('themes.xylo.customer.profile.edit', compact('customer'));
+        return view('themes.xylo.customer.profile.edit', compact('customer', 'orders'));
     }
 
+    /**
+     * Show single order details
+     */
+    public function showOrder($orderId)
+    {
+        $customer = Auth::guard('customer')->user();
+        
+        $order = Order::where('customer_id', $customer->id)
+            ->where('id', $orderId)
+            ->with(['details.product.translation', 'details.productVariant'])
+            ->firstOrFail();
+
+        return view('themes.xylo.customer.profile.order-details', compact('order', 'customer'));
+    }
+
+    /**
+     * Update customer profile
+     */
     public function update(UpdateProfileRequest $request)
     {
         $customer = Auth::guard('customer')->user();

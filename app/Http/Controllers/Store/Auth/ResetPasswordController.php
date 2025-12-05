@@ -12,7 +12,7 @@ class ResetPasswordController extends Controller
 {
     public function showResetForm(Request $request, $token)
     {
-        return view('customer.auth.passwords.reset', [
+        return view('auth.passwords.reset', [
             'token' => $token,
             'email' => $request->email,
         ]);
@@ -37,7 +37,7 @@ class ResetPasswordController extends Controller
         );
 
         return $status == Password::PASSWORD_RESET
-            ? redirect()->route('customer.login')->with('status', __($status))
+            ? redirect()->route('xylo.home')->with('status', __($status))
             : back()->withErrors(['email' => [__($status)]]);
     }
 }

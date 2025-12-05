@@ -1,0 +1,41 @@
+/* Color Classes for Cart & Other Elements */
+.color-circle.black {
+    background-color: #000000;
+}
+
+.color-circle.navy {
+    background-color: #000080;
+}
+
+.color-circle.grey {
+    background-color: #808080;
+}
+
+.color-circle.white {
+    background-color: #FFFFFF;
+    border: 1px solid #ddd;
+}
+
+.color-circle.burgundy {
+    background-color: #800020;
+}
+
+.color-circle.red {
+    background-color: #FF0000;
+}
+
+.color-circle.green {
+    background-color: #008000;
+}
+
+.color-circle.blue {
+    background-color: #0000FF;
+}
+
+.color-circle.yellow {
+    background-color: #FFFF00;
+}
+
+.color-circle.beige {
+    background-color: #F5F5DC;
+}

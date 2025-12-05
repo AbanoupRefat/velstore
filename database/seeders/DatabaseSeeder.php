@@ -13,12 +13,23 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $this->call([
-            // SiteSettingsSeeder::class,
-            OrderSeeder::class,
             LanguageSeeder::class,
+            AdminSeeder::class,
+            SiteSettingsSeeder::class,
+            CurrencySeeder::class,
+            CategorySeeder::class,
+            // BrandSeeder::class, // Replaced by FreshHoodieSeeder
+            // AttributeSeeder::class, // Replaced by FreshHoodieSeeder
+            // ProductSeeder::class, // Replaced by FreshHoodieSeeder
+            FreshHoodieSeeder::class, // NEW
+            MenuSeeder::class,
+            BannerSeeder::class,
+            ThemeSeeder::class,
+            // OrderSeeder::class, // Cleared in FreshHoodieSeeder
             PaymentGatewaySeeder::class,
             PaymentSeeder::class,
             RefundSeeder::class,
+            PageContentSeeder::class,
         ]);
     }
 }

@@ -1,109 +1,149 @@
 @extends('themes.xylo.layouts.master')
 
+@section('css')
+<link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet">
+@endsection
+
 @section('content')
 @php $currency = activeCurrency(); @endphp
 
-<div class="container py-5">
-    <h1 class="sec-heading mb-5">{{ __('store.wishlist.title') }}</h1>
-
-    @if($products->isEmpty())
-        <div class="alert alert-info">{{ __('store.wishlist.empty') }}</div>
-    @else
+<section class="banner-area inner-banner pt-5 animate__animated animate__fadeIn">
+    <div class="container h-100">
         <div class="row">
-            @foreach ($products as $product)
-                <div class="col-md-3 mb-4">
-                    <div class="product-card">
+            <div class="col-md-12">
+                <div class="breadcrumbs">
+                    <a href="{{ route('xylo.home') }}">{{ __('Home') }}</a> <i class="fa fa-angle-right"></i> {{ __('My Wishlist') }}
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
 
-                        <div class="product-img position-relative">
-                            <img src="{{ Storage::url(optional($product->thumbnail)->image_url ?? 'default.jpg') }}"
-                                 alt="{{ $product->translation->name }}" style="object-fit: contain; width: 100%; height: 250px;">
+<section class="trending-products py-5">
+    <div class="container">
+        <h1 class="sec-heading mb-5">{{ __('My Wishlist') }}</h1>
 
-                            <!-- Same wishlist heart like homepage -->
-                            <button class="wishlist-btn border-0 bg-transparent"
-                                    data-product-id="{{ $product->id }}">
-                                <i class="fa-solid fa-heart text-danger"></i>
-                            </button>
-                        </div>
-
-                        <div class="product-info mt-4">
-                            <div class="top-info">
-                                <div class="reviews">
-                                    <i class="fa-solid fa-star"></i> ({{ $product->reviews_count }} {{ __('store.wishlist.reviews') }})
-                                </div>
+        @if($products->isEmpty())
+            <div class="text-center py-5">
+                <i class="fas fa-heart" style="font-size: 80px; color: #ddd; margin-bottom: 20px;"></i>
+                <h3 style="color: #666;">{{ __('Your wishlist is empty') }}</h3>
+                <p style="color: #999; margin-bottom: 30px;">{{ __('Save your favorite items here to find them easily later!') }}</p>
+                <a href="{{ route('shop.index') }}" class="btn btn-primary" style="background: var(--burgundy-main); border: none;">
+                    {{ __('Start Shopping') }}
+                </a>
+            </div>
+        @else
+            <div class="row">
+                @foreach ($products as $product)
+                    <div class="col-6 col-md-4 col-lg-3 mb-4 wishlist-product-item" data-product-id="{{ $product->id }}">
+                        <div class="product-card clickable-product-card" onclick="window.location='{{ route('product.show', $product->slug) }}'">
+                            <div class="product-img">
+                                <img src="{{ Storage::url(optional($product->thumbnail)->image_url ?? 'default.jpg') }}"
+                                     alt="{{ $product->translation->name ?? 'Product Name Not Available' }}">
+                                <button class="wishlist-btn active" data-product-id="{{ $product->id }}" onclick="event.stopPropagation();">
+                                    <i class="fa-solid fa-heart" style="color: #800020;"></i>
+                                </button>
                             </div>
-
-                            <div class="bottom-info">
-                                <div class="left">
-                                    <h3>
-                                        <a href="{{ route('product.show', $product->slug) }}" class="product-title">
-                                            {{ $product->translation->name }}
-                                        </a>
-                                    </h3>
-
-                                    <p class="price">
-                                        <span class="original {{ optional($product->primaryVariant)->converted_discount_price ? 'has-discount' : '' }}">
-                                            {{ $currency->symbol }}{{ optional($product->primaryVariant)->converted_price ?? 'N/A' }}
-                                        </span>
-
-                                        @if(optional($product->primaryVariant)->converted_discount_price)
-                                            <span class="discount"> 
-                                                {{ $currency->symbol }}{{ $product->primaryVariant->converted_discount_price }}
-                                            </span>
-                                        @endif
-                                    </p>
+                            <div class="product-info p-3">
+                                <div class="reviews mb-2">
+                                    <i class="fa-solid fa-star"></i> ({{ $product->reviews_count }} {{ __('Reviews') }})
                                 </div>
-
-                                <!--  Same Add to Cart button -->
-                                <button class="cart-btn" onclick="addToCart({{ $product->id }})">
-                                    <i class="fa fa-shopping-bag"></i>
+                                <h3>
+                                    <a href="{{ route('product.show', $product->slug) }}" class="product-title" onclick="event.stopPropagation();">
+                                        {{ $product->translation->name ?? 'Product Name Not Available' }}
+                                    </a>
+                                </h3>
+                                <p class="price mb-3">
+                                    @php
+                                        $minPrice = $product->variants->min('converted_price');
+                                        $maxPrice = $product->variants->max('converted_price');
+                                    @endphp
+                                    @if($minPrice != $maxPrice)
+                                        {{ $currency->symbol }} {{ number_format($minPrice, 2) }} - {{ $currency->symbol }} {{ number_format($maxPrice, 2) }}
+                                    @else
+                                        {{ $currency->symbol }} {{ number_format($minPrice, 2) }}
+                                    @endif
+                                </p>
+                                <button class="btn btn-dark w-100 rounded-pill text-uppercase" onclick="event.stopPropagation(); window.location='{{ route('product.show', $product->slug) }}'">
+                                    {{ __('View Product') }}
                                 </button>
                             </div>
                         </div>
-
                     </div>
-                </div>
-            @endforeach
-        </div>
-    @endif
-</div>
+                @endforeach
+            </div>
+        @endif
+    </div>
+</section>
 @endsection
 
 @section('js')
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 <script>
-$(document).on('click', '.wishlist-btn', function () {
-    let button = $(this);
-    let productId = button.data('product-id');
+document.addEventListener('DOMContentLoaded', function () {
+    // Configure toastr
+    toastr.options = {
+        closeButton: true,
+        progressBar: true,
+        positionClass: "toast-top-right",
+        timeOut: 3000,
+        showMethod: 'fadeIn',
+        hideMethod: 'fadeOut'
+    };
 
-    $.post('{{ route("customer.wishlist.toggle") }}', {
-        _token: '{{ csrf_token() }}',
-        product_id: productId
-    }, function(res) {
-        if (res.status === 'removed') {
-            button.closest('.col-md-3').fadeOut();
-        }
+    // Wishlist functionality (remove from wishlist)
+    document.querySelectorAll('.wishlist-btn').forEach(button => {
+        button.addEventListener('click', function (e) {
+            e.stopPropagation();
+            
+            const productId = this.getAttribute('data-product-id');
+            const productItem = document.querySelector(`.wishlist-product-item[data-product-id="${productId}"]`);
+
+            // Send request to toggle wishlist (remove)
+            fetch('{{ route("customer.wishlist.toggle") }}', {
+                method: 'POST',
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRF-TOKEN": "{{ csrf_token() }}",
+                    "Accept": "application/json",
+                },
+                body: JSON.stringify({ product_id: productId })
+            })
+            .then(response => {
+                if (response.status === 401) {
+                    window.location.href = '{{ route("customer.login") }}';
+                    return;
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data && data.status === 'removed') {
+                    // Fade out and remove the product card
+                    if (productItem) {
+                        productItem.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+                        productItem.style.opacity = '0';
+                        productItem.style.transform = 'scale(0.9)';
+                        
+                        setTimeout(() => {
+                            productItem.remove();
+                            
+                            // Check if wishlist is now empty
+                            const remainingProducts = document.querySelectorAll('.wishlist-product-item');
+                            if (remainingProducts.length === 0) {
+                                location.reload(); // Reload to show empty state
+                            }
+                        }, 300);
+                    }
+                    
+                    toastr.info(data.message || '{{ __("Removed from wishlist") }}');
+                }
+            })
+            .catch(error => {
+                console.error('Wishlist Error:', error);
+                toastr.error('{{ __("Something went wrong. Please try again.") }}');
+            });
+        });
     });
 });
-//  Add to Cart
-function addToCart(productId) {
-    $.ajax({
-        url: "{{ route('cart.add') }}",
-        method: "POST",
-        data: {
-            _token: "{{ csrf_token() }}",
-            product_id: productId,
-            quantity: 1
-        },
-        success: function(res) {
-            if (res.status === 'success') {
-                toastr.success(res.message);
-            } else {
-                toastr.success(res.message);
-            }
-        },
-        error: function() {
-            toastr.error("Error adding to cart");
-        }
-    });
-}
 </script>
 @endsection

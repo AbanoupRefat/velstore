@@ -39,6 +39,7 @@ Route::get('/search-suggestions', [SearchController::class, 'suggestions']);
 Route::get('/search', [SearchController::class, 'searchResults']);
 
 Route::get('/get-variant-price', [ProductController::class, 'getVariantPrice'])->name('product.variant.price');
+Route::get('/product/quick-view/{id}', [ProductController::class, 'quickView'])->name('product.quickView');
 
 Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
 Route::post('/checkout', [CheckoutController::class, 'store'])->name('checkout.store');
@@ -75,7 +76,16 @@ Route::prefix('customer')->name('customer.')->group(function () {
         //  Customer Profile Routes
         Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
         Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
+        Route::get('/orders/{orderId}', [ProfileController::class, 'showOrder'])->name('orders.show');
     });
 });
 
 Route::get('/stripe/checkout', [StripeController::class, 'checkout'])->name('stripe.checkout.process');
+
+// FAQ Page
+Route::get('/faq', function () {
+    return view('themes.xylo.faq');
+})->name('faq');
+
+// Dynamic pages (must be last to avoid conflicts)
+Route::get('/{slug}', [\App\Http\Controllers\Store\PageController::class, 'show'])->name('page.show');

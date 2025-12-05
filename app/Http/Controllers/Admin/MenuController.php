@@ -43,7 +43,7 @@ class MenuController extends Controller
 
     public function create()
     {
-        $languages = Language::all();
+        $languages = Language::where('active', 1)->get();
         $menus = $this->menuService->getAllMenus();
 
         return view('admin.menus.create', compact('languages', 'menus'));

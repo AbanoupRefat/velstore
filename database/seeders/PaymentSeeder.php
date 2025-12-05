@@ -29,7 +29,12 @@ class PaymentSeeder extends Seeder
         $order = Order::create([
             'customer_id' => null,
             'guest_email' => 'guest@example.com',
-            'total_amount' => 100.00,
+            'total_price' => 100.00,
+            'shipping_cost' => 0,
+            'shipping_address' => '123 Test St, Cairo, Egypt',
+            'billing_address' => '123 Test St, Cairo, Egypt',
+            'payment_method' => 'stripe',
+            'payment_status' => 'paid',
             'status' => 'pending',
         ]);
 

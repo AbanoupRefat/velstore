@@ -27,7 +27,7 @@
             @endforeach
         </div>
     </section>
-    {{-- Banner Section End --}}
+    <!-- {{-- Banner Section End --}}
     <section class="cat-slider animate-on-scroll">
         <div class="container">
             <h2 class="text-start pb-5 sec-heading">{{ __('store.home.explore_popular_categories') }}</h2>
@@ -47,6 +47,7 @@
             </div>
         </div>
     </section>
+    --}} -->
 
     <section class="trending-products animate-on-scroll">
         <div class="container position-relative">
@@ -54,110 +55,53 @@
 
             <div class="product-slider">
                 @foreach ($products as $product)
-                    <div class="product-card">
+                    <div class="product-card clickable-product-card" onclick="window.location='{{ route('product.show', $product->slug) }}'">
                         <div class="product-img">
                             <img src="{{ Storage::url(optional($product->thumbnail)->image_url ?? 'default.jpg') }}" 
                                 alt="{{ $product->translation->name ?? 'Product Name Not Available' }}">
-                                <button class="wishlist-btn" data-product-id="{{ $product->id }}">
+                                <button class="wishlist-btn" data-product-id="{{ $product->id }}" onclick="event.stopPropagation();">
                                     <i class="fa-solid fa-heart"></i>
                                 </button>
-                        </div>
-                        <div class="product-info mt-4">
-                            <div class="top-info">
-                                <div class="reviews">
-                                    <i class="fa-solid fa-star"></i> ({{ $product->reviews_count }} {{ __('store.home.reviews') }})
-                                </div>
-                            </div>
-                            <div class="bottom-info">
-                                <div class="left">
-                                    <h3>
-                                        <a href="{{ route('product.show', $product->slug) }}" class="product-title">
-                                            {{ $product->translation->name ?? 'Product Name Not Available' }}
-                                        </a>
-                                    </h3>
-                                    <p class="price">
-                                        <span class="original {{ optional($product->primaryVariant)->converted_discount_price ? 'has-discount' : '' }}">
-                                            {{ $currency->symbol }}{{ optional($product->primaryVariant)->converted_price ?? 'N/A' }}
-                                        </span>
-
-                                        @if(optional($product->primaryVariant)->converted_discount_price)
-                                            <span class="discount"> 
-                                                {{ $currency->symbol }}{{ $product->primaryVariant->converted_discount_price }}
-                                            </span>
-                                        @endif
-                                    </p>
-                                </div>
-                                <button class="cart-btn" onclick="addToCart({{ $product->id }})">
-                                    <i class="fa fa-shopping-bag"></i>
+                                <button class="quick-view-btn" data-product-id="{{ $product->id }}" onclick="event.stopPropagation(); openQuickView({{ $product->id }});" title="{{ __('Quick View') }}">
+                                    <i class="fas fa-eye"></i>
                                 </button>
+                        </div>
+                        <div class="product-info p-3">
+                            <div class="reviews mb-2">
+                                <i class="fa-solid fa-star"></i> ({{ $product->reviews_count }} {{ __('store.home.reviews') }})
                             </div>
+                            <h3>
+                                <a href="{{ route('product.show', $product->slug) }}" class="product-title" onclick="event.stopPropagation();">
+                                    {{ $product->translation->name ?? 'Product Name Not Available' }}
+                                </a>
+                            </h3>
+                            <p class="price mb-3">
+                                @php
+                                    $minPrice = $product->variants->min('converted_price');
+                                    $maxPrice = $product->variants->max('converted_price');
+                                @endphp
+                                @if($minPrice != $maxPrice)
+                                    {{ $currency->symbol }} {{ number_format($minPrice, 2) }} - {{ $currency->symbol }} {{ number_format($maxPrice, 2) }}
+                                @else
+                                    {{ $currency->symbol }} {{ number_format($minPrice, 2) }}
+                                @endif
+                            </p>
+                            <button class="btn btn-dark w-100 rounded-pill text-uppercase" onclick="event.stopPropagation(); window.location='{{ route('product.show', $product->slug) }}'">
+                                {{ __('store.product_detail.add_to_cart') }}
+                            </button>
                         </div>
                     </div>
                 @endforeach
             </div>
 
             <!-- Custom Arrows -->
-            <div class="custom-arrows">
-                <button class="prev"><i class="fa-solid fa-chevron-left"></i></button>
-                <button class="next"><i class="fa-solid fa-chevron-right"></i></button>
-            </div>
+            
         </div>
     </section>
 
 
     <section class="sale-banner pt-5 pb-5 animate-on-scroll">
         <img src="assets/images/homesale-banner.png" alt="">
-    </section>
-
-    <section class="products-home py-5 animate-on-scroll">
-        <div class="container">
-            <h1 class="sec-heading mb-5">{{ __('store.home.featured_products') }}</h1>
-            <div class="row">
-                @foreach ($products as $product)
-                <div class="col-md-3">
-                    <div class="product-card">
-                        <div class="product-img">
-                            <img src="{{ Storage::url(optional($product->thumbnail)->image_url ?? 'default.jpg') }}" alt="{{ $product->translation->name ?? 'Product Name Not Available' }}">
-                            <button class="wishlist-btn"><i class="fa-solid fa-heart"></i></button>
-                        </div>
-                        <div class="product-info mt-4">
-                            <div class="top-info">
-                                <div class="reviews"><i class="fa-solid fa-star"></i>({{ $product->reviews_count }} {{ __('store.home.reviews') }})</div>
-                            </div>
-                            <div class="bottom-info">
-                                <div class="left">
-                                    <h3>
-                                        <a href="{{ route('product.show', $product->slug) }}" class="product-title">
-                                            {{ $product->translation->name ?? 'Product Name Not Available' }}
-                                        </a>
-                                    </h3>
-                                    <p class="price">
-                                        <span class="original {{ optional($product->primaryVariant)->converted_discount_price ? 'has-discount' : '' }}">
-                                            {{ $currency->symbol }}{{ optional($product->primaryVariant)->converted_price ?? 'N/A' }}
-                                        </span>
-
-                                        @if(optional($product->primaryVariant)->converted_discount_price)
-                                            <span class="discount"> 
-                                                {{ $currency->symbol }}{{ $product->primaryVariant->converted_discount_price }}
-                                            </span>
-                                        @endif
-                                    </p>
-                                </div>
-                                <button class="cart-btn" onclick="addToCart({{ $product->id }})">
-                                    <i class="fa fa-shopping-bag"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                @endforeach
-            </div>
-
-            <div class="view-button text-center mt-4">
-                <a href="{{ route('shop.index') }}" class="read-more pe-4 ps-4">{{ __('store.home.view_all') }}</a>
-            </div>
-
-        </div>
     </section>
 
     <section class="why-choose-us py-5 animate-on-scroll">
@@ -198,58 +142,94 @@
                 <div class="col-md-3">
                     <div class="feature-box text-start">
                         <div class="feature-icon">
-                            <img src="https://i.ibb.co/XPvjQGG/choose-icon4.png" alt="">
+                            <img src="{{ asset('images/egyptian_brand_icon.png') }}" alt="Egyptian Local Brand Icon">
                         </div>
-                        <h3>{{ __('store.home.ten_years_services_title') }}</h3>
-                        <p>{{ __('store.home.ten_years_services_text') }}</p>
+                        <h3>Egyptian Local Brand</h3>
+                        <p>Proudly Egyptian, delivering quality and style that represents our local heritage.</p>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 @endsection
+
 @section('js')
 <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 <script>
-        function addToCart(productId) {
-
-            fetch("{{ route('cart.add') }}", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "X-CSRF-TOKEN": "{{ csrf_token() }}"
-                },
-                body: JSON.stringify({
-                    product_id: productId,
-                    quantity: 1
-                })
+    function addToCart(productId) {
+        fetch("{{ route('cart.add') }}", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRF-TOKEN": "{{ csrf_token() }}"
+            },
+            body: JSON.stringify({
+                product_id: productId,
+                quantity: 1
             })
-            .then(response => response.json())
-            .then(data => {
-                toastr.success("{{ session('success') }}", data.message, {
-                    closeButton: true,
-                    progressBar: true,
-                    positionClass: "toast-top-right",
-                    timeOut: 5000
-                });
-                updateCartCount(data.cart);
-            })
-            .catch(error => console.error("Error:", error));
-        }
+        })
+        .then(response => response.json())
+        .then(data => {
+            toastr.success("{{ session('success') }}", data.message, {
+                closeButton: true,
+                progressBar: true,
+                positionClass: "toast-top-right",
+                timeOut: 5000
+            });
+            updateCartCount(data.cart);
+        })
+        .catch(error => console.error("Error:", error));
+    }
 
-        function updateCartCount(cart) {
-            let totalCount = Object.values(cart).reduce((sum, item) => sum + item.quantity, 0);
-            document.getElementById("cart-count").textContent = totalCount;
-        }
+    function updateCartCount(cart) {
+        let totalCount = Object.values(cart).reduce((sum, item) => sum + item.quantity, 0);
+        document.getElementById("cart-count").textContent = totalCount;
+    }
 </script>
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-    document.querySelectorAll('.wishlist-btn').forEach(button => {
-        button.addEventListener('click', function () {
-            const productId = this.getAttribute('data-product-id');
+    // Configure toastr if available
+    if (typeof toastr !== 'undefined') {
+        toastr.options = {
+            closeButton: true,
+            progressBar: true,
+            positionClass: "toast-top-right",
+            timeOut: 3000
+        };
+    }
 
-            fetch('/customer/wishlist', {
+    // Wishlist functionality
+    document.querySelectorAll('.wishlist-btn').forEach(button => {
+        button.addEventListener('click', function (e) {
+            e.stopPropagation();
+            
+            const productId = this.getAttribute('data-product-id');
+            const isAuthenticated = {{ auth('customer')->check() ? 'true' : 'false' }};
+            
+            // Check if user is logged in
+            if (!isAuthenticated) {
+                if (typeof toastr !== 'undefined') {
+                    toastr.warning(
+                        '{{ __("Please login or create an account to save items to your wishlist.") }}',
+                        '{{ __("Login Required") }}',
+                        {
+                            timeOut: 5000,
+                            onclick: function() {
+                                window.location.href = '{{ route("customer.login") }}';
+                            }
+                        }
+                    );
+                } else {
+                    if (confirm('{{ __("Please login or create an account to save items to your wishlist. Go to login page?") }}')) {
+                        window.location.href = '{{ route("customer.login") }}';
+                    }
+                }
+                return;
+            }
+
+            // Send request to toggle wishlist
+            fetch('{{ route("customer.wishlist.toggle") }}', {
                 method: 'POST',
                 headers: {
                     "Content-Type": "application/json",
@@ -260,21 +240,33 @@ document.addEventListener('DOMContentLoaded', function () {
             })
             .then(response => {
                 if (response.status === 401) {
-                    // Not logged in
-                    window.location.href = '/customer/login';
-                } else if (response.ok) {
-                    return response.json();
-                } else {
-                    throw new Error('Something went wrong');
+                    window.location.href = '{{ route("customer.login") }}';
+                    return;
                 }
+                return response.json();
             })
             .then(data => {
-                if (data?.message) {
-                    alert(data.message);
+                if (data) {
+                    // Toggle heart icon
+                    const icon = this.querySelector('i');
+                    if (data.status === 'added') {
+                        icon.style.color = '#800020';
+                        if (typeof toastr !== 'undefined') {
+                            toastr.success(data.message || '{{ __("Added to wishlist!") }}');
+                        }
+                    } else {
+                        icon.style.color = '';
+                        if (typeof toastr !== 'undefined') {
+                            toastr.info(data.message || '{{ __("Removed from wishlist") }}');
+                        }
+                    }
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
+                if (typeof toastr !== 'undefined') {
+                    toastr.error('{{ __("Something went wrong. Please try again.") }}');
+                }
             });
         });
     });

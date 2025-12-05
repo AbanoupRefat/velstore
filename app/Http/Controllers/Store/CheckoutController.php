@@ -12,6 +12,11 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 
+use Illuminate\Support\Str;
+use App\Mail\OrderConfirmation;
+use App\Mail\InstapayOrderConfirmation;
+use App\Mail\NewOrderNotification;
+
 class CheckoutController extends Controller
 {
     public function index()
@@ -41,7 +46,18 @@ class CheckoutController extends Controller
         $shipping = null;
         $total = $subtotal + ($shipping ?? 0);
 
-        return view('themes.xylo.checkout', compact('cart', 'subtotal', 'shipping', 'total', 'paymentGateways', 'paypalClientId'));
+
+        $governorates = \App\Models\Governorate::active()->get();
+
+        // Fetch last order for logged-in users (for auto-fill)
+        $lastOrder = null;
+        if (Auth::guard('customer')->check()) {
+            $lastOrder = Order::where('customer_id', Auth::guard('customer')->id())
+                ->latest()
+                ->first();
+        }
+
+        return view('themes.xylo.checkout', compact('cart', 'subtotal', 'shipping', 'total', 'paymentGateways', 'paypalClientId', 'governorates', 'lastOrder'));
     }
 
     public function process(Request $request)
@@ -121,8 +137,15 @@ class CheckoutController extends Controller
     public function store(Request $request)
     {
         $request->validate([
+            'first_name' => 'required|string|max:255',
+            'last_name' => 'required|string|max:255',
+            'email' => 'required|email',
+            'phone' => 'required|string',
             'address' => 'required|string|max:255',
+            'governorate' => 'required|string',
+            'city' => 'required|string',
             'payment_method' => 'required',
+            'payment_proof' => 'required_if:payment_method,instapay|image|max:5120', // Max 5MB
         ]);
 
         $cart = Session::get('cart', []);
@@ -136,30 +159,98 @@ class CheckoutController extends Controller
             return $item['price'] * $item['quantity'];
         });
 
+        // Create or get customer
+        $customer = null;
+        if (Auth::guard('customer')->check()) {
+            $customer = Auth::guard('customer')->user();
+        } else {
+            // Create guest customer record
+            $customer = \App\Models\Customer::firstOrCreate(
+                ['email' => $request->email],
+                [
+                    'name' => $request->first_name . ' ' . $request->last_name,
+                    'phone' => $request->phone,
+                    'password' => bcrypt(Str::random(16)), // Random password for guest
+                ]
+            );
+        }
+
+        // Get governorate shipping fee
+        $governorate = \App\Models\Governorate::where('name_en', $request->governorate)
+            ->orWhere('name_ar', $request->governorate)
+            ->first();
+            
+        $shippingFee = $governorate ? $governorate->shipping_fee : 0;
+        $finalTotal = $total + $shippingFee;
+
+        // Handle Payment Proof Upload
+        $proofPath = null;
+        if ($request->hasFile('payment_proof')) {
+            $file = $request->file('payment_proof');
+            $filename = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+            // Use Storage facade for public disk
+            $path = $file->storeAs('uploads/payment_proofs', $filename, 'public');
+            $proofPath = 'storage/' . $path;
+        }
+
         // Save Order
         $order = Order::create([
-            'user_id' => Auth::id(),
-            'address' => $request->address,
+            'customer_id' => $customer->id,
+            'shipping_address' => $request->address . ($request->suite ? ', ' . $request->suite : '') . ', ' . $request->city . ', ' . $request->governorate . ', Egypt',
+            'billing_address' => $request->address . ($request->suite ? ', ' . $request->suite : '') . ', ' . $request->city . ', ' . $request->governorate . ', Egypt',
             'payment_method' => $request->payment_method,
-            'total' => $total,
+            'payment_proof' => $proofPath,
+            'total_price' => $finalTotal,
+            'shipping_cost' => $shippingFee,
             'status' => 'pending',
+            'payment_status' => 'pending',
+            'order_date' => now(),
         ]);
 
         // Save Order Items
         foreach ($cart as $item) {
-            OrderItem::create([
+            \App\Models\OrderDetail::create([
                 'order_id' => $order->id,
                 'product_id' => $item['product_id'],
                 'variant_id' => $item['variant_id'] ?? null,
                 'quantity' => $item['quantity'],
                 'price' => $item['price'],
-                'attributes' => json_encode($item['attributes']),
             ]);
+        }
+
+        // Send emails
+        try {
+            // Send confirmation email to customer
+            if ($request->payment_method === 'instapay') {
+                \Mail::to($request->email)->send(new InstapayOrderConfirmation($order));
+            } else {
+                \Mail::to($request->email)->send(new OrderConfirmation($order));
+            }
+            
+            // Send notification email to admin
+            $adminEmail = config('mail.admin_email', env('ADMIN_EMAIL', 'admin@example.com'));
+            \Mail::to($adminEmail)->send(new NewOrderNotification($order));
+        } catch (\Exception $e) {
+            // Log email error but don't fail the order
+            \Log::error('Order email failed: ' . $e->getMessage());
         }
 
         // Clear the session cart
         Session::forget('cart');
 
-        return redirect()->route('thankyou')->with('success', 'Order placed successfully!');
+        return redirect()->route('checkout.success', $order->id);
+    }
+
+    public function success($id)
+    {
+        $order = Order::with(['details.product.translation', 'details.productVariant', 'customer'])->findOrFail($id);
+
+        // Security check: ensure guest can't view other orders (basic check)
+        // For logged in users, check ownership
+        if (Auth::guard('customer')->check() && $order->customer_id !== Auth::guard('customer')->id()) {
+            abort(403);
+        }
+
+        return view('themes.xylo.checkout.success', compact('order'));
     }
 }

@@ -9,7 +9,7 @@
         @vite(['resources/views/themes/xylo/sass/app.scss'])
     @endif
     <link
-        href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
         rel="stylesheet">
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
         @if (!App::environment('testing'))
@@ -20,18 +20,175 @@
         @endif
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick-theme.css">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" />
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
         @if (!App::environment('testing'))
             @vite(['resources/views/themes/xylo/css/style.css'])
         @endif
         @if (!App::environment('testing'))
             @vite(['resources/views/themes/xylo/css/custom.css'])
         @endif
+        @if (!App::environment('testing'))
+            @vite(['resources/views/themes/xylo/css/colors.css'])
+        @endif
+        @if (!App::environment('testing'))
+            @vite(['resources/views/themes/xylo/css/quick-view.css'])
+        @endif
+        @if (!App::environment('testing'))
+            @vite(['resources/views/themes/xylo/css/mobile-responsive.css'])
+        @endif
+    <style>
+        /* Modern Product Card System */
+        :root {
+            --font-primary: 'Instrument Sans', sans-serif;
+            --font-secondary: 'Poppins', sans-serif;
+            --color-text-primary: #1a1a1a;
+            --color-text-secondary: #6b7280;
+            --color-price: #0f172a;
+            --color-border: #e5e7eb;
+            --color-hover: #f9fafb;
+            --border-radius: 12px;
+            --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Apply Instrument Sans for English, Poppins for Arabic */
+        body {
+            font-family: var(--font-primary);
+        }
+
+        html[lang="ar"] body {
+            font-family: var(--font-secondary);
+        }
+
+        .product-card {
+            font-family: var(--font-primary);
+            border: 1px solid var(--color-border);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            background: white;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .product-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-md);
+            border-color: #d1d5db;
+        }
+
+        .product-title {
+            font-family: var(--font-primary);
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--color-text-primary);
+            line-height: 1.5;
+            margin-bottom: 8px;
+            letter-spacing: -0.01em;
+        }
+
+        .product-card .price {
+            font-family: var(--font-primary);
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--color-price);
+            letter-spacing: -0.02em;
+        }
+
+        .product-card .btn {
+            font-family: var(--font-primary);
+            font-weight: 600;
+            font-size: 14px;
+            letter-spacing: 0.02em;
+            padding: 12px 24px;
+            transition: all 0.2s ease;
+        }
+
+        .product-card .btn-dark {
+            background-color: #000;
+            border-color: #000;
+        }
+
+        .product-card .btn-dark:hover {
+            background-color: #1a1a1a;
+            transform: scale(1.02);
+        }
+
+        .product-img {
+            background-color: #f9fafb;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .product-img img {
+            transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            will-change: transform;
+        }
+
+        .product-card:hover .product-img img {
+            transform: scale(1.15);
+        }
+
+        /* Disable hover zoom on touch devices */
+        @media (hover: none) {
+            .product-card:hover .product-img img {
+                transform: none;
+            }
+        }
+
+        .reviews {
+            font-family: var(--font-primary);
+            font-size: 13px;
+            color: var(--color-text-secondary);
+            font-weight: 500;
+        }
+
+        .reviews i {
+            color: #fbbf24;
+        }
+    </style>
     @yield('css')
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css"/>   
 </head>
 <body>
     @include('themes.xylo.layouts.header')
+    
+    <!-- Size Chart Modal - Placed at body level for Bootstrap compatibility -->
+    <div class="modal fade" id="sizeChartModal" tabindex="-1" aria-labelledby="sizeChartModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="sizeChartModalLabel">{{ __('Size Chart') }}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered text-center">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Size</th>
+                                    <th>Chest (cm)</th>
+                                    <th>Length (cm)</th>
+                                    <th>Sleeve (cm)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>S</td><td>50</td><td>68</td><td>60</td></tr>
+                                <tr><td>M</td><td>52</td><td>70</td><td>61</td></tr>
+                                <tr><td>L</td><td>54</td><td>72</td><td>62</td></tr>
+                                <tr><td>XL</td><td>56</td><td>74</td><td>63</td></tr>
+                                <tr><td>XXL</td><td>58</td><td>76</td><td>64</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
     @yield('content')
+
+    @include('themes.xylo.partials.product-quick-view')
+
     @include('themes.xylo.layouts.footer')
     @if (!App::environment('testing'))
         @vite(['resources/views/themes/xylo/js/app.js'])
@@ -45,6 +202,7 @@
         @vite(['resources/views/themes/xylo/js/main.js'])
     @endif
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
     @yield('js')
     <script>
         $(document).ready(function () {

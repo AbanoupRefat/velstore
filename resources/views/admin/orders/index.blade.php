@@ -18,6 +18,7 @@
                      <th>{{ __('cms.orders.customer') }}</th>
                     <th>{{ __('cms.orders.order_date') }}</th>
                     <th>{{ __('cms.orders.status') }}</th>
+                    <th>{{ __('Receipt') }}</th>
                     <th>{{ __('cms.orders.total_price') }}</th>
                     <th>{{ __('cms.orders.action') }}</th>
                 </tr>
@@ -92,6 +93,7 @@ $(document).ready(function () {
             { data: 'customer', name: 'customer', orderable: false, searchable: true },
             { data: 'order_date', name: 'order_date', orderable: false, searchable: false },
             { data: 'status', name: 'status' },
+            { data: 'receipt', name: 'receipt', orderable: false, searchable: false },
             { data: 'total_price', name: 'total_price', orderable: false, searchable: false },
             { data: 'action', name: 'action', orderable: false, searchable: false }
         ],
@@ -144,6 +146,77 @@ $(document).ready(function () {
             }
         });
     });
+
+    // Receipt Modal Logic
+    $(document).on('click', '.view-receipt-btn', function() {
+        const url = $(this).data('url');
+        const orderId = $(this).data('order-id');
+        const customer = $(this).data('customer');
+        const total = $(this).data('total');
+        const date = $(this).data('date');
+
+        $('#receiptModalOrderId').text('#' + orderId);
+        $('#receiptModalCustomer').text(customer);
+        $('#receiptModalTotal').text(total);
+        $('#receiptModalDate').text(date);
+        $('#receiptModalImage').attr('src', url);
+        $('#receiptModalLink').attr('href', url);
+
+        $('#receiptModal').modal('show');
+    });
 });
 </script>
+
+<!-- Receipt Modal -->
+<div class="modal fade" id="receiptModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg" style="border-radius: 12px; overflow: hidden;">
+            <div class="modal-header bg-dark text-white border-0 py-3">
+                <h5 class="modal-title fw-bold">
+                    <i class="bi bi-receipt me-2"></i> Payment Verification
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-0">
+                <div class="row g-0">
+                    <!-- Sidebar Info -->
+                    <div class="col-md-4 bg-light p-4 border-end">
+                        <h6 class="text-uppercase text-muted fw-bold mb-3" style="font-size: 0.75rem; letter-spacing: 1px;">Order Details</h6>
+                        
+                        <div class="mb-4">
+                            <label class="text-muted small mb-1">Order ID</label>
+                            <div class="fw-bold fs-5 text-dark" id="receiptModalOrderId">...</div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="text-muted small mb-1">Customer</label>
+                            <div class="fw-bold text-dark" id="receiptModalCustomer">...</div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="text-muted small mb-1">Total Amount</label>
+                            <div class="fw-bold text-success fs-5" id="receiptModalTotal">...</div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="text-muted small mb-1">Date</label>
+                            <div class="text-dark" id="receiptModalDate">...</div>
+                        </div>
+
+                        <div class="mt-auto pt-3 border-top">
+                            <a href="#" id="receiptModalLink" target="_blank" class="btn btn-outline-dark w-100 btn-sm">
+                                <i class="bi bi-box-arrow-up-right me-1"></i> Open Original
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Image Area -->
+                    <div class="col-md-8 bg-secondary bg-opacity-10 d-flex align-items-center justify-content-center p-4" style="min-height: 400px;">
+                        <img src="" id="receiptModalImage" class="img-fluid shadow-sm rounded" style="max-height: 500px; object-fit: contain;" alt="Receipt">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 @endsection

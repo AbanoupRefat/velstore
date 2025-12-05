@@ -1,6 +1,99 @@
 @extends('themes.xylo.layouts.master')
 @section('css')
 <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet">
+<style>
+    /* Product Gallery */
+    .product-slider {
+        margin-bottom: 15px;
+    }
+    
+    /* Thumbnail Navigation Slider */
+    .product-nav-slider {
+        overflow: hidden !important; /* Prevent overflow */
+        margin-top: 10px;
+        padding: 0 2px; /* Prevent edge clipping */
+    }
+    
+    .product-nav-slider .slick-list {
+        overflow: hidden;
+        margin: 0 -5px; /* Compensate for slide margin */
+    }
+    
+    .product-nav-slider .slick-track {
+        display: flex;
+    }
+    
+    .product-nav-slider .slick-slide {
+        margin: 0 5px;
+        opacity: 0.5;
+        transition: all 0.3s ease;
+        box-sizing: border-box;
+    }
+    
+    .product-nav-slider .slick-slide.slick-current {
+        opacity: 1;
+    }
+    
+    .product-nav-slider .slick-slide.slick-current .thumbnail-img {
+        border: 3px solid var(--burgundy-main, #800020) !important;
+        box-shadow: 0 2px 8px rgba(128, 0, 32, 0.3);
+    }
+    
+    .product-nav-slider .thumbnail-img {
+        width: 100%;
+        height: 85px;
+        object-fit: cover;
+        border-radius: 8px;
+        border: 2px solid transparent !important;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: block;
+    }
+    
+    /* Mobile Responsive */
+    @media (max-width: 768px) {
+        .product-nav-slider {
+            margin-top: 15px;
+        }
+        
+        .product-nav-slider .thumbnail-img {
+            height: 65px;
+        }
+        
+        .product-nav-slider .slick-slide {
+            margin: 0 3px;
+        }
+        
+        .product-nav-slider .slick-list {
+            margin: 0 -3px;
+        }
+    }
+    
+    @media (max-width: 480px) {
+        .product-nav-slider .thumbnail-img {
+            height: 55px;
+        }
+    }
+    
+    /* Size Chart Modal */
+    .modal-open .modal {
+        overflow-x: hidden;
+        overflow-y: auto;
+    }
+    
+    #sizeChartModal {
+        z-index: 9999 !important;
+    }
+    
+    #sizeChartModal .modal-dialog {
+        pointer-events: auto;
+    }
+    
+    .modal-backdrop.show {
+        opacity: 0.5;
+        z-index: 9998 !important;
+    }
+</style>
 @endsection
 @section('content')
 @php $currency = activeCurrency(); @endphp
@@ -10,9 +103,9 @@
             <a href="{{ url('/') }}">{{ __('store.product_detail.home') }}</a>
             <i class="fa fa-angle-right"></i>
             @foreach($breadcrumbs as $category)
-                <a href="{{ url('category/' . $category->slug) }}">
+                <span class="breadcrumb-category">
                     {{ $category->translation->name ?? $category->slug }}
-                </a>
+                </span>
                 <i class="fa fa-angle-right"></i>
             @endforeach
             <span>{{ $product->translation->name }}</span>
@@ -27,6 +120,17 @@
                     @foreach ($product->images as $image)
                         <div>
                             <img src="{{ Storage::url($image['image_url']) }}" alt="{{ $image['name'] }}" style="width: 100%; height: auto;" />
+                        </div>
+                    @endforeach
+                </div>
+                
+                <!-- Thumbnail Slider -->
+                <div class="product-nav-slider">
+                    @foreach ($product->images as $image)
+                        <div>
+                            <img src="{{ Storage::url($image['image_url']) }}" 
+                                 alt="{{ $image['name'] }}" 
+                                 class="thumbnail-img" />
                         </div>
                     @endforeach
                 </div>
@@ -88,11 +192,35 @@
 
                     @foreach ($groupedAttributes as $attributeId => $values)
                         <div class="attribute-options mt-3">
-                            <h3>{{ __('store.product_detail.' . strtolower($values->first()->attribute->name)) }}</h3>
+                            <div class="d-flex align-items-center justify-content-between">
+                                <h3>{{ __('store.product_detail.' . strtolower($values->first()->attribute->name)) }}</h3>
+                                @if(strtolower($values->first()->attribute->name) === 'size')
+                                    <a href="javascript:void(0);" class="text-decoration-underline text-muted" style="font-size: 0.9rem;" data-bs-toggle="modal" data-bs-target="#sizeChartModal">
+                                        {{ __('Size Chart') }}
+                                    </a>
+                                @endif
+                            </div>
                             <div class="{{ strtolower($values->first()->attribute->name) }}-wrapper">
+                                @php
+                                    $colorMap = [
+                                        'black' => '#000000',
+                                        'navy' => '#000080',
+                                        'grey' => '#808080',
+                                        'white' => '#FFFFFF',
+                                        'burgundy' => '#800020',
+                                        'red' => '#FF0000',
+                                        'green' => '#008000',
+                                        'blue' => '#0000FF',
+                                        'yellow' => '#FFFF00',
+                                        'beige' => '#F5F5DC'
+                                    ];
+                                @endphp
                                 @foreach ($values as $index => $value)
                                     @php
                                         $inputId = strtolower($values->first()->attribute->name) . '-' . $index;
+                                        $attrName = strtolower($values->first()->attribute->name);
+                                        $valName = strtolower($value->value); // Use the English value key
+                                        $bgColor = $colorMap[$valName] ?? $valName;
                                     @endphp
                                     <input 
                                         type="radio" 
@@ -103,10 +231,11 @@
                                     >
                                    <label 
                                         for="{{ $inputId }}" 
-                                        class="{{ strtolower($values->first()->attribute->name) === 'color' ? 'color-circle' : 'size-box' }}"
-                                        style="{{ strtolower($values->first()->attribute->name) === 'color' ? 'background-color:' . strtolower($value->value) . ';' : '' }}"
+                                        class="{{ $attrName === 'color' ? 'color-circle' : 'size-box' }}"
+                                        style="{{ $attrName === 'color' ? 'background-color:' . $bgColor . ';' : '' }}"
+                                        title="{{ $value->translated_value }}"
                                     >
-                                    @if(strtolower($values->first()->attribute->name) === 'size')
+                                    @if($attrName === 'size')
                                         {{ $value->translated_value }}
                                     @endif
                                     </label>
@@ -349,14 +478,52 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>  
     <script>
         $(document).ready(function() {
-            $('.product-slider').slick({
-                arrows: true,
-                dots: false,
-                infinite: true,
+            var $slider = $('.product-slider');
+            var $navSlider = $('.product-nav-slider');
+            
+            $slider.slick({
                 slidesToShow: 1,
                 slidesToScroll: 1,
-                prevArrow: '<button type="button" class="slick-prev">←</button>',
-                nextArrow: '<button type="button" class="slick-next">→</button>',
+                arrows: true,
+                fade: true,
+                asNavFor: '.product-nav-slider',
+                autoplay: true,
+                autoplaySpeed: 2000,
+                pauseOnHover: false,
+                pauseOnFocus: false,
+                prevArrow: '<button type="button" class="slick-prev"><i class="fa-solid fa-chevron-left"></i></button>',
+                nextArrow: '<button type="button" class="slick-next"><i class="fa-solid fa-chevron-right"></i></button>',
+            });
+
+            $navSlider.slick({
+                slidesToShow: 4,
+                slidesToScroll: 1,
+                asNavFor: '.product-slider',
+                dots: false,
+                centerMode: false,
+                focusOnSelect: true,
+                arrows: false,
+                responsive: [
+                    {
+                        breakpoint: 768,
+                        settings: {
+                            slidesToShow: 4, /* Keep 4 visible on mobile for better overview */
+                            slidesToScroll: 1
+                        }
+                    },
+                    {
+                        breakpoint: 480,
+                        settings: {
+                            slidesToShow: 3, /* 3 on very small screens */
+                            slidesToScroll: 1
+                        }
+                    }
+                ]
+            });
+
+            // Stop autoplay on user interaction
+            $slider.on('swipe mousedown touchstart', function(event, slick, direction){
+                $slider.slick('slickPause');
             });
         });
     </script>

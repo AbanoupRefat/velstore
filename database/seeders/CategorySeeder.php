@@ -18,42 +18,47 @@ class CategorySeeder extends Seeder
 
             $categories = [
                 [
-                    'slug' => 'electronics',
+                    'slug' => 'hoodies',
                     'parent_slug' => null,
                     'translations' => [
-                        'en' => ['name' => 'Electronics', 'description' => 'Electronic devices'],
-                        'fr' => ['name' => 'Électronique', 'description' => 'Appareils électroniques'],
-                        'es' => ['name' => 'Electrónica', 'description' => 'Dispositivos electrónicos'],
+                        'en' => ['name' => 'Hoodies', 'description' => 'Premium Quality Hoodies'],
+                        'ar' => ['name' => 'هوديز', 'description' => 'هوديز عالية الجودة'],
                     ],
                     'image' => 'https://i.postimg.cc/mgTTQWtW/07-300x300-1-1-removebg-preview.png',
                 ],
                 [
-                    'slug' => 'fashion',
-                    'parent_slug' => null,
+                    'slug' => 'men-hoodies',
+                    'parent_slug' => 'hoodies',
                     'translations' => [
-                        'en' => ['name' => 'Fashion', 'description' => 'Clothing and accessories'],
-                        'fr' => ['name' => 'Mode', 'description' => 'Vêtements et accessoires'],
-                        'es' => ['name' => 'Moda', 'description' => 'Ropa y accesorios'],
+                        'en' => ['name' => 'Men', 'description' => 'Hoodies for Men'],
+                        'ar' => ['name' => 'رجالي', 'description' => 'هوديز رجالي'],
                     ],
                     'image' => 'https://i.postimg.cc/QM9NMkFF/cat7-removebg-preview.png',
                 ],
                 [
-                    'slug' => 'smartphones',
-                    'parent_slug' => 'electronics',
+                    'slug' => 'women-hoodies',
+                    'parent_slug' => 'hoodies',
                     'translations' => [
-                        'en' => ['name' => 'Smartphones', 'description' => 'Latest mobile phones'],
-                        'fr' => ['name' => 'Smartphones', 'description' => 'Derniers téléphones mobiles'],
-                        'es' => ['name' => 'Smartphones', 'description' => 'Últimos teléfonos móviles'],
+                        'en' => ['name' => 'Women', 'description' => 'Hoodies for Women'],
+                        'ar' => ['name' => 'حريمي', 'description' => 'هوديز حريمي'],
                     ],
                     'image' => 'https://i.postimg.cc/ZKwJFD39/cat1-removebg-preview.png',
                 ],
                 [
-                    'slug' => 't-shirts',
-                    'parent_slug' => 'fashion',
+                    'slug' => 'unisex-hoodies',
+                    'parent_slug' => 'hoodies',
                     'translations' => [
-                        'en' => ['name' => 'T-Shirts', 'description' => 'Casual wear t-shirts'],
-                        'fr' => ['name' => 'T-shirts', 'description' => 'T-shirts décontractés'],
-                        'es' => ['name' => 'Camisetas', 'description' => 'Camisetas informales'],
+                        'en' => ['name' => 'Unisex', 'description' => 'For Everyone'],
+                        'ar' => ['name' => 'للجنسين', 'description' => 'للجميع'],
+                    ],
+                    'image' => 'https://i.postimg.cc/VkSP9smT/cat2-removebg-preview.png',
+                ],
+                [
+                    'slug' => 'zip-up-hoodies',
+                    'parent_slug' => 'hoodies',
+                    'translations' => [
+                        'en' => ['name' => 'Zip-Up', 'description' => 'Zip-Up Style Hoodies'],
+                        'ar' => ['name' => 'بسوسته', 'description' => 'هوديز بسوسته'],
                     ],
                     'image' => 'https://i.postimg.cc/VkSP9smT/cat2-removebg-preview.png',
                 ],

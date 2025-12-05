@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\BrandController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\CustomerController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
+use App\Http\Controllers\Admin\GovernorateController;
 use App\Http\Controllers\Admin\LanguageController;
 use App\Http\Controllers\Admin\MenuController;
 use App\Http\Controllers\Admin\MenuItemController;
@@ -22,6 +23,7 @@ use App\Http\Controllers\Admin\RefundController;
 use App\Http\Controllers\Admin\SocialMediaLinkController;
 use App\Http\Controllers\Admin\VendorController;
 use App\Http\Controllers\SiteSettingsController;
+use App\Http\Controllers\Store\CheckoutController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -90,6 +92,8 @@ Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
 
     /* Orders */
     Route::get('orders', [OrderController::class, 'index'])->name('orders.index');
+    Route::get('orders/{id}', [OrderController::class, 'show'])->name('orders.show');
+    Route::post('orders/{id}/update-status', [OrderController::class, 'updateStatus'])->name('orders.updateStatus');
     Route::delete('orders/{id}', [OrderController::class, 'destroy'])->name('orders.destroy');
     Route::post('orders/data', [OrderController::class, 'getData'])->name('orders.data');
 
@@ -116,6 +120,11 @@ Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
     /* Attribute Value Translations Management */
     Route::post('values/{value}/translations', [AttributeController::class, 'storeTranslation'])->name('values.translations.store');
     Route::delete('translations/{translation}', [AttributeController::class, 'destroyTranslation'])->name('translations.destroy');
+
+    /* Governorates */
+    Route::get('governorates/data', [GovernorateController::class, 'getData'])->name('governorates.data');
+    Route::resource('governorates', GovernorateController::class);
+    Route::post('governorates/{id}/toggle-status', [GovernorateController::class, 'toggleStatus'])->name('governorates.toggleStatus');
 
     /* Vendors */
     Route::get('vendors', [VendorController::class, 'index'])->name('vendors.index');
@@ -160,10 +169,20 @@ Route::get('site-settings/edit', [SiteSettingsController::class, 'edit'])->name(
 Route::put('site-settings/update', [SiteSettingsController::class, 'update'])->name('admin.site-settings.update');
 
 Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
-Route::post('/checkout/process', [CheckoutController::class, 'process'])->name('checkout.process');
+Route::get('/checkout/success/{id}', [CheckoutController::class, 'success'])->name('checkout.success');
+
 // PayPal success callback
 Route::get('/checkout/paypal/success', [CheckoutController::class, 'paypalSuccess'])
     ->name('paypal.success');
 // PayPal cancel callback
 Route::get('/checkout/paypal/cancel', [CheckoutController::class, 'paypalCancel'])
     ->name('paypal.cancel');
+
+// About and Contact Pages
+Route::get('/about', function () {
+    return view('themes.xylo.about');
+})->name('about');
+
+Route::get('/contact', function () {
+    return view('themes.xylo.contact');
+})->name('contact');

@@ -46,6 +46,9 @@
                         <button class="wishlist-btn" data-product-id="{{ $product->id }}">
                             <i class="fa-solid fa-heart"></i>
                         </button>
+                        <button class="quick-view-btn" data-product-id="{{ $product->id }}" onclick="event.stopPropagation(); openQuickView({{ $product->id }});" title="{{ __('Quick View') }}">
+                            <i class="fas fa-eye"></i>
+                        </button>
                     </div>
                     <div class="product-info mt-4">
                         <div class="top-info">
@@ -121,10 +124,45 @@
 
     // Wishlist
     document.addEventListener('DOMContentLoaded', function () {
+        // Configure toastr if available
+        if (typeof toastr !== 'undefined') {
+            toastr.options = {
+                closeButton: true,
+                progressBar: true,
+                positionClass: "toast-top-right",
+                timeOut: 3000
+            };
+        }
+
         document.querySelectorAll('.wishlist-btn').forEach(button => {
-            button.addEventListener('click', function () {
+            button.addEventListener('click', function (e) {
+                e.stopPropagation();
+                
                 const productId = this.getAttribute('data-product-id');
-                fetch('/customer/wishlist', {
+                const isAuthenticated = {{ auth('customer')->check() ? 'true' : 'false' }};
+                
+                // Check if user is logged in
+                if (!isAuthenticated) {
+                    if (typeof toastr !== 'undefined') {
+                        toastr.warning(
+                            '{{ __("Please login or create an account to save items to your wishlist.") }}',
+                            '{{ __("Login Required") }}',
+                            {
+                                timeOut: 5000,
+                                onclick: function() {
+                                    window.location.href = '{{ route("customer.login") }}';
+                                }
+                            }
+                        );
+                    } else {
+                        if (confirm('{{ __("Please login or create an account to save items to your wishlist. Go to login page?") }}')) {
+                            window.location.href = '{{ route("customer.login") }}';
+                        }
+                    }
+                    return;
+                }
+
+                fetch('{{ route("customer.wishlist.toggle") }}', {
                     method: 'POST',
                     headers: {
                         "Content-Type": "application/json",
@@ -135,19 +173,33 @@
                 })
                 .then(response => {
                     if (response.status === 401) {
-                        window.location.href = '/customer/login';
-                    } else if (response.ok) {
-                        return response.json();
-                    } else {
-                        throw new Error('Something went wrong');
+                        window.location.href = '{{ route("customer.login") }}';
+                        return;
                     }
+                    return response.json();
                 })
                 .then(data => {
-                    if (data?.message) {
-                        alert(data.message);
+                    if (data) {
+                        const icon = this.querySelector('i');
+                        if (data.status === 'added') {
+                            icon.style.color = '#800020';
+                            if (typeof toastr !== 'undefined') {
+                                toastr.success(data.message || '{{ __("Added to wishlist!") }}');
+                            }
+                        } else {
+                            icon.style.color = '';
+                            if (typeof toastr !== 'undefined') {
+                                toastr.info(data.message || '{{ __("Removed from wishlist") }}');
+                            }
+                        }
                     }
                 })
-                .catch(error => console.error('Error:', error));
+                .catch(error => {
+                    console.error('Error:', error);
+                    if (typeof toastr !== 'undefined') {
+                        toastr.error('{{ __("Something went wrong. Please try again.") }}');
+                    }
+                });
             });
         });
     });

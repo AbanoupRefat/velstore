@@ -1,7 +1,7 @@
 <!-- Sidebar -->
 <nav id="sidebar" class="d-flex flex-column p-3">
     <div class="logo-container">
-        <img src="{{ asset('storage/brands/logo-ready.png') }}" alt="{{ __('cms.sidebar.logo') }}">
+        <img src="{{ asset('images/website_logo.png') }}" alt="{{ __('cms.sidebar.logo') }}" style="max-width: 150px;">
     </div>
     <div class="search-container position-relative">
         <input type="text" class="form-control" placeholder="{{ __('cms.sidebar.search_placeholder') }}" id="searchInput" autocomplete="off">
@@ -201,6 +201,22 @@
                 </ul>
             </div>
         </li>
+
+        {{-- NEW GOVERNORATE MENU ITEM --}}
+        <li class="nav-item">
+            <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#governorateMenu" role="button" aria-expanded="false" aria-controls="governorateMenu">
+                <span><i class="fas fa-map-marker-alt me-2"></i> <span>{{ __('Governorates') }}</span></span>
+                <i class="fas fa-chevron-down"></i>
+            </a>
+            <div class="collapse {{ Route::currentRouteName() == 'admin.governorates.create' || Route::currentRouteName() == 'admin.governorates.index' ? 'show' : '' }}" id="governorateMenu">
+                <ul class="nav flex-column ms-3">
+                    <li><a class="nav-link {{ Route::currentRouteName() == 'admin.governorates.create' ? 'active' : '' }}" href="{{ route('admin.governorates.create') }}">{{ __('Add New') }}</a></li>
+                    <li><a class="nav-link {{ Route::currentRouteName() == 'admin.governorates.index' ? 'active' : '' }}" href="{{ route('admin.governorates.index') }}">{{ __('List All') }}</a></li>
+                </ul>
+            </div>
+        </li>
+        {{-- END GOVERNORATE MENU ITEM --}}
+
          <li class="nav-item">
         <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#pageMenu" role="button" aria-expanded="false" aria-controls="pageMenu">
             <span><i class="fas fa-file-alt me-2"></i> <span>{{ __('cms.sidebar.pages.title') }}</span></span>

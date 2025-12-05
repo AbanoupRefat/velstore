@@ -12,31 +12,15 @@ class CurrencySeeder extends Seeder
      */
     public function run(): void
     {
-        DB::table('currencies')->insert([
+        DB::table('currencies')->upsert([
             [
-                'name' => 'US Dollar',
-                'code' => 'USD',
-                'symbol' => '$',
+                'name' => 'Egyptian Pound',
+                'code' => 'EGP',
+                'symbol' => 'LE',
                 'exchange_rate' => 1.0000,
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
-            [
-                'name' => 'Euro',
-                'code' => 'EUR',
-                'symbol' => '€',
-                'exchange_rate' => 0.9200,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'name' => 'British Pound',
-                'code' => 'GBP',
-                'symbol' => '£',
-                'exchange_rate' => 0.7900,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-        ]);
+        ], ['code'], ['symbol', 'name', 'exchange_rate', 'updated_at']);
     }
 }

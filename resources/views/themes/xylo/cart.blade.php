@@ -90,9 +90,33 @@
                     @endif
 
                     @if (!empty($colors))
+                        @php
+                            $colorMap = [
+                                'black' => '#000000',
+                                'navy' => '#000080',
+                                'grey' => '#808080',
+                                'white' => '#FFFFFF',
+                                'burgundy' => '#800020',
+                                'red' => '#FF0000',
+                                'green' => '#008000',
+                                'blue' => '#0000FF',
+                                'yellow' => '#FFFF00',
+                                'beige' => '#F5F5DC'
+                            ];
+                        @endphp
                         <span id="product-color">
                             @foreach ($colors as $color)
-                                <span class="color-circle {{ strtolower($color) }}" ></span>
+                                @php
+                                    // Try to find the color key from the translated value if possible, 
+                                    // but here we only have the translated value. 
+                                    // Ideally we should pass the raw value too.
+                                    // For now, let's try to match or default.
+                                    // Actually, we should fetch the raw value in the loop above.
+                                @endphp
+                                <span class="color-circle" 
+                                      style="background-color: {{ $colorMap[strtolower($color)] ?? $color }};"
+                                      title="{{ $color }}">
+                                </span>
                             @endforeach
                         </span>
                     @endif
@@ -192,18 +216,29 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 <script>
     $(document).ready(function() {
-        $('.update-cart').click(function(e) {
-            e.preventDefault();
-
+        // Auto-update cart on quantity change
+        $('input[type="number"]').on('change', function() {
+            const $input = $(this);
+            const $row = $input.closest('tr');
+            const productId = $input.data('id');
+            const quantity = parseInt($input.val());
+            
+            if (quantity < 1) {
+                $input.val(1);
+                return;
+            }
+            
+            // Show loading state
+            $row.addClass('updating');
+            $row.css('opacity', '0.6');
+            
             let cartData = [];
-
             $('tbody tr').each(function() {
-                let productId = $(this).find('input[type="number"]').data('id');
-                let quantity = $(this).find('input[type="number"]').val();
-
+                let id = $(this).find('input[type="number"]').data('id');
+                let qty = $(this).find('input[type="number"]').val();
                 cartData.push({
-                    product_id: productId,
-                    quantity: quantity
+                    product_id: id,
+                    quantity: qty
                 });
             });
 
@@ -216,10 +251,41 @@
                 },
                 success: function(response) {
                     if (response.success) {
-                        location.reload();
+                        // Update row visual feedback
+                        $row.removeClass('updating');
+                        $row.css('opacity', '1');
+                        $row.addClass('updated');
+                        
+                        // Reload page to update totals
+                        setTimeout(() => {
+                            location.reload();
+                        }, 300);
+                        
+                        toastr.success('Cart updated successfully', 'Success', {
+                            closeButton: true,
+                            progressBar: true,
+                            positionClass: "toast-top-right",
+                            timeOut: 2000
+                        });
                     }
+                },
+                error: function() {
+                    $row.removeClass('updating');
+                    $row.css('opacity', '1');
+                    toastr.error('Failed to update cart', 'Error', {
+                        closeButton: true,
+                        progressBar: true,
+                        positionClass: "toast-top-right",
+                        timeOut: 3000
+                    });
                 }
             });
+        });
+        
+        // Keep the manual update button for backup
+        $('.update-cart').click(function(e) {
+            e.preventDefault();
+            $('input[type="number"]').first().trigger('change');
         });
     });
 
@@ -227,6 +293,8 @@
         document.querySelectorAll('.remove-from-cart').forEach(button => {
             button.addEventListener('click', function() {
                 let productId = this.dataset.id;
+                const $row = $(this).closest('tr');
+                $row.css('opacity', '0.4');
 
                 fetch("{{ route('cart.remove') }}", {
                     method: "POST",
@@ -238,18 +306,53 @@
                 })
                 .then(response => response.json())
                 .then(data => {
-                    toastr.success("{{ session('success') }}", data.message, {
+                    toastr.success(data.message, 'Removed', {
                         closeButton: true,
                         progressBar: true,
                         positionClass: "toast-top-right",
-                        timeOut: 5000
+                        timeOut: 2000
                     });
-                    location.reload();
+                    setTimeout(() => location.reload(), 500);
                 });
             });
         });
     });
 </script>
+
+<style>
+    /* Cart auto-update visual feedback */
+    tbody tr {
+        transition: all 0.3s ease;
+    }
+    
+    tbody tr.updating {
+        background-color: #FAF9F6;
+    }
+    
+    tbody tr.updated {
+        background-color: rgba(160, 21, 62, 0.1);
+        animation: fadeOut 2s ease forwards;
+    }
+    
+    @keyframes fadeOut {
+        0% { background-color: rgba(160, 21, 62, 0.1); }
+        100% { background-color: transparent; }
+    }
+    
+    input[type="number"] {
+        border: 2px solid #e5e7eb;
+        border-radius: 8px;
+        padding: 8px 12px;
+        transition: all 0.3s ease;
+    }
+    
+    input[type="number"]:focus {
+        border-color: var(--burgundy-main);
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(128, 0, 32, 0.1);
+    }
+</style>
+
 
 <script>
 document.addEventListener("DOMContentLoaded", function() {

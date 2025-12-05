@@ -25,35 +25,21 @@ class ProductSeeder extends Seeder
             $sizeAttr = Attribute::firstOrCreate(['name' => 'Size']);
             $colorAttr = Attribute::firstOrCreate(['name' => 'Color']);
 
-            $sizes = ['Small', 'Medium', 'Large'];
-            $colors = ['Red', 'Blue', 'Black'];
+            $sizes = ['S', 'M', 'L', 'XL', 'XXL'];
+            $colors = ['Black', 'Grey', 'Navy', 'White', 'Beige'];
 
+            // Create Attributes
             foreach ($sizes as $size) {
                 $attrValue = AttributeValue::firstOrCreate([
                     'attribute_id' => $sizeAttr->id,
                     'value' => $size,
                 ]);
-
+                
                 foreach ($languages as $lang) {
-                    $attrValue->translations()->firstOrCreate([
-                        'language_code' => $lang->code,
-                    ], [
-                        'translated_value' => match ($lang->code) {
-                            'es' => match ($size) {
-                                'Small' => 'Pequeño',
-                                'Medium' => 'Mediano',
-                                'Large' => 'Grande',
-                                default => $size,
-                            },
-                            'de' => match ($size) {
-                                'Small' => 'Klein',
-                                'Medium' => 'Mittel',
-                                'Large' => 'Groß',
-                                default => $size,
-                            },
-                            default => $size,
-                        },
-                    ]);
+                    $attrValue->translations()->firstOrCreate(
+                        ['language_code' => $lang->code],
+                        ['translated_value' => $size]
+                    );
                 }
             }
 
@@ -64,60 +50,69 @@ class ProductSeeder extends Seeder
                 ]);
 
                 foreach ($languages as $lang) {
-                    $attrValue->translations()->firstOrCreate([
-                        'language_code' => $lang->code,
-                    ], [
-                        'translated_value' => match ($lang->code) {
-                            'es' => match ($color) {
-                                'Red' => 'Rojo',
-                                'Blue' => 'Azul',
-                                'Black' => 'Negro',
-                                default => $color,
-                            },
-                            'de' => match ($color) {
-                                'Red' => 'Rot',
-                                'Blue' => 'Blau',
-                                'Black' => 'Schwarz',
-                                default => $color,
-                            },
-                            default => $color,
+                    $translatedColor = match($lang->code) {
+                        'ar' => match($color) {
+                            'Black' => 'أسود',
+                            'Grey' => 'رمادي',
+                            'Navy' => 'كحلي',
+                            'White' => 'أبيض',
+                            'Beige' => 'بيج',
+                            default => $color
                         },
-                    ]);
+                        default => $color
+                    };
+
+                    $attrValue->translations()->firstOrCreate(
+                        ['language_code' => $lang->code],
+                        ['translated_value' => $translatedColor]
+                    );
                 }
             }
 
             $vendor = Vendor::first() ?? Vendor::factory()->create();
-            $category = Category::first() ?? Category::factory()->create();
-            $brand = Brand::first() ?? Brand::factory()->create();
+            $category = Category::where('slug', 'hoodies')->first() ?? Category::factory()->create();
+            $brand = Brand::first() ?? Brand::factory()->create(['name' => 'Velstore']);
 
-            $products = [
+            $hoodies = [
                 [
-                    'name' => 'Cool T-Shirt',
-                    'slug' => 'cool-tshirt',
-                    'image' => 'https://i.postimg.cc/zBCkRRvb/T-Shirt-removebg-preview.png',
-                    'description' => 'Trendy T-Shirt available in multiple sizes and colors.',
+                    'name_en' => 'Essential Black Hoodie',
+                    'name_ar' => 'هودي أسود أساسي',
+                    'slug' => 'essential-black-hoodie',
+                    'image' => 'https://i.postimg.cc/zBCkRRvb/T-Shirt-removebg-preview.png', // Placeholder, user can update
+                    'description_en' => 'Premium cotton hoodie, perfect for everyday wear.',
+                    'description_ar' => 'هودي قطن عالي الجودة، مثالي للاستخدام اليومي.',
+                    'price' => 850,
                 ],
                 [
-                    'name' => 'Sport Shoes',
-                    'slug' => 'sport-shoes',
+                    'name_en' => 'Oversized Grey Hoodie',
+                    'name_ar' => 'هودي رمادي واسع',
+                    'slug' => 'oversized-grey-hoodie',
                     'image' => 'https://i.postimg.cc/YS1FXBHT/images-removebg-preview.png',
-                    'description' => 'Comfortable sport shoes for daily use.',
+                    'description_en' => 'Comfortable oversized fit with soft fleece lining.',
+                    'description_ar' => 'قصة واسعة مريحة مع بطانة صوف ناعمة.',
+                    'price' => 950,
                 ],
                 [
-                    'name' => 'Wireless Headphones',
-                    'slug' => 'wireless-headphones',
+                    'name_en' => 'Navy Blue Zip-Up',
+                    'name_ar' => 'هودي كحلي بسوسته',
+                    'slug' => 'navy-blue-zip-up',
                     'image' => 'https://i.postimg.cc/2Sn3YdKZ/images-1-removebg-preview-2.png',
-                    'description' => 'Noise-cancelling wireless headphones with long battery life.',
+                    'description_en' => 'Classic zip-up hoodie with durable metal zipper.',
+                    'description_ar' => 'هودي كلاسيك بسوسته معدنية متينة.',
+                    'price' => 1100,
                 ],
                 [
-                    'name' => 'Travel Backpack',
-                    'slug' => 'travel-backpack',
+                    'name_en' => 'Beige Pullover',
+                    'name_ar' => 'بلوفر بيج',
+                    'slug' => 'beige-pullover',
                     'image' => 'https://i.postimg.cc/WpDkKZTM/images-2-removebg-preview-1.png',
-                    'description' => 'Durable backpack for travel and outdoor activities.',
+                    'description_en' => 'Stylish beige pullover, matches with everything.',
+                    'description_ar' => 'بلوفر بيج أنيق، يليق مع كل حاجة.',
+                    'price' => 900,
                 ],
             ];
 
-            foreach ($products as $item) {
+            foreach ($hoodies as $item) {
                 $product = Product::create([
                     'shop_id' => 1,
                     'vendor_id' => $vendor->id,
@@ -128,50 +123,16 @@ class ProductSeeder extends Seeder
                     'status' => 1,
                 ]);
 
+                // Product Translations
                 foreach ($languages as $lang) {
-                    $translatedName = match ($lang->code) {
-                        'es' => match ($item['name']) {
-                            'Cool T-Shirt' => 'Camiseta genial',
-                            'Sport Shoes' => 'Zapatillas deportivas',
-                            'Wireless Headphones' => 'Auriculares inalámbricos',
-                            'Travel Backpack' => 'Mochila de viaje',
-                            default => $item['name'],
-                        },
-                        'de' => match ($item['name']) {
-                            'Cool T-Shirt' => 'Cooles T-Shirt',
-                            'Sport Shoes' => 'Sportschuhe',
-                            'Wireless Headphones' => 'Kabellose Kopfhörer',
-                            'Travel Backpack' => 'Reiserucksack',
-                            default => $item['name'],
-                        },
-                        default => $item['name'],
-                    };
-
-                    $translatedDescription = match ($lang->code) {
-                        'es' => match ($item['name']) {
-                            'Cool T-Shirt' => 'Camiseta moderna disponible en varios tamaños y colores.',
-                            'Sport Shoes' => 'Zapatillas deportivas cómodas para uso diario.',
-                            'Wireless Headphones' => 'Auriculares inalámbricos con cancelación de ruido y batería de larga duración.',
-                            'Travel Backpack' => 'Mochila duradera para viajes y actividades al aire libre.',
-                            default => $item['description'],
-                        },
-                        'de' => match ($item['name']) {
-                            'Cool T-Shirt' => 'Trendiges T-Shirt in verschiedenen Größen und Farben erhältlich.',
-                            'Sport Shoes' => 'Bequeme Sportschuhe für den täglichen Gebrauch.',
-                            'Wireless Headphones' => 'Kabellose Kopfhörer mit Geräuschunterdrückung und langer Akkulaufzeit.',
-                            'Travel Backpack' => 'Robuster Rucksack für Reisen und Outdoor-Aktivitäten.',
-                            default => $item['description'],
-                        },
-                        default => $item['description'],
-                    };
-
                     $product->translations()->create([
                         'language_code' => $lang->code,
-                        'name' => $translatedName,
-                        'description' => $translatedDescription,
+                        'name' => $lang->code === 'ar' ? $item['name_ar'] : $item['name_en'],
+                        'description' => $lang->code === 'ar' ? $item['description_ar'] : $item['description_en'],
                     ]);
                 }
 
+                // Product Image
                 $imageUrl = $item['image'];
                 $imageName = basename($imageUrl);
                 try {
@@ -188,33 +149,39 @@ class ProductSeeder extends Seeder
                     'type' => 'thumb',
                 ]);
 
+                // Create Variants
                 $sizesAttrValues = AttributeValue::where('attribute_id', $sizeAttr->id)->get();
                 $colorsAttrValues = AttributeValue::where('attribute_id', $colorAttr->id)->get();
 
                 foreach ($sizesAttrValues as $size) {
                     foreach ($colorsAttrValues as $color) {
-                        $price = rand(20, 60);
-                        $discountPrice = rand(10, $price);
-
+                        $price = $item['price'];
+                        // Add slight price variation for larger sizes if needed, but keeping simple for now
+                        
                         $variant = $product->variants()->create([
-                            'variant_slug' => Str::slug("{$item['name']} {$size->value}-{$color->value}").'-'.uniqid(),
+                            'variant_slug' => Str::slug("{$item['name_en']} {$size->value}-{$color->value}").'-'.uniqid(),
                             'price' => $price,
-                            'discount_price' => $discountPrice,
-                            'stock' => rand(50, 200),
-                            'SKU' => strtoupper(substr($size->value, 0, 1)).substr($color->value, 0, 2).rand(100, 999),
+                            'discount_price' => $price, // No discount initially
+                            'stock' => rand(10, 50),
+                            'SKU' => strtoupper(substr($item['slug'], 0, 3).'-'.substr($size->value, 0, 1).'-'.substr($color->value, 0, 1).'-'.uniqid()),
                             'barcode' => null,
-                            'weight' => '0.5',
-                            'dimensions' => '10x10x2 cm',
-                            'is_primary' => 1,
+                            'weight' => '0.8',
+                            'dimensions' => '30x20x5 cm',
+                            'is_primary' => ($size->value === 'M' && $color->value === 'Black') ? 1 : 0,
                         ]);
 
+                        // Variant Translations
                         foreach ($languages as $lang) {
+                            $sizeName = $size->translations()->where('language_code', $lang->code)->first()->translated_value ?? $size->value;
+                            $colorName = $color->translations()->where('language_code', $lang->code)->first()->translated_value ?? $color->value;
+                            
                             $variant->translations()->create([
                                 'language_code' => $lang->code,
-                                'name' => "{$size->value} - {$color->value}",
+                                'name' => "{$sizeName} - {$colorName}",
                             ]);
                         }
 
+                        // Link Attributes
                         foreach ([$size->id, $color->id] as $attrValueId) {
                             DB::table('product_variant_attribute_values')->insert([
                                 'product_id' => $product->id,
@@ -233,5 +200,6 @@ class ProductSeeder extends Seeder
                 }
             }
         });
+
     }
 }

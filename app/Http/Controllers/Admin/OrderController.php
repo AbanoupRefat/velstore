@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Mail\OrderStatusUpdate;
 use App\Models\Order;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 use Yajra\DataTables\Facades\DataTables;
 
 class OrderController extends Controller
@@ -27,25 +29,115 @@ class OrderController extends Controller
 
                 return $order->guest_email ?? 'Guest';
             })
+            ->filterColumn('customer', function($query, $keyword) {
+                $query->where(function($q) use ($keyword) {
+                    $q->whereHas('customer', function($subQ) use ($keyword) {
+                        $subQ->where('name', 'like', "%{$keyword}%")
+                             ->orWhere('email', 'like', "%{$keyword}%")
+                             ->orWhere('phone', 'like', "%{$keyword}%");
+                    })
+                    ->orWhere('guest_email', 'like', "%{$keyword}%")
+                    ->orWhere('id', 'like', "%{$keyword}%");
+                });
+            })
             ->addColumn('order_date', function (Order $order) {
                 return $order->created_at?->format('Y-m-d H:i');
             })
             ->addColumn('total_price', function (Order $order) {
-                return number_format((float) $order->total_amount, 2);
+                return number_format((float) $order->total_price, 2);
             })
             ->editColumn('status', function (Order $order) {
                 return ucfirst($order->status);
             })
+            ->addColumn('receipt', function (Order $order) {
+                if ($order->payment_proof) {
+                    $url = \Illuminate\Support\Facades\Storage::url($order->payment_proof);
+                    // Check if it's a legacy path (not starting with uploads/) or new storage path
+                    if (!str_starts_with($order->payment_proof, 'uploads/')) {
+                         // Fallback for old images if any
+                         $url = asset($order->payment_proof);
+                    } else {
+                         // For new storage images, the path stored is 'uploads/payment_proofs/...'
+                         // Storage::url will prepend /storage/
+                         $url = asset('storage/' . $order->payment_proof);
+                    }
+                    
+                    $customerName = $order->customer ? $order->customer->name : ($order->guest_email ?? 'Guest');
+                    $totalPrice = number_format((float) $order->total_price, 2);
+                    
+                    return '<button type="button" class="btn btn-sm btn-info text-white view-receipt-btn" 
+                        data-url="'.$url.'" 
+                        data-order-id="'.$order->id.'"
+                        data-customer="'.$customerName.'"
+                        data-total="'.$totalPrice.'"
+                        data-date="'.$order->created_at?->format('Y-m-d H:i').'">
+                        <i class="bi bi-file-earmark-image"></i> View
+                    </button>';
+                }
+                return '<span class="text-muted">N/A</span>';
+            })
+            ->rawColumns(['action', 'receipt'])
             ->addColumn('action', function (Order $order) {
                 return '
+                    <a href="'.route('admin.orders.show', $order->id).'" class="btn btn-sm btn-primary">
+                        <i class="bi bi-eye"></i> View
+                    </a>
                     <span class="border border-danger dt-trash rounded-3 d-inline-block" onclick="deleteOrder('.$order->id.')">
                         <i class="bi bi-trash-fill text-danger"></i>
                     </span>
                 ';
             })
-            ->rawColumns(['action'])
+
+            ->rawColumns(['action', 'receipt'])
             ->setRowId('id')
             ->make(true);
+    }
+
+    /**
+     * Show single order details
+     */
+    public function show($id)
+    {
+        $order = Order::with(['customer', 'details.product.translation', 'details.productVariant'])
+            ->findOrFail($id);
+
+        return view('admin.orders.show', compact('order'));
+    }
+
+    /**
+     * Update order status and send email notification
+     */
+    public function updateStatus(Request $request, $id)
+    {
+        $request->validate([
+            'status' => 'required|in:pending,processing,shipped,delivered,cancelled',
+            'tracking_number' => 'nullable|string',
+            'notes' => 'nullable|string',
+        ]);
+
+        $order = Order::with('customer')->findOrFail($id);
+        $oldStatus = $order->status;
+        $newStatus = $request->status;
+
+        // Update order
+        $order->update([
+            'status' => $newStatus,
+            'tracking_number' => $request->tracking_number,
+        ]);
+
+        // Send email notification if status changed
+        if ($oldStatus !== $newStatus && $order->customer) {
+            try {
+                Mail::to($order->customer->email)
+                    ->send(new OrderStatusUpdate($order, $oldStatus, $newStatus));
+            } catch (\Exception $e) {
+                \Log::error('Order status email failed: ' . $e->getMessage());
+            }
+        }
+
+        return redirect()
+            ->route('admin.orders.show', $id)
+            ->with('success', 'Order status updated successfully!' . ($oldStatus !== $newStatus ? ' Email sent to customer.' : ''));
     }
 
     public function destroy($id)

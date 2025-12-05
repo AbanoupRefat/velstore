@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Cache;
 if (! function_exists('convert_price')) {
     function convert_price($amount, $currencyCode = null)
     {
-        $currencyCode = $currencyCode ?: session('currency', getWebConfig('default_currency', 'USD'));
+        $currencyCode = $currencyCode ?: session('currency', getWebConfig('default_currency', 'EGP'));
 
         $usdExchangeRate = Cache::rememberForever('currency_USD', function () {
             return Currency::where('code', 'USD')->value('exchange_rate') ?: 1.0;
@@ -43,8 +43,13 @@ if (! function_exists('getWebConfig')) {
 if (! function_exists('activeCurrency')) {
     function activeCurrency()
     {
-        return Cache::rememberForever('active_currency_'.session('currency', 'USD'), function () {
-            return Currency::where('code', session('currency', 'USD'))->first();
+        $code = session('currency', 'EGP');
+        return Cache::rememberForever('active_currency_'.$code, function () use ($code) {
+            $currency = Currency::where('code', $code)->first();
+            if (!$currency) {
+                $currency = Currency::first();
+            }
+            return $currency;
         });
     }
 }

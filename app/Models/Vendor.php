@@ -7,7 +7,7 @@ use Illuminate\Notifications\Notifiable;
 
 class Vendor extends Authenticatable
 {
-    use Notifiable;
+    use Notifiable, \Illuminate\Database\Eloquent\Factories\HasFactory;
 
     protected $guard = 'vendor';
 
