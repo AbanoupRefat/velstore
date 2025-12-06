@@ -190,17 +190,21 @@
     @include('themes.xylo.partials.product-quick-view')
 
     @include('themes.xylo.layouts.footer')
+    <!-- jQuery must load first -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Bootstrap depends on jQuery -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Now load Vite bundles that may depend on jQuery -->
     @if (!App::environment('testing'))
         @vite(['resources/views/themes/xylo/js/app.js'])
     @endif
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     @if (!App::environment('testing'))
         @vite(['resources/views/themes/xylo/js/slick.min.js'])
     @endif
     @if (!App::environment('testing'))
         @vite(['resources/views/themes/xylo/js/main.js'])
     @endif
+    <!-- Other plugins -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
     @yield('js')
