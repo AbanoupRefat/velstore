@@ -25,6 +25,16 @@
     "src": "resources/views/themes/xylo/css/custom.css",
     "isEntry": true
   },
+  "resources/views/themes/xylo/css/mobile-responsive.css": {
+    "file": "assets/mobile-responsive-Nj2MFvN_.css",
+    "src": "resources/views/themes/xylo/css/mobile-responsive.css",
+    "isEntry": true
+  },
+  "resources/views/themes/xylo/css/quick-view.css": {
+    "file": "assets/quick-view-CFsoOKGk.css",
+    "src": "resources/views/themes/xylo/css/quick-view.css",
+    "isEntry": true
+  },
   "resources/views/themes/xylo/css/slick.css": {
     "file": "assets/slick-CbWFAYwR.css",
     "src": "resources/views/themes/xylo/css/slick.css",
