@@ -188,9 +188,11 @@ class CheckoutController extends Controller
         if ($request->hasFile('payment_proof')) {
             $file = $request->file('payment_proof');
             $filename = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
-            // Use Storage facade for public disk
+            // Use Storage facade for public disk - file is saved to storage/app/public/uploads/payment_proofs
             $path = $file->storeAs('uploads/payment_proofs', $filename, 'public');
-            $proofPath = 'storage/' . $path;
+            // Store just the path (uploads/payment_proofs/filename) without 'storage/' prefix
+            // The view will prepend 'storage/' when needed via asset('storage/' . $path)
+            $proofPath = $path;
         }
 
         // Save Order
