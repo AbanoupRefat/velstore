@@ -194,12 +194,11 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <!-- Bootstrap depends on jQuery -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Slick Carousel from CDN (pre-minified libraries don't work well with Vite) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.js"></script>
     <!-- Now load Vite bundles that may depend on jQuery -->
     @if (!App::environment('testing'))
         @vite(['resources/views/themes/xylo/js/app.js'])
-    @endif
-    @if (!App::environment('testing'))
-        @vite(['resources/views/themes/xylo/js/slick.min.js'])
     @endif
     @if (!App::environment('testing'))
         @vite(['resources/views/themes/xylo/js/main.js'])

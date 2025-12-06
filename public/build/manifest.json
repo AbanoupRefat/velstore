@@ -57,12 +57,6 @@
     "src": "resources/views/themes/xylo/js/main.js",
     "isEntry": true
   },
-  "resources/views/themes/xylo/js/slick.min.js": {
-    "file": "assets/slick.min-C6idbfyY.js",
-    "name": "slick.min",
-    "src": "resources/views/themes/xylo/js/slick.min.js",
-    "isEntry": true
-  },
   "resources/views/themes/xylo/sass/app.scss": {
     "file": "assets/app-DKZBTmtA.css",
     "src": "resources/views/themes/xylo/sass/app.scss",
