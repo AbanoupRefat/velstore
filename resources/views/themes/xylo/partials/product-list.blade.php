@@ -3,7 +3,7 @@
 <div class="col-6 col-md-4">
     <div class="product-card clickable-product-card" onclick="window.location='{{ route('product.show', $product->slug) }}'">
         <div class="product-img">
-            <img src="{{ Storage::url(optional($product->thumbnail)->image_url ?? 'default.jpg') }}" 
+            <img src="{{ asset('uploads/' . (optional($product->thumbnail)->image_url ?? 'default.jpg')) }}" 
                  alt="{{ $product->translation->name ?? 'Product Name Not Available' }}">
             <button class="wishlist-btn" data-product-id="{{ $product->id }}" onclick="event.stopPropagation();"><i class="fa-solid fa-heart"></i></button>
             <button class="quick-view-btn" data-product-id="{{ $product->id }}" onclick="event.stopPropagation(); openQuickView({{ $product->id }});" title="{{ __('Quick View') }}">

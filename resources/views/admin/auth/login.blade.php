@@ -243,7 +243,7 @@
         <div class="login-card">
             <!-- Logo -->
             <div class="logo-container">
-                <img src="{{ Storage::url('website_logo.png') }}" alt="Bekabo Logo">
+                <img src="{{ asset('uploads/website_logo.png') }}" alt="Bekabo Logo">
             </div>
 
             <!-- Title -->

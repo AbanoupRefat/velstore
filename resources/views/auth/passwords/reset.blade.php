@@ -219,7 +219,7 @@
     <div class="reset-card">
         <!-- Logo -->
         <div class="reset-logo">
-            <img src="{{ Storage::url('website_logo.png') }}" alt="Pekaboo Logo">
+            <img src="{{ asset('uploads/website_logo.png') }}" alt="Pekaboo Logo">
         </div>
 
         <!-- Heading -->

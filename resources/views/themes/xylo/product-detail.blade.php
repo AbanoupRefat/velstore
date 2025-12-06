@@ -119,7 +119,7 @@
                 <div class="product-slider">
                     @foreach ($product->images as $image)
                         <div>
-                            <img src="{{ Storage::url($image['image_url']) }}" alt="{{ $image['name'] }}" style="width: 100%; height: auto;" />
+                            <img src="{{ asset('uploads/' . $image['image_url']) }}" alt="{{ $image['name'] }}" style="width: 100%; height: auto;" />
                         </div>
                     @endforeach
                 </div>
@@ -128,7 +128,7 @@
                 <div class="product-nav-slider">
                     @foreach ($product->images as $image)
                         <div>
-                            <img src="{{ Storage::url($image['image_url']) }}" 
+                            <img src="{{ asset('uploads/' . $image['image_url']) }}" 
                                  alt="{{ $image['name'] }}" 
                                  class="thumbnail-img" />
                         </div>

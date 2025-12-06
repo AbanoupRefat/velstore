@@ -40,7 +40,7 @@
                 <div class="product-card">
                     <div class="product-img">
                         <a href="{{ route('product.show', $product->slug) }}">
-                            <img src="{{ Storage::url(optional($product->thumbnail)->image_url ?? 'default.jpg') }}"
+                            <img src="{{ asset('uploads/' . (optional($product->thumbnail)->image_url ?? 'default.jpg')) }}"
                                  alt="{{ $product->translation->name ?? 'Product Name' }}">
                         </a>
                         <button class="wishlist-btn" data-product-id="{{ $product->id }}">

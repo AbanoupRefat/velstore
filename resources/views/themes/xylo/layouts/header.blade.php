@@ -206,7 +206,7 @@
             <!-- Logo -->
             <div class="col-md-4 col-6 col-lg-4 text-center text-md-start">
                 <a href="{{ route('xylo.home') }}" class="navbar-brand">
-                    <img src="{{ Storage::url('website_logo.png') }}" class="logo-responsive" alt="Logo" />
+                    <img src="{{ asset('uploads/website_logo.png') }}" class="logo-responsive" alt="Logo" />
                 </a>
                 <style>
                     .logo-responsive {

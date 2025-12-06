@@ -253,7 +253,7 @@
     <div class="register-card">
         <!-- Logo -->
         <div class="register-logo">
-            <img src="{{ Storage::url('website_logo.png') }}" alt="Pekaboo Logo">
+            <img src="{{ asset('uploads/website_logo.png') }}" alt="Pekaboo Logo">
         </div>
 
         <!-- Heading -->

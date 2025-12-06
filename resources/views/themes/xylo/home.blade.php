@@ -19,7 +19,7 @@
                     </div>
                     <div class="col-md-6">
                         <div class="rightimg-banner rightimg-banner1">
-                            <img src="{{ Storage::url(optional($banner->translation)->image_url ?? 'default.jpg') }}" class="img-fluid shoes-img" alt="{{ $banner->translation ? $banner->translation->title : $banner->title }}">
+                            <img src="{{ asset('uploads/' . (optional($banner->translation)->image_url ?? 'default.jpg')) }}" class="img-fluid shoes-img" alt="{{ $banner->translation ? $banner->translation->title : $banner->title }}">
                         </div>
                     </div>
                 </div>
@@ -38,7 +38,7 @@
                         <a href="{{ route('category.show', $category->slug) }}">
                             <h3>{{ $category->translation->name ?? 'No Translation' }}</h3>
                             <div class="catcard-img">
-                                <img src="{{ Storage::url(optional($category->translation)->image_url ?? 'default.jpg') }}" alt="{{ $category->translation->name ?? 'No Translation' }}">
+                                <img src="{{ asset('uploads/' . (optional($category->translation)->image_url ?? 'default.jpg')) }}" alt="{{ $category->translation->name ?? 'No Translation' }}">
                             </div>
                         </a>
                     </div>
@@ -57,7 +57,7 @@
                 @foreach ($products as $product)
                     <div class="product-card clickable-product-card" onclick="window.location='{{ route('product.show', $product->slug) }}'">
                         <div class="product-img">
-                            <img src="{{ Storage::url(optional($product->thumbnail)->image_url ?? 'default.jpg') }}" 
+                            <img src="{{ asset('uploads/' . (optional($product->thumbnail)->image_url ?? 'default.jpg')) }}" 
                                 alt="{{ $product->translation->name ?? 'Product Name Not Available' }}">
                                 <button class="wishlist-btn" data-product-id="{{ $product->id }}" onclick="event.stopPropagation();">
                                     <i class="fa-solid fa-heart"></i>

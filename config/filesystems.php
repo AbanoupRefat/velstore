@@ -36,10 +36,11 @@ return [
             'throw' => false,
         ],
 
+        // Default public disk - now writes directly to public/uploads
         'public' => [
             'driver' => 'local',
-            'root' => storage_path('app/public'),
-            'url' => env('APP_URL').'/public-storage',
+            'root' => public_path('uploads'),
+            'url' => env('APP_URL').'/uploads',
             'visibility' => 'public',
             'throw' => false,
         ],
