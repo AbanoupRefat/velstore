@@ -39,13 +39,19 @@ use Illuminate\Support\Facades\Route;
 
 /* require base_path('routes/store.php'); */
 
-Route::get('/login', function () {
+/* Custom Admin Login Route - Only accessible via custom URL */
+Route::get('/' . config('admin.url_prefix'), function () {
     return view('admin.auth.login');
-});
+})->name('login')->middleware('throttle.admin.login');
 
-Auth::routes();
+Route::post('/' . config('admin.url_prefix'), [\App\Http\Controllers\Auth\LoginController::class, 'login'])
+    ->middleware('throttle.admin.login');
 
-Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
+Route::post('/logout', [\App\Http\Controllers\Auth\LoginController::class, 'logout'])->name('logout');
+
+// Note: Auth::routes() is disabled for security - only custom URL login is allowed
+
+Route::prefix(config('admin.url_prefix'))->name('admin.')->middleware(['auth', 'restrict.admin'])->group(function () {
 
     /* Dashboard */
     Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
@@ -92,6 +98,7 @@ Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
 
     /* Orders */
     Route::get('orders', [OrderController::class, 'index'])->name('orders.index');
+    Route::get('orders/export', [OrderController::class, 'export'])->name('orders.export');
     Route::get('orders/{id}', [OrderController::class, 'show'])->name('orders.show');
     Route::post('orders/{id}/update-status', [OrderController::class, 'updateStatus'])->name('orders.updateStatus');
     Route::delete('orders/{id}', [OrderController::class, 'destroy'])->name('orders.destroy');

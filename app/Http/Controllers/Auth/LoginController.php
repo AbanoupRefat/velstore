@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Http\Middleware\ThrottleAdminLogin;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
+use Illuminate\Http\Request;
 
 class LoginController extends Controller
 {
@@ -23,9 +25,12 @@ class LoginController extends Controller
     /**
      * Where to redirect users after login.
      *
-     * @var string
+     * @return string
      */
-    protected $redirectTo = '/admin/dashboard';
+    public function redirectTo()
+    {
+        return '/' . config('admin.url_prefix', 'bekabo-control-panel') . '/dashboard';
+    }
 
     /**
      * Create a new controller instance.
@@ -46,5 +51,37 @@ class LoginController extends Controller
     public function showLoginForm()
     {
         return view('admin.auth.login');
+    }
+
+    /**
+     * Handle a login request to the application.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Http\Response|\Illuminate\Http\JsonResponse
+     */
+    protected function authenticated(Request $request, $user)
+    {
+        // Clear login attempts on successful login
+        ThrottleAdminLogin::clearAttempts($request);
+    }
+
+    /**
+     * The user has failed to authenticate.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return void
+     */
+    protected function sendFailedLoginResponse(Request $request)
+    {
+        // Increment failed attempts
+        $attempts = ThrottleAdminLogin::incrementAttempts($request);
+        $remaining = ThrottleAdminLogin::getRemainingAttempts($request);
+
+        // Add remaining attempts to session for display
+        if ($remaining <= 3) {
+            $request->session()->flash('remaining_attempts', $remaining);
+        }
+
+        return parent::sendFailedLoginResponse($request);
     }
 }

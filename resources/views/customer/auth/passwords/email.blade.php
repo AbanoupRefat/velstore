@@ -276,7 +276,7 @@
     <div class="forgot-card">
         <!-- Logo -->
         <div class="forgot-logo">
-            <img src="{{ asset('images/website_logo.png') }}" alt="Pekaboo Logo">
+            <img src="{{ Storage::url('website_logo.png') }}" alt="Pekaboo Logo">
         </div>
 
         <!-- Heading -->

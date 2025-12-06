@@ -1,7 +1,7 @@
 <!-- Sidebar -->
 <nav id="sidebar" class="d-flex flex-column p-3">
     <div class="logo-container">
-        <img src="{{ asset('images/website_logo.png') }}" alt="{{ __('cms.sidebar.logo') }}" style="max-width: 150px;">
+        <img src="{{ Storage::url('website_logo.png') }}" alt="{{ __('cms.sidebar.logo') }}" style="max-width: 150px;">
     </div>
     <div class="search-container position-relative">
         <input type="text" class="form-control" placeholder="{{ __('cms.sidebar.search_placeholder') }}" id="searchInput" autocomplete="off">
@@ -22,6 +22,7 @@
                 </ul>
             </div>
         </li>
+        {{-- HIDDEN FOR FUTURE USE: Categories
         <li class="nav-item">
             <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#categoryMenu" role="button" aria-expanded="false" aria-controls="categoryMenu">
                 <span><i class="fas fa-th-large me-2"></i> <span>{{ __('cms.sidebar.categories.title') }}</span></span>
@@ -33,7 +34,9 @@
                     <li><a class="nav-link {{ Route::currentRouteName() == 'admin.categories.index' ? 'active' : '' }}" href="{{ route('admin.categories.index') }}">{{ __('cms.sidebar.categories.list') }}</a></li>
                 </ul>
             </div>
-        </li>           
+        </li>
+        --}}           
+        {{-- HIDDEN FOR FUTURE USE: Brands
         <li class="nav-item">
             <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#brandMenu" role="button" aria-expanded="false" aria-controls="brandMenu">
                 <span><i class="fas fa-tags me-2"></i> <span>{{ __('cms.sidebar.brands.title') }}</span></span>
@@ -45,7 +48,8 @@
                     <li><a class="nav-link {{ Route::currentRouteName() == 'admin.brands.index' ? 'active' : '' }}" href="{{ route('admin.brands.index') }}">{{ __('cms.sidebar.brands.list') }}</a></li>
                 </ul>
             </div>
-        </li>       
+        </li>
+        --}}       
             <li class="nav-item">
                 <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#attributeMenu" role="button" aria-expanded="false" aria-controls="attributeMenu">
                     <span><i class="fas fa-cogs me-2"></i> <span>{{ __('cms.sidebar.attributes.title') }}</span></span>
@@ -68,6 +72,7 @@
                         <li><a class="nav-link {{ Route::currentRouteName() == 'admin.customers.index' ? 'active' : '' }}" href="{{ route('admin.customers.index') }}">{{ __('cms.sidebar.brands.list') }}</a></li>
                     </ul>
                 </div>                
+        {{-- HIDDEN FOR FUTURE USE: Vendors
                     <li class="nav-item">
                 <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#vendorMenu" role="button" aria-expanded="false" aria-controls="vendorMenu">
                     <span><i class="fas fa-user-tag me-2"></i> <span>{{ __('cms.sidebar.vendors.title') }}</span></span>
@@ -87,7 +92,8 @@
                         </li>
                     </ul>
                 </div>
-            </li>  
+            </li>
+        --}}  
              <li class="nav-item">
             <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#ordersMenu" role="button" aria-expanded="false" aria-controls="ordersMenu">
                 <span><i class="fas fa-shopping-cart me-2"></i> <span>{{ __('cms.sidebar.orders.title') }}</span></span>
@@ -101,6 +107,7 @@
                 </ul>
             </div>
         </li>      
+        {{-- HIDDEN FOR FUTURE USE: Payments, Refunds, Payment Gateways
         <li class="nav-item">
             <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#paymentsMenu" role="button" aria-expanded="false" aria-controls="paymentsMenu">
                 <span><i class="fas fa-credit-card me-2"></i> <span>{{ __('cms.sidebar.payments.title') }}</span></span>
@@ -140,6 +147,8 @@
                 </ul>
             </div>
         </li>
+        --}}
+        {{-- HIDDEN FOR FUTURE USE: Product Reviews
          <li class="nav-item">
                 <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#productReviewMenu" role="button" aria-expanded="false" aria-controls="productReviewMenu">
                     <span><i class="fas fa-star me-2"></i> <span>{{ __('cms.sidebar.product_reviews.title') }}</span></span>
@@ -150,7 +159,8 @@
                         <li><a class="nav-link {{ Route::currentRouteName() == 'admin.product_reviews.index' ? 'active' : '' }}" href="{{ route('admin.reviews.index') }}">{{ __('cms.sidebar.product_reviews.list') }}</a></li>
                     </ul>
                 </div>
-            </li>                
+            </li>
+        --}}                
         <li class="nav-item">
             <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#bannerMenu" role="button" aria-expanded="false" aria-controls="bannerMenu">
                 <span><i class="fas fa-image me-2"></i> <span>{{ __('cms.sidebar.banners.title') }}</span></span>
@@ -163,6 +173,7 @@
                 </ul>
             </div>
         </li>
+        {{-- HIDDEN FOR FUTURE USE: Menus and Menu Items
         <li class="nav-item">
             <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#menuMenu" role="button" aria-expanded="false" aria-controls="menuMenu">
                 <span><i class="fas fa-bars me-2"></i> <span>{{ __('cms.sidebar.menu.title') }}</span></span>
@@ -188,7 +199,9 @@
                     @endif
                 </ul>
             </div>
-        </li>                       
+        </li>
+        --}}                       
+        {{-- HIDDEN FOR FUTURE USE: Social Media Links
         <li class="nav-item">
             <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#socialMediaLinkMenu" role="button" aria-expanded="false" aria-controls="socialMediaLinkMenu">
                 <span><i class="fas fa-link me-2"></i> <span>{{ __('cms.sidebar.social_media_links.title') }}</span></span>
@@ -201,6 +214,7 @@
                 </ul>
             </div>
         </li>
+        --}}
 
         {{-- NEW GOVERNORATE MENU ITEM --}}
         <li class="nav-item">
@@ -217,6 +231,7 @@
         </li>
         {{-- END GOVERNORATE MENU ITEM --}}
 
+        {{-- HIDDEN FOR FUTURE USE: Pages
          <li class="nav-item">
         <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#pageMenu" role="button" aria-expanded="false" aria-controls="pageMenu">
             <span><i class="fas fa-file-alt me-2"></i> <span>{{ __('cms.sidebar.pages.title') }}</span></span>
@@ -237,6 +252,7 @@
             </ul>
         </div>
     </li>
+        --}}
         <li class="nav-item">
             <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#siteSettingsMenu" role="button" aria-expanded="false" aria-controls="siteSettingsMenu">
                 <span><i class="fas fa-cog me-2"></i> <span>{{ __('cms.sidebar.site_settings.title') }}</span></span>

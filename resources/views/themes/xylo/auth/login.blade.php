@@ -269,7 +269,7 @@
     <div class="login-card">
         <!-- Logo -->
         <div class="login-logo">
-            <img src="{{ asset('images/website_logo.png') }}" alt="Pekaboo Logo">
+            <img src="{{ Storage::url('website_logo.png') }}" alt="Pekaboo Logo">
         </div>
 
         <!-- Heading -->

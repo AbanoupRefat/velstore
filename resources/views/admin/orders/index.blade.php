@@ -6,11 +6,61 @@
 @endsection
 
 @section('content')
-<div class="card mt-4">
-    <div class="card-header card-header-bg text-white">
-        <h6>{{ __('cms.orders.title') }}</h6>
+<div class="container-fluid">
+    {{-- Filters Panel --}}
+    <div class="card mb-3">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0"><i class="bi bi-funnel"></i> Filters & Export</h5>
+        </div>
+        <div class="card-body">
+            <div class="row g-3">
+                <div class="col-md-3">
+                    <label class="form-label"><strong>Status</strong></label>
+                    <select id="statusFilter" class="form-select">
+                        <option value="all">All Statuses</option>
+                        <option value="pending">Pending</option>
+                        <option value="processing">Processing</option>
+                        <option value="shipped">Shipped</option>
+                        <option value="delivered">Delivered</option>
+                        <option value="cancelled">Cancelled</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label"><strong>Date From</strong></label>
+                    <input type="date" id="dateFromFilter" class="form-control">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label"><strong>Date To</strong></label>
+                    <input type="date" id="dateToFilter" class="form-control">
+                </div>
+                <div class="col-md-3 d-flex align-items-end gap-2">
+                    <button id="applyFilters" class="btn btn-primary flex-fill">
+                        <i class="bi bi-search"></i> Apply Filters
+                    </button>
+                    <button id="clearFilters" class="btn btn-secondary">
+                        <i class="bi bi-x-circle"></i> Clear
+                    </button>
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col-12">
+                    <button id="exportExcel" class="btn btn-success">
+                        <i class="bi bi-file-earmark-excel"></i> Export to Excel
+                    </button>
+                    <small class="text-muted ms-2">
+                        <i class="bi bi-info-circle"></i> Export will include current filter selections
+                    </small>
+                </div>
+            </div>
+        </div>
     </div>
-    <div class="card-body">
+
+    {{-- Orders Table --}}
+    <div class="card">
+        <div class="card-header card-header-bg text-white">
+            <h6>{{ __('cms.orders.title') }}</h6>
+        </div>
+        <div class="card-body">
         <table id="orders-table" class="table table-bordered mt-4 w-100">
             <thead>
                 <tr>
@@ -25,6 +75,7 @@
             </thead>
         </table>
     </div>
+</div>
 </div>
 
 <!-- Delete Modal -->
@@ -86,6 +137,9 @@ $(document).ready(function () {
             type: 'POST',
             data: function (d) {
                 d._token = "{{ csrf_token() }}";
+                d.status = $('#statusFilter').val();
+                d.date_from = $('#dateFromFilter').val();
+                d.date_to = $('#dateToFilter').val();
             }
         },
         columns: [
@@ -99,6 +153,102 @@ $(document).ready(function () {
         ],
         pageLength: 10,
         language: @json($datatableLang)
+    });
+
+    // Apply Filters Button
+    $('#applyFilters').on('click', function() {
+        table.ajax.reload();
+        toastr.success('Filters applied successfully', 'Success', {
+            closeButton: true,
+            progressBar: true,
+            positionClass: "toast-top-right",
+            timeOut: 3000
+        });
+    });
+
+    // Clear Filters Button
+    $('#clearFilters').on('click', function() {
+        $('#statusFilter').val('all');
+        $('#dateFromFilter').val('');
+        $('#dateToFilter').val('');
+        table.ajax.reload();
+        toastr.info('Filters cleared', 'Info', {
+            closeButton: true,
+            progressBar: true,
+            positionClass: "toast-top-right",
+            timeOut: 3000
+        });
+    });
+
+    // Export to Excel Button
+    $('#exportExcel').on('click', function() {
+        const status = $('#statusFilter').val();
+        const dateFrom = $('#dateFromFilter').val();
+        const dateTo = $('#dateToFilter').val();
+        
+        const params = new URLSearchParams();
+        if (status && status !== 'all') params.append('status', status);
+        if (dateFrom) params.append('date_from', dateFrom);
+        if (dateTo) params.append('date_to', dateTo);
+        
+        const url = "{{ route('admin.orders.export') }}" + (params.toString() ? '?' + params.toString() : '');
+        
+        toastr.info('Preparing Excel export...', 'Please Wait', {
+            closeButton: true,
+            progressBar: true,
+            positionClass: "toast-top-right",
+            timeOut: 3000
+        });
+        
+        // Use fetch API with blob for proper download
+        fetch(url, {
+            method: 'GET',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => {
+            if (!response.ok) throw new Error('Export failed');
+            
+            // Get filename from Content-Disposition header
+            const disposition = response.headers.get('Content-Disposition');
+            let filename = 'orders_' + new Date().toISOString().slice(0,19).replace(/:/g,'-') + '.xlsx';
+            if (disposition && disposition.includes('filename=')) {
+                const matches = disposition.match(/filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/);
+                if (matches && matches[1]) {
+                    filename = matches[1].replace(/['"]/g, '');
+                }
+            }
+            
+            return response.blob().then(blob => ({blob, filename}));
+        })
+        .then(({blob, filename}) => {
+            // Create download link
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.style.display = 'none';
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            document.body.removeChild(a);
+            
+            toastr.success('Excel file downloaded successfully!', 'Success', {
+                closeButton: true,
+                progressBar: true,
+                positionClass: "toast-top-right",
+                timeOut: 3000
+            });
+        })
+        .catch(error => {
+            toastr.error('Failed to export orders: ' + error.message, 'Error', {
+                closeButton: true,
+                progressBar: true,
+                positionClass: "toast-top-right",
+                timeOut: 5000
+            });
+        });
     });
 
     let orderToDeleteId = null;

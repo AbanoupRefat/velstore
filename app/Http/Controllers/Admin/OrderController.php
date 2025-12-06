@@ -5,8 +5,10 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Mail\OrderStatusUpdate;
 use App\Models\Order;
+use App\Exports\OrdersExport;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
+use Maatwebsite\Excel\Facades\Excel;
 use Yajra\DataTables\Facades\DataTables;
 
 class OrderController extends Controller
@@ -19,6 +21,19 @@ class OrderController extends Controller
     public function getData(Request $request)
     {
         $query = Order::query()->latest()->with('customer');
+
+        // Apply status filter
+        if ($request->has('status') && $request->status !== 'all') {
+            $query->where('status', $request->status);
+        }
+
+        // Apply date range filter
+        if ($request->has('date_from') && $request->date_from) {
+            $query->whereDate('created_at', '>=', $request->date_from);
+        }
+        if ($request->has('date_to') && $request->date_to) {
+            $query->whereDate('created_at', '<=', $request->date_to);
+        }
 
         return DataTables::of($query)
             ->addIndexColumn()
@@ -146,5 +161,32 @@ class OrderController extends Controller
         $order->delete();
 
         return response()->json(['success' => true, 'message' => __('cms.orders.deleted_success')]);
+    }
+
+    /**
+     * Export orders to Excel
+     */
+    public function export(Request $request)
+    {
+        try {
+            $status = $request->get('status');
+            $dateFrom = $request->get('date_from');
+            $dateTo = $request->get('date_to');
+
+            $filename = 'orders_' . date('Y-m-d_His') . '.xlsx';
+            $filePath = 'exports/' . $filename;
+
+            // Store the file temporarily
+            Excel::store(new OrdersExport($status, $dateFrom, $dateTo), $filePath);
+
+            // Download and delete
+            return response()->download(storage_path('app/' . $filePath), $filename, [
+                'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            ])->deleteFileAfterSend(true);
+            
+        } catch (\Exception $e) {
+            \Log::error('Export failed: ' . $e->getMessage());
+            return back()->with('error', 'Export failed: ' . $e->getMessage());
+        }
     }
 }
