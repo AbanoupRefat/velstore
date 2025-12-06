@@ -648,7 +648,10 @@
 
         function updateCartCount(cart) {
             let totalCount = Object.values(cart).reduce((sum, item) => sum + item.quantity, 0);
-            document.getElementById("cart-count").textContent = totalCount;
+            const cartCountEl = document.getElementById("cart-count");
+            const cartCountMobileEl = document.getElementById("cart-count-mobile");
+            if (cartCountEl) cartCountEl.textContent = totalCount;
+            if (cartCountMobileEl) cartCountMobileEl.textContent = totalCount;
         }
     </script>
 @endsection
