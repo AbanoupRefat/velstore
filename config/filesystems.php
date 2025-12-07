@@ -36,10 +36,11 @@ return [
             'throw' => false,
         ],
 
-        // Default public disk - now writes directly to public/uploads
+        // Default public disk - writes to uploads folder at document root
+        // Using base_path() for Hostinger where public_html IS the document root
         'public' => [
             'driver' => 'local',
-            'root' => public_path('uploads'),
+            'root' => base_path('uploads'),
             'url' => env('APP_URL').'/uploads',
             'visibility' => 'public',
             'throw' => false,

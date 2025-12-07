@@ -66,16 +66,14 @@ class OrderController extends Controller
             })
             ->addColumn('receipt', function (Order $order) {
                 if ($order->payment_proof) {
-                    $url = \Illuminate\Support\Facades\Storage::url($order->payment_proof);
-                    // Check if it's a legacy path (not starting with uploads/) or new storage path
-                    if (!str_starts_with($order->payment_proof, 'uploads/')) {
-                         // Fallback for old images if any
-                         $url = asset($order->payment_proof);
-                    } else {
-                         // For new storage images, the path stored is 'uploads/payment_proofs/...'
-                         // Storage::url will prepend /storage/
-                         $url = asset('storage/' . $order->payment_proof);
+                    // Payment proofs are stored as 'payment_proofs/filename' (new)
+                    // or 'uploads/payment_proofs/filename' (legacy)
+                    $path = $order->payment_proof;
+                    if (str_starts_with($path, 'uploads/')) {
+                        // Legacy path - strip 'uploads/' prefix
+                        $path = substr($path, 8);
                     }
+                    $url = asset('uploads/' . $path);
                     
                     $customerName = $order->customer ? $order->customer->name : ($order->guest_email ?? 'Guest');
                     $totalPrice = number_format((float) $order->total_price, 2);
