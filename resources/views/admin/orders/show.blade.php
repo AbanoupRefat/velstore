@@ -105,10 +105,14 @@
                             <strong>Payment Proof (InstaPay Receipt):</strong>
                             <div class="mt-2">
                                 @php
-                                    $proofUrl = asset($order->payment_proof);
-                                    if (str_starts_with($order->payment_proof, 'uploads/')) {
-                                        $proofUrl = asset('storage/' . $order->payment_proof);
+                                    // Payment proofs are stored as 'payment_proofs/filename' 
+                                    // or legacy 'uploads/payment_proofs/filename'
+                                    $path = $order->payment_proof;
+                                    if (str_starts_with($path, 'uploads/')) {
+                                        // Legacy path format - strip 'uploads/' prefix
+                                        $path = substr($path, 8);
                                     }
+                                    $proofUrl = asset('uploads/' . $path);
                                 @endphp
                                 <a href="{{ $proofUrl }}" target="_blank">
                                     <img src="{{ $proofUrl }}" alt="Payment Proof" class="img-fluid rounded border" style="max-height: 300px;">
