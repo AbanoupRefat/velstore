@@ -44,7 +44,7 @@ class BannerController extends Controller
             ->addColumn('image', function ($banner) {
                 $imageUrl = $banner->translations->firstWhere('language_code', 'en')->image_url ?? null;
 
-                return $imageUrl ? '<img src="'.Storage::url($imageUrl).'" width="50" />' : 'No Image';
+                return $imageUrl ? '<img src="'.asset('uploads/' . $imageUrl).'" width="50" />' : 'No Image';
             })
             ->addColumn('action', function ($banner) {
                 return '<a href="'.route('admin.banners.edit', $banner->id).'" class="btn btn-primary">Edit</a>
