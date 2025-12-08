@@ -38,7 +38,7 @@ class ProductService
             ->addColumn('price', function ($product) {
                 $primaryVariant = $product->variants->firstWhere('is_primary', true);
 
-                return $primaryVariant ? '$'.number_format($primaryVariant->price, 2) : 'No price';
+                return $primaryVariant ? number_format($primaryVariant->price, 2) . ' EGP' : 'No price';
             })
             ->addColumn('status', function ($product) {
                 return $product->status;
@@ -52,6 +52,12 @@ class ProductService
                             <button type="submit" class="btn btn-danger btn-sm">Delete</button>
                         </form>';
             })
+            ->filterColumn('name', function($query, $keyword) {
+                $query->whereHas('translations', function($q) use ($keyword) {
+                    $q->where('name', 'like', "%{$keyword}%")
+                      ->where('language_code', 'en');
+                });
+            })
             ->rawColumns(['action'])
             ->make(true);
     }
@@ -64,7 +70,6 @@ class ProductService
         foreach ($translations as $languageCode => $translation) {
             ProductTranslation::create([
                 'product_id' => $product->id,
-                'locale' => $languageCode,
                 'language_code' => $languageCode,
                 'name' => $translation['name'],
                 'description' => $translation['description'] ?? null,
