@@ -53,12 +53,12 @@
             <div class="col-md-3">
                 <div class="dashboard-item">
                     <div class="icon-container">
-                        <i class="fas fa-dollar-sign"></i>
+                        <i class="fas fa-money-bill-wave"></i>
                     </div>
                     <div class="text-container">
                         <h6>{{ __('cms.dashboard.total_sales') }}</h6>
-                        <p>{{ __('cms.dashboard.today') }}: ${{ number_format($data['todaySales'], 2) }}</p>
-                        <p>{{ __('cms.dashboard.total') }}: ${{ number_format($data['totalSales'], 2) }}</p>
+                        <p>{{ __('cms.dashboard.today') }}: {{ number_format($data['todaySales'], 2) }} EGP</p>
+                        <p>{{ __('cms.dashboard.total') }}: {{ number_format($data['totalSales'], 2) }} EGP</p>
                     </div>
                 </div>
             </div>

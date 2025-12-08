@@ -25,7 +25,7 @@
             </tr>
             <tr>
                 <th>{{ __('cms.payments.amount') }}</th>
-                <td>{{ number_format($payment->amount, 2) }}</td>
+                <td>{{ number_format($payment->amount, 2) }} EGP</td>
             </tr>
             <tr>
                 <th>{{ __('cms.payments.status') }}</th>
