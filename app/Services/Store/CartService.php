@@ -7,40 +7,148 @@ use Illuminate\Support\Facades\Session;
 
 class CartService
 {
-    public function applyCoupon($code)
+    /**
+     * Apply a coupon code with comprehensive validation
+     */
+    public function applyCoupon($code, $cartTotal = null, $customerId = null, $guestEmail = null)
     {
-        $coupon = Coupon::where('code', $code)->first();
+        // Find coupon case-insensitively
+        $coupon = Coupon::where('code', strtoupper($code))->first();
 
-        if (! $coupon) {
+        if (!$coupon) {
             return ['success' => false, 'message' => 'Invalid coupon code.'];
         }
 
-        if ($coupon->isExpired()) {
-            return ['success' => false, 'message' => 'This coupon has expired.'];
+        // Get cart total if not provided
+        if ($cartTotal === null) {
+            $cartTotal = $this->getCartSubtotal();
         }
 
-        Session::put('cart_coupon', $coupon);
+        // Use the model's validate method for comprehensive validation
+        $validation = $coupon->validate($cartTotal, $customerId, $guestEmail);
 
-        return ['success' => true, 'message' => 'Coupon applied successfully!', 'discount' => $coupon->discount, 'type' => $coupon->type];
+        if (!$validation['valid']) {
+            return ['success' => false, 'message' => $validation['message']];
+        }
+
+        // Calculate discount amount
+        $discountAmount = $coupon->calculateDiscount($cartTotal);
+
+        // Store coupon in session
+        Session::put('cart_coupon', [
+            'id' => $coupon->id,
+            'code' => $coupon->code,
+            'discount' => $coupon->discount,
+            'type' => $coupon->type,
+            'max_discount' => $coupon->max_discount,
+            'calculated_discount' => $discountAmount,
+        ]);
+
+        return [
+            'success' => true, 
+            'message' => 'Coupon applied successfully!', 
+            'discount' => $coupon->discount, 
+            'type' => $coupon->type,
+            'discount_amount' => $discountAmount
+        ];
     }
 
+    /**
+     * Get cart subtotal (before discount)
+     */
+    private function getCartSubtotal()
+    {
+        $cart = Session::get('cart', []);
+        $total = 0;
+        
+        foreach ($cart as $item) {
+            $price = $item['discount_price'] ?? $item['price'] ?? 0;
+            $quantity = $item['quantity'] ?? 1;
+            $total += $price * $quantity;
+        }
+        
+        return $total;
+    }
+
+    /**
+     * Get cart total with discount applied
+     */
     public function getCartTotalWithDiscount($total)
     {
-        $coupon = Session::get('cart_coupon');
+        $couponData = Session::get('cart_coupon');
 
-        if (! $coupon) {
+        if (!$couponData) {
             return $total;
         }
 
-        if ($coupon->type === 'percentage') {
-            return $total - ($total * ($coupon->discount / 100));
-        } else {
-            return max(0, $total - $coupon->discount);
+        // Recalculate discount based on current cart total
+        $coupon = Coupon::find($couponData['id']);
+        
+        if (!$coupon) {
+            Session::forget('cart_coupon');
+            return $total;
         }
+
+        $discountAmount = $coupon->calculateDiscount($total);
+        
+        return max(0, $total - $discountAmount);
     }
 
+    /**
+     * Get the current discount amount
+     */
+    public function getDiscountAmount($total)
+    {
+        $couponData = Session::get('cart_coupon');
+
+        if (!$couponData) {
+            return 0;
+        }
+
+        $coupon = Coupon::find($couponData['id']);
+        
+        if (!$coupon) {
+            Session::forget('cart_coupon');
+            return 0;
+        }
+
+        return $coupon->calculateDiscount($total);
+    }
+
+    /**
+     * Get the applied coupon data from session
+     */
+    public function getAppliedCoupon()
+    {
+        return Session::get('cart_coupon');
+    }
+
+    /**
+     * Remove the applied coupon
+     */
     public function removeCoupon()
     {
+        Session::forget('cart_coupon');
+    }
+
+    /**
+     * Record coupon usage after successful order
+     */
+    public function recordCouponUsage($orderId, $discountApplied, $customerId = null, $guestEmail = null)
+    {
+        $couponData = Session::get('cart_coupon');
+
+        if (!$couponData) {
+            return;
+        }
+
+        $coupon = Coupon::find($couponData['id']);
+
+        if ($coupon) {
+            $coupon->recordUsage($orderId, $discountApplied, $customerId, $guestEmail);
+        }
+
+        // Clear the coupon from session after recording
         Session::forget('cart_coupon');
     }
 }

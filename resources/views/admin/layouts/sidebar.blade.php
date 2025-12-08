@@ -231,6 +231,21 @@
         </li>
         {{-- END GOVERNORATE MENU ITEM --}}
 
+        {{-- COUPONS / PROMO CODES MENU ITEM --}}
+        <li class="nav-item">
+            <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#couponMenu" role="button" aria-expanded="false" aria-controls="couponMenu">
+                <span><i class="fas fa-ticket-alt me-2"></i> <span>Promo Codes</span></span>
+                <i class="fas fa-chevron-down"></i>
+            </a>
+            <div class="collapse {{ str_contains(Route::currentRouteName(), 'admin.coupons') ? 'show' : '' }}" id="couponMenu">
+                <ul class="nav flex-column ms-3">
+                    <li><a class="nav-link {{ Route::currentRouteName() == 'admin.coupons.create' ? 'active' : '' }}" href="{{ route('admin.coupons.create') }}">{{ __('Add New') }}</a></li>
+                    <li><a class="nav-link {{ Route::currentRouteName() == 'admin.coupons.index' ? 'active' : '' }}" href="{{ route('admin.coupons.index') }}">{{ __('List All') }}</a></li>
+                </ul>
+            </div>
+        </li>
+        {{-- END COUPONS MENU ITEM --}}
+
         {{-- HIDDEN FOR FUTURE USE: Pages
          <li class="nav-item">
         <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#pageMenu" role="button" aria-expanded="false" aria-controls="pageMenu">

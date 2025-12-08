@@ -22,6 +22,7 @@ use App\Http\Controllers\Admin\ProfileController;
 use App\Http\Controllers\Admin\RefundController;
 use App\Http\Controllers\Admin\SocialMediaLinkController;
 use App\Http\Controllers\Admin\VendorController;
+use App\Http\Controllers\Admin\CouponController;
 use App\Http\Controllers\SiteSettingsController;
 use App\Http\Controllers\Store\CheckoutController;
 use Illuminate\Support\Facades\Route;
@@ -132,6 +133,11 @@ Route::prefix(config('admin.url_prefix'))->name('admin.')->middleware(['auth', '
     Route::get('governorates/data', [GovernorateController::class, 'getData'])->name('governorates.data');
     Route::resource('governorates', GovernorateController::class);
     Route::post('governorates/{id}/toggle-status', [GovernorateController::class, 'toggleStatus'])->name('governorates.toggleStatus');
+
+    /* Coupons / Promo Codes */
+    Route::resource('coupons', CouponController::class);
+    Route::post('coupons/data', [CouponController::class, 'getData'])->name('coupons.data');
+    Route::post('coupons/update-status', [CouponController::class, 'updateStatus'])->name('coupons.updateStatus');
 
     /* Vendors */
     Route::get('vendors', [VendorController::class, 'index'])->name('vendors.index');

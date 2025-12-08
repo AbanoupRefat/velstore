@@ -181,7 +181,19 @@ class CheckoutController extends Controller
             ->first();
             
         $shippingFee = $governorate ? $governorate->shipping_fee : 0;
-        $finalTotal = $total + $shippingFee;
+        
+        // Apply coupon discount if present
+        $cartService = app(\App\Services\Store\CartService::class);
+        $couponData = $cartService->getAppliedCoupon();
+        $discountAmount = 0;
+        $couponCode = null;
+        
+        if ($couponData) {
+            $discountAmount = $cartService->getDiscountAmount($total);
+            $couponCode = $couponData['code'];
+        }
+        
+        $finalTotal = $total - $discountAmount + $shippingFee;
 
         // Handle Payment Proof Upload
         $proofPath = null;
@@ -204,6 +216,8 @@ class CheckoutController extends Controller
             'payment_proof' => $proofPath,
             'total_price' => $finalTotal,
             'shipping_cost' => $shippingFee,
+            'discount_amount' => $discountAmount,
+            'coupon_code' => $couponCode,
             'status' => 'pending',
             'payment_status' => 'pending',
             'order_date' => now(),
@@ -218,6 +232,16 @@ class CheckoutController extends Controller
                 'quantity' => $item['quantity'],
                 'price' => $item['price'],
             ]);
+        }
+
+        // Record coupon usage if a coupon was applied
+        if ($couponData) {
+            $cartService->recordCouponUsage(
+                $order->id, 
+                $discountAmount, 
+                $customer->id, 
+                $request->email
+            );
         }
 
         // Send emails
