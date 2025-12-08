@@ -98,7 +98,8 @@
                     orderable: false, 
                     searchable: false,
                     render: function(data, type, row) {
-                        var editBtn = '<span class="border border-edit dt-trash rounded-3 d-inline-block"><a href="/admin/banners/' + row.id + '/edit"><i class="bi bi-pencil-fill pencil-edit-color"></i></a></span>';
+                        var editUrl = '{{ route("admin.banners.edit", ":id") }}'.replace(':id', row.id);
+                        var editBtn = '<span class="border border-edit dt-trash rounded-3 d-inline-block"><a href="' + editUrl + '"><i class="bi bi-pencil-fill pencil-edit-color"></i></a></span>';
                         var deleteBtn = '<span class="border border-danger dt-trash rounded-3 d-inline-block" onclick="deleteBanner(' + row.id + ')"><i class="bi bi-trash-fill text-danger"></i></span>';
                         return editBtn + ' ' + deleteBtn;
                     }
