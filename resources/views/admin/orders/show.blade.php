@@ -57,6 +57,7 @@
                             <tr>
                                 <th>Product</th>
                                 <th>Variant</th>
+                                <th>Attributes</th>
                                 <th>Quantity</th>
                                 <th>Price</th>
                                 <th>Subtotal</th>
@@ -67,6 +68,15 @@
                             <tr>
                                 <td>{{ $item->product->translation->name ?? 'Product' }}</td>
                                 <td>{{ $item->productVariant->translation->name ?? '-' }}</td>
+                                <td>
+                                    @if($item->productVariant && $item->productVariant->attributeValues && $item->productVariant->attributeValues->count() > 0)
+                                        @foreach($item->productVariant->attributeValues as $attrValue)
+                                            <span class="badge bg-secondary me-1">{{ $attrValue->attribute->name ?? 'Attr' }}: {{ $attrValue->value }}</span>
+                                        @endforeach
+                                    @else
+                                        -
+                                    @endif
+                                </td>
                                 <td>{{ $item->quantity }}</td>
                                 <td>{{ number_format($item->unit_price, 2) }} EGP</td>
                                 <td>{{ number_format($item->unit_price * $item->quantity, 2) }} EGP</td>
@@ -75,15 +85,15 @@
                         </tbody>
                         <tfoot>
                             <tr>
-                                <td colspan="4" class="text-end"><strong>Subtotal:</strong></td>
+                                <td colspan="5" class="text-end"><strong>Subtotal:</strong></td>
                                 <td>{{ number_format($order->total_price - $order->shipping_cost, 2) }} EGP</td>
                             </tr>
                             <tr>
-                                <td colspan="4" class="text-end"><strong>Shipping:</strong></td>
+                                <td colspan="5" class="text-end"><strong>Shipping:</strong></td>
                                 <td>{{ number_format($order->shipping_cost, 2) }} EGP</td>
                             </tr>
                             <tr>
-                                <td colspan="4" class="text-end"><strong>Total:</strong></td>
+                                <td colspan="5" class="text-end"><strong>Total:</strong></td>
                                 <td><strong>{{ number_format($order->total_price, 2) }} EGP</strong></td>
                             </tr>
                         </tfoot>

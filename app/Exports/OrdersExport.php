@@ -33,7 +33,7 @@ class OrdersExport implements FromCollection, WithHeadings, WithStyles, ShouldAu
      */
     public function collection()
     {
-        $query = Order::with(['customer', 'details.product.translation', 'details.productVariant'])
+        $query = Order::with(['customer', 'details.product.translation', 'details.productVariant.translation', 'details.productVariant.attributeValues.attribute'])
             ->latest();
 
         // Apply status filter
@@ -67,12 +67,24 @@ class OrdersExport implements FromCollection, WithHeadings, WithStyles, ShouldAu
                     
                     $productSKU = $detail->product ? ($detail->product->sku ?? 'N/A') : 'N/A';
                     
-                    $variant = 'N/A';
+                    // Get variant name and attributes
+                    $variantName = 'N/A';
+                    $attributes = 'N/A';
+                    
                     if ($detail->productVariant) {
-                        $variantAttrs = [];
-                        if (isset($detail->productVariant->size)) $variantAttrs[] = "Size: {$detail->productVariant->size}";
-                        if (isset($detail->productVariant->color)) $variantAttrs[] = "Color: {$detail->productVariant->color}";
-                        $variant = !empty($variantAttrs) ? implode(', ', $variantAttrs) : 'Default';
+                        // Get variant name from translation
+                        $variantName = $detail->productVariant->translation->name ?? 'Default';
+                        
+                        // Get all attribute values with their attribute names
+                        $attrList = [];
+                        if ($detail->productVariant->attributeValues && $detail->productVariant->attributeValues->count() > 0) {
+                            foreach ($detail->productVariant->attributeValues as $attrValue) {
+                                $attrName = $attrValue->attribute->name ?? 'Attribute';
+                                $attrVal = $attrValue->value ?? 'N/A';
+                                $attrList[] = "{$attrName}: {$attrVal}";
+                            }
+                        }
+                        $attributes = !empty($attrList) ? implode(', ', $attrList) : 'N/A';
                     }
 
                     $rows->push([
@@ -93,7 +105,8 @@ class OrdersExport implements FromCollection, WithHeadings, WithStyles, ShouldAu
                         $order->billing_address ?? 'N/A',
                         $productName,
                         $productSKU,
-                        $variant,
+                        $variantName,
+                        $attributes,
                         $detail->quantity,
                         number_format($detail->unit_price, 2),
                         number_format($detail->quantity * $detail->unit_price, 2),
@@ -119,6 +132,7 @@ class OrdersExport implements FromCollection, WithHeadings, WithStyles, ShouldAu
                     number_format($order->total_price, 2),
                     $order->shipping_address ?? 'N/A',
                     $order->billing_address ?? 'N/A',
+                    'N/A',
                     'N/A',
                     'N/A',
                     'N/A',
@@ -158,6 +172,7 @@ class OrdersExport implements FromCollection, WithHeadings, WithStyles, ShouldAu
             'Product Name',
             'Product SKU',
             'Variant',
+            'Attributes (Size, Color, etc.)',
             'Quantity',
             'Unit Price',
             'Item Total',
