@@ -314,14 +314,13 @@ header form input[type="submit"] {
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: #f8f8f8;
 }
 
 .product-img img {
     height: 100%;
-    width: 100%;
-    object-fit: cover;
-    /* Cover fills the container completely */
+    width: auto;
+    object-fit: contain;
+    /* or cover depending on the visual preference */
     display: block;
 }
 
