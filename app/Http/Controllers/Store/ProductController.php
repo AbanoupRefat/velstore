@@ -136,7 +136,7 @@ class ProductController extends Controller
         $images = [];
         if ($product->thumbnail) {
             $images[] = [
-                'url' => \Storage::url($product->thumbnail->image_url),
+                'url' => asset('uploads/' . $product->thumbnail->image_url),
                 'alt' => $product->translation->name ?? 'Product'
             ];
         }
@@ -144,7 +144,7 @@ class ProductController extends Controller
         // Add additional images
         foreach ($product->images as $image) {
             $images[] = [
-                'url' => \Storage::url($image->image_url),
+                'url' => asset('uploads/' . $image->image_url),
                 'alt' => $product->translation->name ?? 'Product'
             ];
         }
@@ -163,7 +163,7 @@ class ProductController extends Controller
         return response()->json([
             'id' => $product->id,
             'name' => $product->translation->name ?? 'Product',
-            'image' => \Storage::url(optional($product->thumbnail)->image_url ?? 'default.jpg'),
+            'image' => asset('uploads/' . (optional($product->thumbnail)->image_url ?? 'default.jpg')),
             'images' => $images,
             'price' => $price,
             'price_range' => $priceRange,
