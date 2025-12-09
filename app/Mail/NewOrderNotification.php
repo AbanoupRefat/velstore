@@ -43,7 +43,7 @@ class NewOrderNotification extends Mailable implements ShouldQueue
                         'paymentMethod' => $this->order->payment_method,
                         'total' => $this->order->total_price,
                         'items' => $this->items,
-                        'adminUrl' => url('/admin/orders/' . $this->order->id),
+                        'adminUrl' => route('admin.orders.show', $this->order->id),
                     ]);
     }
 }

@@ -97,7 +97,7 @@ $(document).ready(function() {
                     orderable: false, 
                     searchable: false, 
                     render: function(data, type, row) {  // <- Make sure this line is correct
-                        var editBtn = '<span class="border border-info dt-trash rounded-3 d-inline-block"><a href="/admin/items/' + row.id + '/edit" class=""><i class="bi bi-pencil-fill text-info"></i></a></span>';
+                        var editBtn = '<span class="border border-info dt-trash rounded-3 d-inline-block"><a href="/{{ config("admin.url_prefix") }}/items/' + row.id + '/edit" class=""><i class="bi bi-pencil-fill text-info"></i></a></span>';
                         var deleteBtn = '<span class="border border-danger dt-trash rounded-3 d-inline-block" onclick="deleteMenuItem(' + row.id + ')"> <i class="bi bi-trash-fill text-danger"></i> </span>';
                         return editBtn + ' ' + deleteBtn;
                     }

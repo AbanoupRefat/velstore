@@ -60,16 +60,16 @@ Route::prefix(config('admin.url_prefix'))->name('admin.')->middleware(['auth', '
     /* Categiries */
     Route::resource('categories', CategoryController::class);
     Route::post('/categories/data', [CategoryController::class, 'getCategories'])->name('categories.data');
-    Route::post('/admin/categories/update-status', [CategoryController::class, 'updateCategoryStatus'])->name('categories.updateStatus');
+    Route::post('/categories/update-status', [CategoryController::class, 'updateCategoryStatus'])->name('categories.updateStatus');
 
     /* Products */
     Route::resource('products', ProductController::class);
     Route::post('products/data', [ProductController::class, 'getProducts'])->name('products.data');
-    Route::post('admin/products/updateStatus', [ProductController::class, 'updateStatus'])->name('products.updateStatus');
+    Route::post('products/updateStatus', [ProductController::class, 'updateStatus'])->name('products.updateStatus');
 
     /* Brands */
     Route::get('/brands', [BrandController::class, 'index'])->name('brands.index');
-    Route::get('admin/brands/getdata', [BrandController::class, 'getData'])->name('brands.getData');
+    Route::get('brands/getdata', [BrandController::class, 'getData'])->name('brands.getData');
     Route::get('brands/{id}/edit', [BrandController::class, 'edit'])->name('brands.edit');
     Route::put('brands/{brand}', [BrandController::class, 'update'])->name('brands.update');
     Route::get('brands/create', [BrandController::class, 'create'])->name('brands.create');

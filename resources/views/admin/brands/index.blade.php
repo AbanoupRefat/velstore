@@ -110,7 +110,7 @@
                     orderable: false, 
                     searchable: false, 
                     render: function(data, type, row) {
-                        var editBtn = '<span class="border border-edit dt-trash rounded-3 d-inline-block" ><a href="/admin/brands/' + row.id + '/edit" class=""><i class="bi bi-pencil-fill pencil-edit-color"></i></a></span>';
+                        var editBtn = '<span class="border border-edit dt-trash rounded-3 d-inline-block" ><a href="/{{ config("admin.url_prefix") }}/brands/' + row.id + '/edit" class=""><i class="bi bi-pencil-fill pencil-edit-color"></i></a></span>';
                         var deleteBtn = '<span class="border border-danger dt-trash rounded-3 d-inline-block" onclick="deleteBrand(' + row.id + ')"> <i class="bi bi-trash-fill text-danger"></i> </span>';
                         return editBtn + ' ' + deleteBtn;
                     }

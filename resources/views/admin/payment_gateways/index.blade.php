@@ -87,7 +87,7 @@ $(document).ready(function() {
                 searchable: false,
                 render: function(data, type, row) {
                     var editBtn = '<span class="border border-edit dt-trash rounded-3 d-inline-block">' +
-                                    '<a href="/admin/payment-gateways/' + row.id + '/edit">' +
+                                    '<a href="/{{ config("admin.url_prefix") }}/payment-gateways/' + row.id + '/edit">' +
                                         '<i class="bi bi-pencil-fill pencil-edit-color"></i>' +
                                     '</a>' +
                                 '</span>';

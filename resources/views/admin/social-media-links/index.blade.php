@@ -98,7 +98,7 @@
                 orderable: false,
                 searchable: false,
                 render: function(data, type, row) {
-                    var editBtn = '<span class="border border-info dt-trash rounded-3 d-inline-block"><a href="/admin/social-media-links/' + row.id + '/edit"><i class="bi bi-pencil-fill text-info"></i></a></span>';
+                    var editBtn = '<span class="border border-info dt-trash rounded-3 d-inline-block"><a href="/{{ config("admin.url_prefix") }}/social-media-links/' + row.id + '/edit"><i class="bi bi-pencil-fill text-info"></i></a></span>';
                     var deleteBtn = '<span class="border border-danger dt-trash rounded-3 d-inline-block" onclick="deleteSocialMediaLink(' + row.id + ')"> <i class="bi bi-trash-fill text-danger"></i> </span>';
                     return editBtn + ' ' + deleteBtn;
                 }

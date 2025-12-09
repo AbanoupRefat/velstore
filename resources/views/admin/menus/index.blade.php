@@ -88,7 +88,7 @@ $(document).ready(function() {
                     orderable: false, 
                     searchable: false, 
                     render: function(data, type, row) {
-                        var editBtn = '<span class="border border-info dt-trash rounded-3 d-inline-block"><a href="/admin/menus/' + row.id + '/edit" class=""><i class="bi bi-pencil-fill text-info"></i></a></span>';
+                        var editBtn = '<span class="border border-info dt-trash rounded-3 d-inline-block"><a href="/{{ config("admin.url_prefix") }}/menus/' + row.id + '/edit" class=""><i class="bi bi-pencil-fill text-info"></i></a></span>';
                         var deleteBtn = '<span class="border border-danger dt-trash rounded-3 d-inline-block" onclick="deleteMenu(' + row.id + ')"> <i class="bi bi-trash-fill text-danger"></i> </span>';
                         return editBtn + ' ' + deleteBtn;
                     }
