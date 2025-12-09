@@ -24,7 +24,7 @@
             @endforeach
         </div>
     </section>
-    <!-- {{-- Banner Section End --}}
+    {{-- Category Slider Section --}}
     <section class="cat-slider animate-on-scroll">
         <div class="container">
             <h2 class="text-start pb-5 sec-heading">{{ __('store.home.explore_popular_categories') }}</h2>
@@ -44,7 +44,6 @@
             </div>
         </div>
     </section>
-    --}} -->
 
     <section class="trending-products animate-on-scroll">
         <div class="container position-relative">
