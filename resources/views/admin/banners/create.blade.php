@@ -25,6 +25,22 @@
                 @error('type') <div class="invalid-feedback">{{ $message }}</div> @enderror
             </div>
 
+            {{-- Redirect URL --}}
+            <div class="form-group mt-3">
+                <label for="link_url">Redirect URL (CTA Link)</label>
+                <input type="text" 
+                       name="link_url" 
+                       class="form-control @error('link_url') is-invalid @enderror"
+                       value="{{ old('link_url') }}"
+                       placeholder="e.g., /products/category or https://example.com">
+                <small class="form-text text-muted">Enter the URL where clicking the banner or CTA button will redirect. Supports both internal paths and external URLs.</small>
+                @error('link_url') <div class="invalid-feedback">{{ $message }}</div> @enderror
+            </div>
+
+            <div class="alert alert-info mt-3">
+                <i class="fas fa-info-circle"></i> <strong>Recommended Image Size:</strong> 1920×823px (21:9 cinematic aspect ratio). Please maintain a wide aspect ratio for best display.
+            </div>
+
             {{-- Language tabs --}}
             <ul class="nav nav-tabs mt-4" role="tablist">
                 @foreach($languages as $language)

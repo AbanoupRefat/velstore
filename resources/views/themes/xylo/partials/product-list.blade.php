@@ -7,7 +7,7 @@
                  alt="{{ $product->translation->name ?? 'Product Name Not Available' }}">
             <button class="wishlist-btn" data-product-id="{{ $product->id }}" onclick="event.stopPropagation();"><i class="fa-solid fa-heart"></i></button>
             <button class="quick-view-btn" data-product-id="{{ $product->id }}" onclick="event.stopPropagation(); openQuickView({{ $product->id }});" title="{{ __('Quick View') }}">
-                <i class="fas fa-eye"></i>
+                <i class="fas fa-plus"></i>
             </button>
         </div>
             <div class="product-info p-3">

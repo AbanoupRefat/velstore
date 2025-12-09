@@ -24,8 +24,10 @@ class StoreController extends Controller
             ->take(10)
             ->get();
 
+        // Trending Products - Only show products marked as trending in admin
         $products = Product::where('status', 1)
-            ->with(['translation', 'thumbnail', 'primaryVariant'])
+            ->where('is_trending', true)
+            ->with(['translation', 'thumbnail', 'primaryVariant', 'variants'])
             ->withCount('reviews')
             ->orderBy('id', 'desc')
             ->take(10)

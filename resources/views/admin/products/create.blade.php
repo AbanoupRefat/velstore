@@ -184,6 +184,17 @@
                 <div id="productImagesPreview" class="mt-2 d-flex flex-wrap"></div>
             </div>  
          
+            {{-- Trending Toggle --}}
+            <div class="mt-4">
+                <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" name="is_trending" id="isTrending" value="1" {{ old('is_trending') ? 'checked' : '' }}>
+                    <label class="form-check-label" for="isTrending">
+                        <strong>Show in Trending Section</strong>
+                        <small class="text-muted d-block">Enable this to display the product in the homepage "Trending" section</small>
+                    </label>
+                </div>
+            </div>
+
             {{-- Submit --}}
             <div class="mt-4 text-start">
                 <button type="submit" class="btn btn-primary">{{ __('cms.products.save_product') }}</button>

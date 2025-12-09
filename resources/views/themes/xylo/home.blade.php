@@ -1,28 +1,25 @@
 @extends('themes.xylo.layouts.master')
 @section('content')
     @php $currency = activeCurrency(); @endphp
-    {{-- Banner Section Start --}}
-    <section class="banner-area py-5 animate__animated animate__fadeIn">
-        <div class="container h-100 banner-slider">
+    {{-- Cinematic Banner Section - Full Width 21:9 Aspect Ratio --}}
+    <section class="banner-cinematic animate__animated animate__fadeIn">
+        <div class="banner-slider-cinematic">
             @foreach ($banners as $banner)
-            <div>
-                <div class="row h-100 align-items-center">
-                    <div class="col-md-6">
-                        <h1 class="mt-5"><span>{{ $banner->translation ? $banner->translation->title : $banner->title }}</span>
-                        </h1>
-                        <p class="mt-3 mb-4">{{ __('store.home.banner_text') }}</p>
-                       <a href="{{ route('shop.index') }}" class="btn btn-primary">{{ __('store.home.shop_now') }}</a>
-
-                        <div class="mt-5">
-                            <img src="assets/images/slide-smallimages.png" alt="" style="width: 200px;">
+            <div class="banner-slide">
+                <a href="{{ $banner->link_url ?? route('shop.index') }}" class="banner-link">
+                    <div class="banner-image-wrapper">
+                        <img src="{{ asset('uploads/' . (optional($banner->translation)->image_url ?? 'default.jpg')) }}" 
+                             alt="{{ $banner->translation ? $banner->translation->title : $banner->title }}"
+                             class="banner-image-cinematic">
+                        <div class="banner-overlay">
+                            <div class="banner-content">
+                                <h1 class="banner-title-cinematic">{{ $banner->translation ? $banner->translation->title : $banner->title }}</h1>
+                                <p class="banner-text-cinematic">{{ __('store.home.banner_text') }}</p>
+                                <span class="btn btn-cta-banner">{{ __('store.home.shop_now') }}</span>
+                            </div>
                         </div>
                     </div>
-                    <div class="col-md-6">
-                        <div class="rightimg-banner rightimg-banner1">
-                            <img src="{{ asset('uploads/' . (optional($banner->translation)->image_url ?? 'default.jpg')) }}" class="img-fluid shoes-img" alt="{{ $banner->translation ? $banner->translation->title : $banner->title }}">
-                        </div>
-                    </div>
-                </div>
+                </a>
             </div>
             @endforeach
         </div>
@@ -63,7 +60,7 @@
                                     <i class="fa-solid fa-heart"></i>
                                 </button>
                                 <button class="quick-view-btn" data-product-id="{{ $product->id }}" onclick="event.stopPropagation(); openQuickView({{ $product->id }});" title="{{ __('Quick View') }}">
-                                    <i class="fas fa-eye"></i>
+                                    <i class="fas fa-plus"></i>
                                 </button>
                         </div>
                         <div class="product-info p-3">

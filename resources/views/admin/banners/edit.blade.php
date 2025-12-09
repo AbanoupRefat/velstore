@@ -31,6 +31,22 @@
                     </select>
                 </div>
 
+                {{-- Redirect URL --}}
+                <div class="form-group mt-3">
+                    <label for="link_url">Redirect URL (CTA Link)</label>
+                    <input type="text" 
+                           name="link_url" 
+                           class="form-control @error('link_url') is-invalid @enderror"
+                           value="{{ old('link_url', $banner->link_url) }}"
+                           placeholder="e.g., /products/category or https://example.com">
+                    <small class="form-text text-muted">Enter the URL where clicking the banner or CTA button will redirect.</small>
+                    @error('link_url') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                </div>
+
+                <div class="alert alert-info mt-3">
+                    <i class="fas fa-info-circle"></i> <strong>Recommended Image Size:</strong> 1920×823px (21:9 cinematic aspect ratio). Please maintain a wide aspect ratio.
+                </div>
+
                 <div id="languages-container" class="mt-4">
                     @if(!empty($languages) && count($languages) > 0)
                         <ul class="nav nav-tabs" id="languageTabs" role="tablist">

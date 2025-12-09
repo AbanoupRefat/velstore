@@ -426,6 +426,26 @@
             <li>
                 <a href="{{ url('/products') }}">Products</a>
             </li>
+            <li class="has-submenu">
+                <a href="#" class="submenu-toggle" onclick="event.preventDefault(); toggleSubmenu(this);">
+                    Categories <i class="fas fa-chevron-down submenu-arrow"></i>
+                </a>
+                <ul class="mobile-submenu" style="display: none;">
+                    @php
+                        $mobileCategories = \App\Models\Category::where('status', 1)->with('translation')->orderBy('id', 'desc')->take(10)->get();
+                    @endphp
+                    @foreach($mobileCategories as $category)
+                        <li>
+                            <a href="{{ route('category.show', $category->slug) }}">
+                                {{ $category->translation->name ?? 'Category' }}
+                            </a>
+                        </li>
+                    @endforeach
+                    <li>
+                        <a href="{{ url('/products') }}" class="text-primary"><strong>View All</strong></a>
+                    </li>
+                </ul>
+            </li>
             <li>
                 <a href="{{ url('/about') }}">About Us</a>
             </li>
@@ -504,11 +524,71 @@
             if (menuClose) menuClose.addEventListener('click', closeMenu);
             if (overlay) overlay.addEventListener('click', closeMenu);
 
-            // Close menu when clicking on a link
-            const menuLinks = menu.querySelectorAll('.mobile-menu-nav a');
+            // Close menu when clicking on a link (except submenu toggle)
+            const menuLinks = menu.querySelectorAll('.mobile-menu-nav a:not(.submenu-toggle)');
             menuLinks.forEach(link => {
                 link.addEventListener('click', closeMenu);
             });
         });
+
+        // Toggle submenu expand/collapse
+        function toggleSubmenu(element) {
+            const submenu = element.nextElementSibling;
+            const arrow = element.querySelector('.submenu-arrow');
+            
+            if (submenu.style.display === 'none' || !submenu.style.display) {
+                submenu.style.display = 'block';
+                arrow.classList.add('rotated');
+            } else {
+                submenu.style.display = 'none';
+                arrow.classList.remove('rotated');
+            }
+        }
     </script>
+
+    <style>
+        /* Mobile Submenu Styles */
+        .mobile-submenu {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            background: #f9fafb;
+        }
+
+        .mobile-submenu li {
+            border-bottom: 1px solid #f3f4f6;
+        }
+
+        .mobile-submenu a {
+            display: block;
+            padding: 12px 20px 12px 32px;
+            color: #4b5563;
+            text-decoration: none;
+            font-size: 14px;
+            transition: background 0.2s ease;
+        }
+
+        .mobile-submenu a:hover {
+            background: #f3f4f6;
+        }
+
+        .submenu-toggle {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .submenu-arrow {
+            font-size: 12px;
+            transition: transform 0.3s ease;
+        }
+
+        .submenu-arrow.rotated {
+            transform: rotate(180deg);
+        }
+
+        .has-submenu > a {
+            position: relative;
+        }
+    </style>
 </header>

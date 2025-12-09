@@ -29,6 +29,7 @@ class BannerService
 
         $rules = [
             'type' => 'required|in:promotion,sale,seasonal,featured,announcement',
+            'link_url' => 'nullable|string|max:500',
         ];
 
         foreach ($activeLanguages as $code) {
@@ -47,7 +48,7 @@ class BannerService
 
         $validated = $request->validate($rules);
 
-        $banner = $this->bannerRepository->createBanner($request->only('type'));
+        $banner = $this->bannerRepository->createBanner($request->only('type', 'link_url'));
 
         $defaultImage = null;
         if ($request->hasFile("languages.$defaultLang.image")) {
@@ -81,11 +82,12 @@ class BannerService
             'languages.*.title' => 'required|string|max:255',
             'languages.*.image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:10000',
             'type' => 'required|in:promotion,sale,seasonal,featured,announcement',
+            'link_url' => 'nullable|string|max:500',
         ]);
 
         $banner = $this->bannerRepository->getBannerById($id);
 
-        $this->bannerRepository->updateBanner($banner, $request->only('type'));
+        $this->bannerRepository->updateBanner($banner, $request->only('type', 'link_url'));
 
         foreach ($request->languages as $languageData) {
             $translation = BannerTranslation::where('banner_id', $banner->id)
