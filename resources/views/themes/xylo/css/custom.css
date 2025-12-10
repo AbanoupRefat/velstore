@@ -432,161 +432,181 @@ header form input[type="submit"] {
     /* Right arrow position */
 }
 
-
 /* ========================================
-   OUDIES-STYLE REDESIGN (Minimal & Mobile First)
+   OUDIES-STYLE PRODUCT CARD (Minimal Design)
+   Based on reference: 4:5 portrait ratio, 
+   white plus button, UPPERCASE centered title
    ======================================== */
 
-/* Container & Layout */
-.product-card {
-    background: transparent;
+/* Product Card - No borders, clean white background */
+.product-card,
+.product-card-minimal {
+    background: white;
     border: none;
     box-shadow: none;
-    margin-bottom: 25px;
-    position: relative;
-    transition: none; /* Removed lift effect for minimal feel */
+    border-radius: 0;
+    overflow: visible;
+    transition: none;
 }
 
-/* Image Wrapper - 4:5 Aspect Ratio */
-.product-img {
+.product-card:hover,
+.product-card-minimal:hover {
+    box-shadow: none;
+    transform: none;
+}
+
+/* Product Image Wrapper - 4:5 Portrait Aspect Ratio */
+.product-img,
+.product-img-wrapper {
     position: relative;
     width: 100%;
     aspect-ratio: 4 / 5;
-    background-color: #f4f4f4; /* Light grey placeholder */
     overflow: hidden;
-    margin-bottom: 12px;
+    background-color: #f8f8f8;
+    cursor: pointer;
 }
 
-/* Image Handling (Primary & Secondary) */
-.product-img img {
+.product-img img,
+.product-img-wrapper img {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    object-position: center;
+    display: block;
+    transition: transform 0.4s ease;
+}
+
+.product-img:hover img,
+.product-img-wrapper:hover img {
+    transform: scale(1.05);
+}
+
+/* Quick Add Button - White Square with Plus Icon at Bottom Right */
+.quick-add-btn,
+.quick-view-btn {
     position: absolute;
-    top: 0;
-    left: 0;
-    transition: opacity 0.4s ease;
-}
-
-.product-img .img-secondary {
-    opacity: 0;
-    z-index: 2;
-}
-
-/* Hover Effect: Swap Images */
-@media (hover: hover) {
-    .product-card:hover .img-secondary {
-        opacity: 1;
-    }
-}
-
-/* Quick Add Button (Bottom Right) */
-.quick-add-btn {
-    position: absolute;
-    bottom: 0;
-    right: 0;
+    bottom: 12px;
+    right: 12px;
     width: 44px;
     height: 44px;
-    background: #ffffff;
+    background: white;
     border: none;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
+    transition: all 0.2s ease;
     z-index: 10;
-    opacity: 0;
-    transform: translateY(10px);
-    transition: all 0.3s ease;
 }
 
-.product-card:hover .quick-add-btn {
-    opacity: 1;
-    transform: translateY(0);
+.quick-add-btn:hover,
+.quick-view-btn:hover {
+    background: #f5f5f5;
+    transform: scale(1.05);
 }
 
-.quick-add-btn svg {
-    width: 14px;
-    height: 14px;
-    stroke: #000;
-    stroke-width: 1.5;
-}
-
-/* Typography & Info */
-.product-info {
-    padding: 0 !important;
-    text-align: center;
-    background: transparent !important;
-}
-
-.product-title {
-    font-family: inherit; /* Use site font */
-    font-size: 13px;
-    font-weight: 600; /* Slightly bolder for uppercase */
-    text-transform: uppercase;
-    letter-spacing: 1px;
+.quick-add-btn i,
+.quick-view-btn i {
     color: #1a1a1a;
-    margin-bottom: 6px;
-    display: block;
+    font-size: 16px;
+}
+
+/* Change eye icon to plus icon programmatically via content */
+.quick-view-btn i.fas.fa-eye::before {
+    content: "\f067";
+    /* Plus icon */
+}
+
+/* Wishlist Button - Hidden by default in minimal design */
+.wishlist-btn {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 36px;
+    height: 36px;
+    background: white;
+    border: none;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: 10;
+}
+
+.product-img:hover .wishlist-btn,
+.product-img-wrapper:hover .wishlist-btn {
+    opacity: 1;
+}
+
+.wishlist-btn i {
+    color: #1a1a1a;
+    font-size: 14px;
+}
+
+/* Product Info - Centered, Minimal Typography */
+.product-info,
+.product-info-minimal {
+    padding: 16px 8px;
+    text-align: center;
+    background: white;
+}
+
+/* Hide reviews section in minimal design */
+.product-info .reviews,
+.product-info-minimal .reviews {
+    display: none;
+}
+
+/* Product Title - UPPERCASE, Letter Spacing */
+.product-info h3,
+.product-info-minimal h3,
+.product-title,
+.product-title-minimal {
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: #1a1a1a;
+    margin: 0 0 8px 0;
     line-height: 1.4;
+}
+
+.product-info h3 a,
+.product-title,
+.product-title-minimal a {
+    color: inherit;
     text-decoration: none;
 }
 
-.product-title:hover {
+.product-info h3 a:hover {
     color: var(--burgundy-main);
 }
 
-.product-price {
+/* Product Price - Simple, Centered */
+.product-info .price,
+.product-price-minimal {
     font-size: 13px;
-    color: #555; /* Subdued color */
     font-weight: 400;
-    letter-spacing: 0.5px;
+    color: #1a1a1a;
     margin: 0;
 }
 
-/* Hide reviews and old buttons if any remain */
-.product-info .reviews,
-.product-info .btn {
-    display: none !important;
+/* Hide Add to Cart Button in minimal card design */
+.product-info .btn,
+.product-card .btn.btn-dark {
+    display: none;
 }
 
-/* Mobile Optimizations (Max-width: 768px) */
-@media (max-width: 768px) {
-    .product-card {
-        margin-bottom: 20px;
-    }
-    
-    .product-img {
-        margin-bottom: 10px;
-    }
-
-    /* Force button to be visible on mobile since there is no hover */
-    .quick-add-btn {
-        opacity: 1;
-        transform: translateY(0);
-        width: 36px;
-        height: 36px;
-        bottom: 8px;
-        right: 8px;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.05); /* Slight shadow for visibility */
-    }
-
-    .product-title {
-        font-size: 11px;
-        letter-spacing: 0.8px;
-    }
-
-    .product-price {
-        font-size: 12px;
-    }
-    
-    /* Ensure 2 columns fit perfectly */
-    .col-6 {
-        padding-left: 6px;
-        padding-right: 6px;
-    }
+/* Clickable Product Card Cursor */
+.clickable-product-card {
+    cursor: pointer;
 }
-/* END OUDIES-STYLE REDESIGN */
 
+/* END OUDIES-STYLE PRODUCT CARD */
 
 .search-product-title {
     text-transform: capitalize;
