@@ -111,8 +111,8 @@
     /* Full width product cards on small mobile */
     .col-6:has(.product-card) {
         width: 50% !important;
-        padding-left: 8px;
-        padding-right: 8px;
+        padding-left: 6px;
+        padding-right: 6px;
     }
 
     /* Optimize card padding */
@@ -120,9 +120,18 @@
         margin-bottom: 16px;
     }
 
-    /* Better image aspect ratio */
-    .product-img {
-        height: 200px !important;
+    /* Square image with hard edges */
+    .product-img,
+    .product-img-wrapper {
+        aspect-ratio: 1 / 1 !important;
+        height: auto !important;
+        border-radius: 0 !important;
+    }
+
+    /* Ensure images fill the square */
+    .product-img img,
+    .product-img-wrapper img {
+        border-radius: 0 !important;
     }
 
     /* Button text size */
