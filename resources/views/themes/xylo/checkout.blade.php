@@ -110,7 +110,18 @@
 
                             <!-- InstaPay Upload Section (Hidden by default) -->
                             <div id="instapay-section" class="mt-3 p-3 border rounded bg-light" style="display: none;">
-                                <p class="mb-2 text-info"><i class="fas fa-info-circle"></i> {{ __('store.checkout.instapay_instructions') }}</p>
+                                <div class="mb-3">
+                                    <h6 class="mb-2">{{ __('Transfer to:') }}</h6>
+                                    <div class="d-flex align-items-center bg-white border rounded px-3 py-2">
+                                        <span id="instapay-id" class="me-auto fw-bold font-monospace text-dark">tgwnh@instapay</span>
+                                        <button type="button" class="btn btn-sm btn-outline-dark" onclick="copyInstaPay()">
+                                            <i class="fas fa-copy"></i>
+                                        </button>
+                                    </div>
+                                    <p id="copy-message" class="text-success small mt-1 mb-0 d-none"><i class="fas fa-check-circle"></i> {{ __('Copied!') }}</p>
+                                </div>
+
+                                <p class="mb-2 text-info small"><i class="fas fa-info-circle"></i> {{ __('store.checkout.instapay_instructions') }}</p>
                                 <div class="mb-3">
                                     <label for="payment_proof" class="form-label">{{ __('store.checkout.upload_proof') }} <span class="text-danger">*</span></label>
                                     <input type="file" name="payment_proof" id="payment_proof" class="form-control" accept="image/*">
@@ -341,6 +352,27 @@ document.addEventListener("DOMContentLoaded", function () {
 </script>
 
 <script>
+    function copyInstaPay() {
+        const id = document.getElementById('instapay-id').innerText;
+        navigator.clipboard.writeText(id).then(() => {
+            const msg = document.getElementById('copy-message');
+            msg.classList.remove('d-none');
+            setTimeout(() => msg.classList.add('d-none'), 2000);
+        }).catch(err => {
+            console.error('Failed to copy: ', err);
+            // Fallback
+            const textarea = document.createElement('textarea');
+            textarea.value = id;
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textarea);
+            const msg = document.getElementById('copy-message');
+            msg.classList.remove('d-none');
+            setTimeout(() => msg.classList.add('d-none'), 2000);
+        });
+    }
+
     function updateShipping() {
         const select = document.getElementById('governorate-select');
         const selectedOption = select.options[select.selectedIndex];

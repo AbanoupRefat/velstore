@@ -50,17 +50,7 @@
 
                     <hr class="my-5">
 
-                    <!-- InstaPay Section -->
-                    <div class="mb-5">
-                        <h4 class="mb-3"><i class="fas fa-wallet me-2"></i> InstaPay Support</h4>
-                        <div class="d-inline-flex align-items-center bg-light border rounded px-3 py-2">
-                            <span id="instapay-id" class="me-3 fs-5 fw-bold font-monospace">tgwnh@instapay</span>
-                            <button class="btn btn-sm btn-dark" onclick="copyInstaPay()">
-                                <i class="fas fa-copy me-1"></i> Copy
-                            </button>
-                        </div>
-                        <p id="copy-message" class="text-success small mt-2 d-none">Copied to clipboard!</p>
-                    </div>
+
 
                     <!-- Social Links -->
                     <div class="social-links-about mt-5">
