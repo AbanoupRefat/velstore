@@ -3,22 +3,42 @@
 <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet"> 
 @endsection
 @section('content')
-    <div class="container">
-        <h2>Search Results for "{{ $query }}"</h2>
+@php $currency = activeCurrency(); @endphp
+    <div class="container py-5">
+        <h2 class="mb-4">{{ __('Search Results for') }} "{{ $query }}"</h2>
 
         @if($products->count() > 0)
             <div class="row">
                 @foreach($products as $product)
-                    <div class="col-md-3">
-                        <div class="card">
-                            <img src="{{ asset('uploads/' . (optional($product->thumbnail)->image_url ?? 'default-thumbnail.jpg')) }}" class="card-img-top" alt="{{ $product->translations->first()->name ?? 'Product' }}">
-                            <div class="card-body">
-                                <h5 class="card-title">
-                                    <a href="{{ url('/product/' . $product->slug) }}">
-                                        {{ $product->translations->first()->name ?? 'No Name' }}
+                    <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+                        <div class="product-card clickable-product-card" onclick="window.location='{{ url('/product/' . $product->slug) }}'">
+                            <div class="product-img">
+                                <img src="{{ asset('uploads/' . (optional($product->thumbnail)->image_url ?? 'default.jpg')) }}" 
+                                     alt="{{ $product->translations->first()->name ?? 'Product Name' }}">
+                                <button class="wishlist-btn" data-product-id="{{ $product->id }}" onclick="event.stopPropagation();">
+                                    <i class="fa-solid fa-heart"></i>
+                                </button>
+                                <button class="quick-view-btn" data-product-id="{{ $product->id }}" onclick="event.stopPropagation(); openQuickView({{ $product->id }});" title="{{ __('Quick View') }}">
+                                    <i class="fas fa-plus"></i>
+                                </button>
+                            </div>
+                            <div class="product-info p-3">
+                                <h3>
+                                    <a href="{{ url('/product/' . $product->slug) }}" class="product-title" onclick="event.stopPropagation();">
+                                        {{ $product->translations->first()->name ?? 'Product Name' }}
                                     </a>
-                                </h5>
-                                <p class="card-text">{{ Str::limit($product->translations->first()->description, 100) }}</p>
+                                </h3>
+                                <p class="price mb-3">
+                                    @php
+                                        $minPrice = $product->variants->min('converted_price');
+                                        $maxPrice = $product->variants->max('converted_price');
+                                    @endphp
+                                    @if($minPrice != $maxPrice)
+                                        {{ $currency->symbol }} {{ number_format($minPrice, 0) }} - {{ $currency->symbol }} {{ number_format($maxPrice, 0) }}
+                                    @else
+                                        {{ $currency->symbol }} {{ number_format($minPrice, 0) }}
+                                    @endif
+                                </p>
                             </div>
                         </div>
                     </div>
