@@ -19,18 +19,25 @@
 
     <h2 class="mb-3">{{ $category->translation->name }}</h2>
 
-    {{-- Filters --}}
-    <form method="GET" class="mb-4 d-flex gap-2">
-        <input type="number" name="min_price" class="form-control" placeholder="{{ __('store.category.min_price') }}" value="{{ request('min_price') }}">
-        <input type="number" name="max_price" class="form-control" placeholder="{{ __('store.category.max_price') }}" value="{{ request('max_price') }}">
-        <select name="sort" class="form-select">
+    {{-- Minimal Filter Bar --}}
+    <form method="GET" class="filter-bar-minimal mb-4">
+        <button type="button" class="filter-toggle" onclick="document.getElementById('price-filters').classList.toggle('show')">
+            <span>{{ __('store.category.filter') }}</span>
+        </button>
+        <div class="filter-divider"></div>
+        <select name="sort" class="sort-select" onchange="this.form.submit()">
             <option value="">{{ __('store.category.sort_by') }}</option>
             <option value="newest" {{ request('sort') == 'newest' ? 'selected' : '' }}>{{ __('store.category.newest') }}</option>
             <option value="price_asc" {{ request('sort') == 'price_asc' ? 'selected' : '' }}>{{ __('store.category.price_low_high') }}</option>
             <option value="price_desc" {{ request('sort') == 'price_desc' ? 'selected' : '' }}>{{ __('store.category.price_high_low') }}</option>
             <option value="rating" {{ request('sort') == 'rating' ? 'selected' : '' }}>{{ __('store.category.top_rated') }}</option>
         </select>
-        <button type="submit" class="btn btn-primary">{{ __('store.category.filter') }}</button>
+        {{-- Hidden price filters (toggle visible) --}}
+        <div id="price-filters" class="price-filters-dropdown">
+            <input type="number" name="min_price" placeholder="{{ __('store.category.min_price') }}" value="{{ request('min_price') }}">
+            <input type="number" name="max_price" placeholder="{{ __('store.category.max_price') }}" value="{{ request('max_price') }}">
+            <button type="submit">{{ __('store.category.filter') }}</button>
+        </div>
     </form>
 
     {{-- Products --}}

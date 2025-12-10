@@ -41,7 +41,7 @@ class BannerService
                 $rules["languages.$code.image"] = 'nullable|image|mimes:jpeg,png,jpg,gif,svg,webp|max:10000';
             }
 
-            $rules["languages.$code.description"] = 'required|string|min:3';
+            $rules["languages.$code.description"] = 'nullable|string';
 
             $rules["languages.$code.image_title"] = 'nullable|string|max:255';
         }
