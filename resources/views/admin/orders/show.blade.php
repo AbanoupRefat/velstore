@@ -86,8 +86,14 @@
                         <tfoot>
                             <tr>
                                 <td colspan="5" class="text-end"><strong>Subtotal:</strong></td>
-                                <td>{{ number_format($order->total_price - $order->shipping_cost, 2) }} EGP</td>
+                                <td>{{ number_format($order->total_price - $order->shipping_cost + ($order->discount_amount ?? 0), 2) }} EGP</td>
                             </tr>
+                            @if($order->discount_amount > 0)
+                            <tr>
+                                <td colspan="5" class="text-end"><strong>Discount:</strong></td>
+                                <td class="text-danger">-{{ number_format($order->discount_amount, 2) }} EGP</td>
+                            </tr>
+                            @endif
                             <tr>
                                 <td colspan="5" class="text-end"><strong>Shipping:</strong></td>
                                 <td>{{ number_format($order->shipping_cost, 2) }} EGP</td>

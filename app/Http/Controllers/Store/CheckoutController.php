@@ -44,8 +44,17 @@ class CheckoutController extends Controller
         }
 
         $shipping = null;
-        $total = $subtotal + ($shipping ?? 0);
-
+        
+        // Apply coupon discount logic
+        $cartService = app(\App\Services\Store\CartService::class);
+        $couponData = $cartService->getAppliedCoupon();
+        $discountAmount = 0;
+        
+        if ($couponData) {
+            $discountAmount = $cartService->getDiscountAmount($subtotal);
+        }
+        
+        $total = $subtotal - $discountAmount + ($shipping ?? 0);
 
         $governorates = \App\Models\Governorate::active()->get();
 
@@ -57,7 +66,7 @@ class CheckoutController extends Controller
                 ->first();
         }
 
-        return view('themes.xylo.checkout', compact('cart', 'subtotal', 'shipping', 'total', 'paymentGateways', 'paypalClientId', 'governorates', 'lastOrder'));
+        return view('themes.xylo.checkout', compact('cart', 'subtotal', 'shipping', 'total', 'paymentGateways', 'paypalClientId', 'governorates', 'lastOrder', 'discountAmount', 'couponData'));
     }
 
     public function process(Request $request)

@@ -150,6 +150,14 @@
                             <span>{{ __('store.checkout.shipping') }}</span>
                             <span id="shipping-cost-display">0.00 EGP</span>
                         </div>
+                        @if(isset($discountAmount) && $discountAmount > 0)
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-success">{{ __('Discount') }} ({{ $couponData['code'] ?? '' }})</span>
+                            <span class="text-success">-{{ number_format($discountAmount, 2) }} EGP</span>
+                        </div>
+                        @else
+                            <!-- No Discount -->
+                        @endif
                         <hr>
                         <div class="d-flex justify-content-between mb-2">
                             <span class="fw-bold">{{ __('store.checkout.total') }}</span>
@@ -387,7 +395,8 @@ document.addEventListener("DOMContentLoaded", function () {
         // Update total display
         // Get initial subtotal from server-side rendered value
         const subtotal = {{ $subtotal ?? 0 }};
-        const total = subtotal + shippingFee;
+        const discount = {{ $discountAmount ?? 0 }};
+        const total = subtotal - discount + shippingFee;
         
         const totalElement = document.getElementById('total-cost-display');
         if (totalElement) {

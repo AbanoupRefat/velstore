@@ -147,6 +147,18 @@
             </div>
 
             <div class="col-md-3">
+                <div class="coupon-box mb-4">
+                    <h3 class="cart-heading mb-4">{{ __('store.cart.coupon_heading') }}</h3>
+
+                    <form id="applyCouponForm">
+                        @csrf
+                        <div class="form-group">
+                            <input type="text" name="code" id="coupon_code" placeholder="{{ __('store.cart.coupon_placeholder') }}" class="form-control">
+                        </div>
+                        <button type="submit" class="btn-light d-block text-center w-100">{{ __('store.cart.apply_coupon') }}</button>
+                    </form>
+                </div>
+
                 <div class="cart-box">
                     <h3 class="cart-heading">{{ __('store.cart.cart_totals') }}</h3>
 
@@ -192,18 +204,6 @@
                     <div class="mt-4">
                         <a href="{{ route('checkout.index') }}" class="proceed-to-checkout d-block text-center">{{ __('store.cart.proceed_to_checkout') }}</a>
                     </div>
-                </div>
-
-                <div class="coupon-box mt-4">
-                    <h3 class="cart-heading mb-4">{{ __('store.cart.coupon_heading') }}</h3>
-
-                    <form id="applyCouponForm">
-                        @csrf
-                        <div class="form-group">
-                            <input type="text" name="code" id="coupon_code" placeholder="{{ __('store.cart.coupon_placeholder') }}" class="form-control">
-                        </div>
-                        <button type="submit" class="btn-light d-block text-center w-100">{{ __('store.cart.apply_coupon') }}</button>
-                    </form>
                 </div>
 
             </div>
