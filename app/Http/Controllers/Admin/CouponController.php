@@ -26,6 +26,9 @@ class CouponController extends Controller
 
         return DataTables::of($coupons)
             ->addColumn('discount_display', function ($coupon) {
+                if ($coupon->type === 'buy_x_get_y') {
+                    return "Buy {$coupon->buy_qty} Get {$coupon->get_qty} Free";
+                }
                 if ($coupon->type === 'percentage') {
                     return $coupon->discount . '%';
                 }
@@ -93,8 +96,8 @@ class CouponController extends Controller
     {
         $validated = $request->validate([
             'code' => 'required|string|max:50|unique:coupons,code',
-            'discount' => 'required|numeric|min:0',
-            'type' => 'required|in:percentage,fixed',
+            'discount' => 'nullable|numeric|min:0|required_unless:type,buy_x_get_y',
+            'type' => 'required|in:percentage,fixed,buy_x_get_y',
             'description' => 'nullable|string|max:500',
             'starts_at' => 'nullable|date',
             'expires_at' => 'nullable|date|after_or_equal:starts_at',
@@ -102,6 +105,8 @@ class CouponController extends Controller
             'per_user_limit' => 'nullable|integer|min:1',
             'min_order_amount' => 'nullable|numeric|min:0',
             'max_discount' => 'nullable|numeric|min:0',
+            'buy_qty' => 'nullable|required_if:type,buy_x_get_y|integer|min:1',
+            'get_qty' => 'nullable|required_if:type,buy_x_get_y|integer|min:1',
             'is_active' => 'boolean',
         ]);
 
@@ -134,8 +139,8 @@ class CouponController extends Controller
 
         $validated = $request->validate([
             'code' => 'required|string|max:50|unique:coupons,code,' . $id,
-            'discount' => 'required|numeric|min:0',
-            'type' => 'required|in:percentage,fixed',
+            'discount' => 'nullable|numeric|min:0|required_unless:type,buy_x_get_y',
+            'type' => 'required|in:percentage,fixed,buy_x_get_y',
             'description' => 'nullable|string|max:500',
             'starts_at' => 'nullable|date',
             'expires_at' => 'nullable|date|after_or_equal:starts_at',
@@ -143,6 +148,8 @@ class CouponController extends Controller
             'per_user_limit' => 'nullable|integer|min:1',
             'min_order_amount' => 'nullable|numeric|min:0',
             'max_discount' => 'nullable|numeric|min:0',
+            'buy_qty' => 'nullable|required_if:type,buy_x_get_y|integer|min:1',
+            'get_qty' => 'nullable|required_if:type,buy_x_get_y|integer|min:1',
             'is_active' => 'boolean',
         ]);
 

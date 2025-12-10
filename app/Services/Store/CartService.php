@@ -32,7 +32,8 @@ class CartService
         }
 
         // Calculate discount amount
-        $discountAmount = $coupon->calculateDiscount($cartTotal);
+        $cart = Session::get('cart', []);
+        $discountAmount = $coupon->calculateDiscount($cartTotal, $cart);
 
         // Store coupon in session
         Session::put('cart_coupon', [
@@ -89,7 +90,8 @@ class CartService
             return $total;
         }
 
-        $discountAmount = $coupon->calculateDiscount($total);
+        $cart = Session::get('cart', []);
+        $discountAmount = $coupon->calculateDiscount($total, $cart);
         
         return max(0, $total - $discountAmount);
     }
@@ -112,7 +114,8 @@ class CartService
             return 0;
         }
 
-        return $coupon->calculateDiscount($total);
+        $cart = Session::get('cart', []);
+        return $coupon->calculateDiscount($total, $cart);
     }
 
     /**

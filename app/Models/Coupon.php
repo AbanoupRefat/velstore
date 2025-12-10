@@ -22,7 +22,9 @@ class Coupon extends Model
         'max_discount',
         'starts_at',
         'is_active',
-        'description'
+        'description',
+        'buy_qty',
+        'get_qty'
     ];
 
     protected $casts = [
@@ -32,6 +34,8 @@ class Coupon extends Model
         'min_order_amount' => 'decimal:2',
         'max_discount' => 'decimal:2',
         'is_active' => 'boolean',
+        'buy_qty' => 'integer',
+        'get_qty' => 'integer',
     ];
 
     /**
@@ -83,8 +87,15 @@ class Coupon extends Model
     /**
      * Calculate discount amount based on cart total
      */
-    public function calculateDiscount($cartTotal): float
+    public function calculateDiscount($cartTotal, $cartItems = null): float
     {
+        if ($this->type === 'buy_x_get_y') {
+            if (!$cartItems || !$this->buy_qty || !$this->get_qty) {
+                return 0;
+            }
+            return $this->calculateBuyXGetYDiscount($cartItems);
+        }
+
         if ($this->type === 'percentage') {
             $discount = $cartTotal * ($this->discount / 100);
             
@@ -97,7 +108,55 @@ class Coupon extends Model
         }
         
         // Fixed discount - cannot exceed cart total
-        return min($this->discount, $cartTotal);
+        return min($this->discount ?? 0, $cartTotal);
+    }
+
+    /**
+     * Calculate B3G1 style discount
+     */
+    private function calculateBuyXGetYDiscount($cartItems): float
+    {
+        $prices = [];
+        
+        // Flatten cart items into a list of individual product prices
+        foreach ($cartItems as $item) {
+            $price = $item['price']; // Handle discount_price in controller/service if needed
+            $qty = $item['quantity'];
+            for ($i = 0; $i < $qty; $i++) {
+                $prices[] = $price;
+            }
+        }
+
+        // Sort prices descending (expensive first)
+        rsort($prices);
+
+        $totalDiscount = 0;
+        $groupSize = $this->buy_qty + $this->get_qty;
+        
+        // Logic: For every group of (X+Y), the last Y items are free
+        // e.g. Buy 3 Get 1 (Size 4). Indices 0,1,2 Paid. Index 3 Free.
+        // e.g. Buy 1 Get 1 (Size 2). Index 0 Paid. Index 1 Free.
+        
+        foreach ($prices as $index => $price) {
+            // Check if this item is in the "Get" position
+            // 0-based index. 
+            // Position in group: ($index + 1) % $groupSize
+            // If remainder is 0, or > buy_qty (if get_qty > 1)
+            // Example B3G1 (Group 4). Index 3 (Pos 4) is free. 4 % 4 == 0.
+            // Example B1G1 (Group 2). Index 1 (Pos 2) is free. 2 % 2 == 0.
+            // What if B2G2 (Group 4). Indices 2, 3 free. 
+            // Pos 3 (%4=3), Pos 4 (%4=0).
+            // Logic: Pos in group = ($index % $groupSize) + 1.
+            // If Pos > $buy_qty, it is free.
+            
+            $posInGroup = ($index % $groupSize) + 1;
+            
+            if ($posInGroup > $this->buy_qty) {
+                $totalDiscount += $price;
+            }
+        }
+
+        return $totalDiscount;
     }
 
     /**

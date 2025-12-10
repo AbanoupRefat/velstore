@@ -46,9 +46,10 @@
                         <!-- Type -->
                         <div class="col-md-3 mb-3">
                             <label for="type" class="form-label">Discount Type <span class="text-danger">*</span></label>
-                            <select class="form-select @error('type') is-invalid @enderror" id="type" name="type">
+                            <select class="form-select @error('type') is-invalid @enderror" id="type" name="type" onchange="toggleTypeFields()">
                                 <option value="percentage" {{ old('type', $coupon->type) == 'percentage' ? 'selected' : '' }}>Percentage (%)</option>
                                 <option value="fixed" {{ old('type', $coupon->type) == 'fixed' ? 'selected' : '' }}>Fixed Amount (EGP)</option>
+                                <option value="buy_x_get_y" {{ old('type', $coupon->type) == 'buy_x_get_y' ? 'selected' : '' }}>Buy X Get Y Free</option>
                             </select>
                             @error('type')
                                 <div class="invalid-feedback">{{ $message }}</div>
@@ -56,7 +57,7 @@
                         </div>
 
                         <!-- Discount Value -->
-                        <div class="col-md-3 mb-3">
+                        <div class="col-md-3 mb-3" id="discount_wrapper">
                             <label for="discount" class="form-label">Discount Value <span class="text-danger">*</span></label>
                             <input type="number" step="0.01" min="0" class="form-control @error('discount') is-invalid @enderror" 
                                    id="discount" name="discount" value="{{ old('discount', $coupon->discount) }}">
@@ -64,7 +65,49 @@
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
+
+                        <!-- Buy Qty (X) -->
+                        <div class="col-md-3 mb-3 d-none" id="buy_qty_wrapper">
+                            <label for="buy_qty" class="form-label">Buy Quantity (X) <span class="text-danger">*</span></label>
+                            <input type="number" min="1" class="form-control @error('buy_qty') is-invalid @enderror" 
+                                   id="buy_qty" name="buy_qty" value="{{ old('buy_qty', $coupon->buy_qty ?? '') }}" placeholder="e.g. 3">
+                            @error('buy_qty')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <!-- Get Qty (Y) -->
+                        <div class="col-md-3 mb-3 d-none" id="get_qty_wrapper">
+                            <label for="get_qty" class="form-label">Get Quantity (Y) <span class="text-danger">*</span></label>
+                            <input type="number" min="1" class="form-control @error('get_qty') is-invalid @enderror" 
+                                   id="get_qty" name="get_qty" value="{{ old('get_qty', $coupon->get_qty ?? '') }}" placeholder="e.g. 1">
+                            @error('get_qty')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
                     </div>
+
+                    <script>
+                        function toggleTypeFields() {
+                            const type = document.getElementById('type').value;
+                            const discountWrapper = document.getElementById('discount_wrapper');
+                            const buyQtyWrapper = document.getElementById('buy_qty_wrapper');
+                            const getQtyWrapper = document.getElementById('get_qty_wrapper');
+
+                            if (type === 'buy_x_get_y') {
+                                discountWrapper.classList.add('d-none');
+                                buyQtyWrapper.classList.remove('d-none');
+                                getQtyWrapper.classList.remove('d-none');
+                            } else {
+                                discountWrapper.classList.remove('d-none');
+                                buyQtyWrapper.classList.add('d-none');
+                                getQtyWrapper.classList.add('d-none');
+                            }
+                        }
+                        
+                        // Run on load
+                        document.addEventListener('DOMContentLoaded', toggleTypeFields);
+                    </script>
 
                     <div class="row">
                         <!-- Description -->
