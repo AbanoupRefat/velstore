@@ -5,6 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+use Illuminate\Support\Facades\App;
+
 class ProductVariant extends Model
 {
     use HasFactory;
@@ -32,6 +34,12 @@ class ProductVariant extends Model
     public function translations()
     {
         return $this->hasMany(ProductVariantTranslation::class);
+    }
+
+    public function translation()
+    {
+        return $this->hasOne(ProductVariantTranslation::class)
+            ->where('language_code', App::getLocale());
     }
 
     public function images()
