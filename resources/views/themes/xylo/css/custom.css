@@ -58,12 +58,12 @@
     right: 0;
     bottom: 0;
     background: linear-gradient(to right,
-            rgba(0, 0, 0, 0.6) 0%,
-            rgba(0, 0, 0, 0.3) 50%,
+            rgba(0, 0, 0, 0.4) 0%,
+            rgba(0, 0, 0, 0.2) 50%,
             transparent 100%);
     display: flex;
-    align-items: center;
-    padding: 0 5%;
+    align-items: flex-end;
+    padding: 0 5% 5%;
 }
 
 .banner-content {
@@ -74,7 +74,7 @@
 .banner-title-cinematic {
     font-size: clamp(1.8rem, 4vw, 3.5rem);
     font-weight: 700;
-    margin-bottom: 1rem;
+    margin-bottom: 1.5rem;
     text-transform: uppercase;
     letter-spacing: 2px;
     line-height: 1.2;
@@ -84,6 +84,7 @@
     font-size: clamp(0.9rem, 1.5vw, 1.2rem);
     margin-bottom: 1.5rem;
     opacity: 0.9;
+    display: none;
 }
 
 .btn-cta-banner {
@@ -95,7 +96,7 @@
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 1.5px;
-    border: none;
+    border: 2px solid white;
     cursor: pointer;
     transition: all 0.3s ease;
 }
@@ -103,6 +104,7 @@
 .btn-cta-banner:hover {
     background: var(--burgundy-main);
     color: white;
+    border-color: var(--burgundy-main);
 }
 
 @media (max-width: 768px) {
@@ -116,13 +118,17 @@
                 rgba(0, 0, 0, 0.3) 50%,
                 transparent 100%);
         align-items: flex-end;
-        padding-bottom: 2rem;
+        padding: 2rem 1rem;
     }
 
     .banner-content {
         text-align: center;
         max-width: 100%;
-        padding: 0 1rem;
+    }
+
+    .banner-title-cinematic {
+        font-size: 1.8rem;
+        margin-bottom: 1rem;
     }
 
     .btn-cta-banner {
@@ -442,16 +448,18 @@ header form input[type="submit"] {
 .product-card,
 .product-card-minimal {
     background: white;
-    border: none;
-    box-shadow: none;
+    border: none !important;
+    box-shadow: none !important;
     border-radius: 0;
     overflow: visible;
     transition: none;
+    padding: 0 !important;
+    margin-bottom: 30px;
 }
 
 .product-card:hover,
 .product-card-minimal:hover {
-    box-shadow: none;
+    box-shadow: none !important;
     transform: none;
 }
 
@@ -464,6 +472,7 @@ header form input[type="submit"] {
     overflow: hidden;
     background-color: #f8f8f8;
     cursor: pointer;
+    border-radius: 0;
 }
 
 .product-img img,
@@ -490,7 +499,7 @@ header form input[type="submit"] {
     width: 44px;
     height: 44px;
     background: white;
-    border: none;
+    border: none !important;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     display: flex;
     align-items: center;
@@ -498,6 +507,7 @@ header form input[type="submit"] {
     cursor: pointer;
     transition: all 0.2s ease;
     z-index: 10;
+    border-radius: 4px;
 }
 
 .quick-add-btn:hover,
@@ -518,7 +528,7 @@ header form input[type="submit"] {
     /* Plus icon */
 }
 
-/* Wishlist Button - Hidden by default in minimal design */
+/* Wishlist Button - Hidden by default in minimal design, appears on hover */
 .wishlist-btn {
     position: absolute;
     top: 12px;
@@ -526,7 +536,7 @@ header form input[type="submit"] {
     width: 36px;
     height: 36px;
     background: white;
-    border: none;
+    border: none !important;
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -535,6 +545,7 @@ header form input[type="submit"] {
     opacity: 0;
     transition: opacity 0.3s ease;
     z-index: 10;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .product-img:hover .wishlist-btn,
@@ -545,6 +556,10 @@ header form input[type="submit"] {
 .wishlist-btn i {
     color: #1a1a1a;
     font-size: 14px;
+}
+
+.wishlist-btn i.fa-solid.fa-heart {
+    color: #1a1a1a;
 }
 
 /* Product Info - Centered, Minimal Typography */
@@ -558,7 +573,7 @@ header form input[type="submit"] {
 /* Hide reviews section in minimal design */
 .product-info .reviews,
 .product-info-minimal .reviews {
-    display: none;
+    display: none !important;
 }
 
 /* Product Title - UPPERCASE, Letter Spacing */
@@ -592,13 +607,13 @@ header form input[type="submit"] {
     font-size: 13px;
     font-weight: 400;
     color: #1a1a1a;
-    margin: 0;
+    margin: 0 !important;
 }
 
 /* Hide Add to Cart Button in minimal card design */
 .product-info .btn,
 .product-card .btn.btn-dark {
-    display: none;
+    display: none !important;
 }
 
 /* Clickable Product Card Cursor */
@@ -790,8 +805,8 @@ input[type="button"]:hover::before,
 }
 
 .clickable-product-card:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 12px 24px rgba(128, 0, 32, 0.25);
+    transform: none;
+    box-shadow: none;
 }
 
 .clickable-product-card:hover .product-img img {

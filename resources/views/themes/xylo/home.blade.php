@@ -14,7 +14,6 @@
                         <div class="banner-overlay">
                             <div class="banner-content">
                                 <h1 class="banner-title-cinematic">{{ $banner->translation ? $banner->translation->title : $banner->title }}</h1>
-                                <p class="banner-text-cinematic">{{ __('store.home.banner_text') }}</p>
                                 <span class="btn btn-cta-banner">{{ __('store.home.shop_now') }}</span>
                             </div>
                         </div>
@@ -63,9 +62,6 @@
                                 </button>
                         </div>
                         <div class="product-info p-3">
-                            <div class="reviews mb-2">
-                                <i class="fa-solid fa-star"></i> ({{ $product->reviews_count }} {{ __('store.home.reviews') }})
-                            </div>
                             <h3>
                                 <a href="{{ route('product.show', $product->slug) }}" class="product-title" onclick="event.stopPropagation();">
                                     {{ $product->translation->name ?? 'Product Name Not Available' }}
@@ -82,9 +78,6 @@
                                     {{ $currency->symbol }} {{ number_format($minPrice, 2) }}
                                 @endif
                             </p>
-                            <button class="btn btn-dark w-100 rounded-pill text-uppercase" onclick="event.stopPropagation(); window.location='{{ route('product.show', $product->slug) }}'">
-                                {{ __('store.product_detail.add_to_cart') }}
-                            </button>
                         </div>
                     </div>
                 @endforeach

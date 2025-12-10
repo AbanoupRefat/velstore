@@ -10,30 +10,24 @@
                 <i class="fas fa-plus"></i>
             </button>
         </div>
-            <div class="product-info p-3">
-                <div class="reviews mb-2">
-                    <i class="fa-solid fa-star"></i> ({{ $product->reviews_count }} {{ __('store.category.reviews') }})
-                </div>
-                <h3>
-                    <a href="{{ route('product.show', $product->slug) }}" class="product-title" onclick="event.stopPropagation();">
-                        {{ $product->translation->name ?? 'Product Name Not Available' }}
-                    </a>
-                </h3>
-                <p class="price mb-3">
-                    @php
-                        $minPrice = $product->variants->min('converted_price');
-                        $maxPrice = $product->variants->max('converted_price');
-                    @endphp
-                    @if($minPrice != $maxPrice)
-                        {{ $currency->symbol }} {{ number_format($minPrice, 2) }} - {{ $currency->symbol }} {{ number_format($maxPrice, 2) }}
-                    @else
-                        {{ $currency->symbol }} {{ number_format($minPrice, 2) }}
-                    @endif
-                </p>
-                <button class="btn btn-dark w-100 rounded-pill text-uppercase" onclick="event.stopPropagation(); window.location='{{ route('product.show', $product->slug) }}'">
-                    {{ __('store.product_detail.add_to_cart') }}
-                </button>
-            </div>
+        <div class="product-info p-3">
+            <h3>
+                <a href="{{ route('product.show', $product->slug) }}" class="product-title" onclick="event.stopPropagation();">
+                    {{ $product->translation->name ?? 'Product Name Not Available' }}
+                </a>
+            </h3>
+            <p class="price mb-3">
+                @php
+                    $minPrice = $product->variants->min('converted_price');
+                    $maxPrice = $product->variants->max('converted_price');
+                @endphp
+                @if($minPrice != $maxPrice)
+                    {{ $currency->symbol }} {{ number_format($minPrice, 2) }} - {{ $currency->symbol }} {{ number_format($maxPrice, 2) }}
+                @else
+                    {{ $currency->symbol }} {{ number_format($minPrice, 2) }}
+                @endif
+            </p>
+        </div>
     </div>
 </div>
 @endforeach
