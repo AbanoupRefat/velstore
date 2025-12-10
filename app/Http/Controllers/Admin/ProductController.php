@@ -155,7 +155,7 @@ class ProductController extends Controller
         $defaultLang = config('app.locale');
         $validated = $request->validate(['category_id' => 'required|exists:categories,id', 'brand_id' => 'nullable|exists:brands,id', 'vendor_id' => 'required|exists:vendors,id', 'translations.'.$defaultLang.'.name' => 'required|string|max:255', 'images.*' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:10240', 'variants' => 'required|array|min:1', 'variants.*.id' => 'nullable|exists:product_variants,id', 'variants.*.name' => 'required|string|max:255', 'variants.*.price' => 'required|numeric|min:0', 'variants.*.discount_price' => 'nullable|numeric|min:0|lte:variants.*.price', 'variants.*.stock' => 'required|integer|min:0', 'variants.*.SKU' => 'required|string|max:255', 'variants.*.barcode' => 'nullable|string|max:255', 'variants.*.weight' => 'nullable|numeric|min:0', 'variants.*.dimensions' => 'nullable|string|max:255', 'variants.*.language_code' => 'nullable|string|size:2', 'variants.*.size_id' => 'nullable|exists:attribute_values,id', 'variants.*.color_id' => 'nullable|exists:attribute_values,id']);
         DB::transaction(function () use ($request, $product, $defaultLang) {
-            $product->update(['category_id' => $request->category_id, 'brand_id' => $request->brand_id, 'vendor_id' => $request->vendor_id]);
+            $product->update(['category_id' => $request->category_id, 'brand_id' => $request->brand_id, 'vendor_id' => $request->vendor_id, 'is_trending' => $request->has('is_trending') ? 1 : 0]);
             $newAttrValueIds = collect($request->variants)->flatMap(function ($v) {
                 return array_filter([$v['size_id'] ?? null, $v['color_id'] ?? null]);
             })->unique()->values()->all();

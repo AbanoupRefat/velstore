@@ -33,7 +33,7 @@ class BannerService
         ];
 
         foreach ($activeLanguages as $code) {
-            $rules["languages.$code.title"] = 'required|string|max:255';
+            $rules["languages.$code.title"] = 'nullable|string|max:255';
 
             if ($code === $defaultLang) {
                 $rules["languages.$code.image"] = 'required|image|mimes:jpeg,png,jpg,gif,svg,webp|max:10000';
@@ -79,7 +79,7 @@ class BannerService
     public function update(Request $request, int $id)
     {
         $request->validate([
-            'languages.*.title' => 'required|string|max:255',
+            'languages.*.title' => 'nullable|string|max:255',
             'languages.*.image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:10000',
             'type' => 'required|in:promotion,sale,seasonal,featured,announcement',
             'link_url' => 'nullable|string|max:500',
