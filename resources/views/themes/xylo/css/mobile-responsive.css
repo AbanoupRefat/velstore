@@ -361,3 +361,92 @@
         padding: 16px !important;
     }
 }
+
+/* ========================================
+   Sticky Header Mobile
+   ======================================== */
+@media (max-width: 991px) {
+    header {
+        position: sticky !important;
+        top: 0;
+        z-index: 1000;
+        background: white;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    }
+}
+
+/* ========================================
+   Product Card Sharp Corners (Global)
+   ======================================== */
+.product-card,
+.product-card *,
+.product-img,
+.product-img img {
+    border-radius: 0 !important;
+}
+
+/* ========================================
+   Mobile Filter UI Redesign
+   ======================================== */
+@media (max-width: 767px) {
+
+    /* Filter form layout */
+    .mb-4.d-flex.gap-2 {
+        flex-direction: column !important;
+        gap: 10px !important;
+    }
+
+    .mb-4.d-flex.gap-2 input,
+    .mb-4.d-flex.gap-2 select {
+        width: 100% !important;
+        border-radius: 0 !important;
+        height: 44px;
+        font-size: 14px;
+    }
+
+    .mb-4.d-flex.gap-2 button {
+        width: 100% !important;
+        border-radius: 0 !important;
+        height: 48px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    /* Price inputs side by side */
+    .mb-4.d-flex.gap-2 {
+        display: grid !important;
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: auto auto auto;
+    }
+
+    .mb-4.d-flex.gap-2 input[name="min_price"] {
+        grid-column: 1;
+    }
+
+    .mb-4.d-flex.gap-2 input[name="max_price"] {
+        grid-column: 2;
+    }
+
+    .mb-4.d-flex.gap-2 select {
+        grid-column: 1 / -1;
+    }
+
+    .mb-4.d-flex.gap-2 button {
+        grid-column: 1 / -1;
+    }
+
+    /* Category page title */
+    h2.mb-3 {
+        font-size: 22px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 20px !important;
+    }
+
+    /* Breadcrumb styling */
+    .breadcrumb {
+        font-size: 12px;
+        padding: 10px 0;
+    }
+}
