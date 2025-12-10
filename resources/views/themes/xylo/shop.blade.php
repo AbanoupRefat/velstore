@@ -7,11 +7,32 @@
     <section class="products-home py-5 mb-5 main-shop">
     <div class="container">
         <div class="row">
-            <!-- Mobile Filter Toggle -->
-            <div class="col-12 d-lg-none mb-3">
-                <button class="btn btn-primary w-100" type="button" data-bs-toggle="offcanvas" data-bs-target="#filterOffcanvas" aria-controls="filterOffcanvas">
-                    <i class="fa-solid fa-filter me-2"></i> {{ __('store.shop.filter') }}
-                </button>
+            <!-- Minimal Filter Bar (Mobile) -->
+            <div class="col-12 d-lg-none mb-4">
+                <form method="GET" class="filter-bar-minimal">
+                    {{-- Preserve existing filters --}}
+                    @foreach(request()->except(['sort', 'min_price', 'max_price', 'page']) as $key => $value)
+                        @if(is_array($value))
+                            @foreach($value as $v)
+                                <input type="hidden" name="{{ $key }}[]" value="{{ $v }}">
+                            @endforeach
+                        @else
+                            <input type="hidden" name="{{ $key }}" value="{{ $value }}">
+                        @endif
+                    @endforeach
+
+                    <button type="button" class="filter-toggle" data-bs-toggle="offcanvas" data-bs-target="#filterOffcanvas" aria-controls="filterOffcanvas">
+                        <span>{{ __('store.shop.filter') }}</span>
+                    </button>
+                    <div class="filter-divider"></div>
+                    <select name="sort" class="sort-select" onchange="this.form.submit()">
+                        <option value="">{{ __('store.category.sort_by') }}</option>
+                        <option value="newest" {{ request('sort') == 'newest' ? 'selected' : '' }}>{{ __('store.category.newest') }}</option>
+                        <option value="price_asc" {{ request('sort') == 'price_asc' ? 'selected' : '' }}>{{ __('store.category.price_low_high') }}</option>
+                        <option value="price_desc" {{ request('sort') == 'price_desc' ? 'selected' : '' }}>{{ __('store.category.price_high_low') }}</option>
+                        <option value="top_rated" {{ request('sort') == 'top_rated' ? 'selected' : '' }}>{{ __('store.category.top_rated') }}</option>
+                    </select>
+                </form>
             </div>
 
             <!-- Desktop Sidebar -->

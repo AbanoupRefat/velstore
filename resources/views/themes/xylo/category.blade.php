@@ -44,48 +44,34 @@
     <div class="row">
         @forelse ($products as $product)
             <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
-                <div class="product-card">
+                <div class="product-card clickable-product-card" onclick="window.location='{{ route('product.show', $product->slug) }}'">
                     <div class="product-img">
-                        <a href="{{ route('product.show', $product->slug) }}">
-                            <img src="{{ asset('uploads/' . (optional($product->thumbnail)->image_url ?? 'default.jpg')) }}"
-                                 alt="{{ $product->translation->name ?? 'Product Name' }}">
-                        </a>
-                        <button class="wishlist-btn" data-product-id="{{ $product->id }}">
+                        <img src="{{ asset('uploads/' . (optional($product->thumbnail)->image_url ?? 'default.jpg')) }}" 
+                             alt="{{ $product->translation->name ?? 'Product Name Not Available' }}">
+                        <button class="wishlist-btn" data-product-id="{{ $product->id }}" onclick="event.stopPropagation();">
                             <i class="fa-solid fa-heart"></i>
                         </button>
                         <button class="quick-view-btn" data-product-id="{{ $product->id }}" onclick="event.stopPropagation(); openQuickView({{ $product->id }});" title="{{ __('Quick View') }}">
-                            <i class="fas fa-eye"></i>
+                            <i class="fas fa-plus"></i>
                         </button>
                     </div>
-                    <div class="product-info mt-4">
-                        <div class="top-info">
-                            <div class="reviews">
-                                <i class="fa-solid fa-star"></i> ({{ $product->reviews_count }} {{ __('store.category.reviews') }})
-                            </div>
-                        </div>
-                        <div class="bottom-info">
-                            <div class="left">
-                                <h3>
-                                    <a href="{{ route('product.show', $product->slug) }}" class="product-title">
-                                        {{ $product->translation->name ?? 'Product Name Not Available' }}
-                                    </a>
-                                </h3>
-                                <p class="price">
-                                    <span class="original {{ optional($product->primaryVariant)->converted_discount_price ? 'has-discount' : '' }}">
-                                        {{ activeCurrency()->symbol }}{{ optional($product->primaryVariant)->converted_price ?? 'N/A' }}
-                                    </span>
-
-                                    @if(optional($product->primaryVariant)->converted_discount_price)
-                                        <span class="discount">
-                                            {{ activeCurrency()->symbol }}{{ $product->primaryVariant->converted_discount_price }}
-                                        </span>
-                                    @endif
-                                </p>
-                            </div>
-                            <button class="cart-btn" onclick="addToCart({{ $product->id }})">
-                                <i class="fa fa-shopping-bag"></i>
-                            </button>
-                        </div>
+                    <div class="product-info p-3">
+                        <h3>
+                            <a href="{{ route('product.show', $product->slug) }}" class="product-title" onclick="event.stopPropagation();">
+                                {{ $product->translation->name ?? 'Product Name Not Available' }}
+                            </a>
+                        </h3>
+                        <p class="price mb-3">
+                            @php
+                                $minPrice = $product->variants->min('converted_price');
+                                $maxPrice = $product->variants->max('converted_price');
+                            @endphp
+                            @if($minPrice != $maxPrice)
+                                {{ $currency->symbol }} {{ number_format($minPrice, 0) }} - {{ $currency->symbol }} {{ number_format($maxPrice, 0) }}
+                            @else
+                                {{ $currency->symbol }} {{ number_format($minPrice, 0) }}
+                            @endif
+                        </p>
                     </div>
                 </div>
             </div>
