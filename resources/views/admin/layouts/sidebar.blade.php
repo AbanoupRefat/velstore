@@ -22,7 +22,6 @@
                 </ul>
             </div>
         </li>
-        {{-- HIDDEN FOR FUTURE USE: Categories
         <li class="nav-item">
             <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#categoryMenu" role="button" aria-expanded="false" aria-controls="categoryMenu">
                 <span><i class="fas fa-th-large me-2"></i> <span>{{ __('cms.sidebar.categories.title') }}</span></span>
@@ -34,8 +33,7 @@
                     <li><a class="nav-link {{ Route::currentRouteName() == 'admin.categories.index' ? 'active' : '' }}" href="{{ route('admin.categories.index') }}">{{ __('cms.sidebar.categories.list') }}</a></li>
                 </ul>
             </div>
-        </li>
-        --}}           
+        </li>           
         {{-- HIDDEN FOR FUTURE USE: Brands
         <li class="nav-item">
             <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#brandMenu" role="button" aria-expanded="false" aria-controls="brandMenu">
