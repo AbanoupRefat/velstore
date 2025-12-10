@@ -140,3 +140,20 @@ document.addEventListener("DOMContentLoaded", function () {
 
     elements.forEach(el => observer.observe(el));
 });
+
+// Header scroll effect - transparent to white
+document.addEventListener("DOMContentLoaded", function () {
+    const header = document.querySelector('header');
+    if (!header) return;
+
+    function checkScroll() {
+        if (window.scrollY > 50) {
+            header.classList.add('scrolled');
+        } else {
+            header.classList.remove('scrolled');
+        }
+    }
+
+    window.addEventListener('scroll', checkScroll);
+    checkScroll(); // Check initial state
+});
