@@ -51,40 +51,51 @@
 
             <div class="product-slider">
                 @foreach ($products as $product)
-                    <div class="product-card clickable-product-card" onclick="window.location='{{ route('product.show', $product->slug) }}'">
-                        <div class="product-img">
-                            <img src="{{ asset('uploads/' . (optional($product->thumbnail)->image_url ?? 'default.jpg')) }}" 
-                                alt="{{ $product->translation->name ?? 'Product Name Not Available' }}">
-                                <button class="wishlist-btn" data-product-id="{{ $product->id }}" onclick="event.stopPropagation();">
-                                    <i class="fa-solid fa-heart"></i>
-                                </button>
-                                <button class="quick-view-btn" data-product-id="{{ $product->id }}" onclick="event.stopPropagation(); openQuickView({{ $product->id }});" title="{{ __('Quick View') }}">
-                                    <i class="fas fa-plus"></i>
-                                </button>
+                    <div class="product-card">
+                        <div class="product-card__figure">
+                            <a href="{{ route('product.show', $product->slug) }}" class="product-card__media" draggable="false">
+                                {{-- Primary Image --}}
+                                <img src="{{ asset('uploads/' . (optional($product->thumbnail)->image_url ?? 'default.jpg')) }}" 
+                                     alt="{{ $product->translation->name ?? 'Product' }}"
+                                     class="product-card__image product-card__image--primary"
+                                     draggable="false">
+                                
+                                {{-- Secondary Image (if exists, shows on hover) --}}
+                                @if($product->images && $product->images->count() > 1)
+                                <img src="{{ asset('uploads/' . $product->images[1]->image_url) }}" 
+                                     alt="{{ $product->translation->name ?? 'Product' }}"
+                                     class="product-card__image product-card__image--secondary"
+                                     draggable="false">
+                                @endif
+                            </a>
+                            
+                            {{-- Quick Add Button with Plus SVG --}}
+                            <button type="button" class="product-card__quick-add-button" 
+                                    data-product-id="{{ $product->id }}" 
+                                    onclick="event.stopPropagation(); openQuickView({{ $product->id }});"
+                                    title="{{ __('Quick View') }}">
+                                <span class="sr-only">{{ __('Choose options') }}</span>
+                                <svg aria-hidden="true" focusable="false" fill="none" width="12" class="icon-plus" viewBox="0 0 12 12">
+                                    <path d="M6 0v12M0 6h12" stroke="currentColor" stroke-width="1.5"></path>
+                                </svg>
+                            </button>
                         </div>
-                        <div class="product-info p-3">
-                            <div class="reviews mb-2">
-                                <i class="fa-solid fa-star"></i> ({{ $product->reviews_count }} {{ __('store.home.reviews') }})
-                            </div>
-                            <h3>
-                                <a href="{{ route('product.show', $product->slug) }}" class="product-title" onclick="event.stopPropagation();">
-                                    {{ $product->translation->name ?? 'Product Name Not Available' }}
-                                </a>
-                            </h3>
-                            <p class="price mb-3">
+                        
+                        <div class="product-card__info">
+                            <a href="{{ route('product.show', $product->slug) }}" class="product-card__title">
+                                {{ $product->translation->name ?? 'Product Name Not Available' }}
+                            </a>
+                            <div class="product-card__price">
                                 @php
                                     $minPrice = $product->variants->min('converted_price');
                                     $maxPrice = $product->variants->max('converted_price');
                                 @endphp
-                                @if($minPrice != $maxPrice)
-                                    {{ $currency->symbol }} {{ number_format($minPrice, 2) }} - {{ $currency->symbol }} {{ number_format($maxPrice, 2) }}
+                                @if($minPrice && $minPrice != $maxPrice)
+                                    {{ number_format($minPrice, 2) }} - {{ number_format($maxPrice, 2) }}
                                 @else
-                                    {{ $currency->symbol }} {{ number_format($minPrice, 2) }}
+                                    {{ number_format($minPrice ?? 0, 2) }}
                                 @endif
-                            </p>
-                            <button class="btn btn-dark w-100 rounded-pill text-uppercase" onclick="event.stopPropagation(); window.location='{{ route('product.show', $product->slug) }}'">
-                                {{ __('store.product_detail.add_to_cart') }}
-                            </button>
+                            </div>
                         </div>
                     </div>
                 @endforeach
