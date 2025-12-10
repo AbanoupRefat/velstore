@@ -5,7 +5,48 @@
     --burgundy-dark: #5D001E;
     --gold-cream: #F4E4C1;
     --warm-white: #FAF9F6;
-    --deep-charcoal: #2C2C2C;
+    --deep-charcoal: #5D001E;
+    /* Replaced charcoal with burgundy dark */
+    --main-color: #800020;
+    /* Override main color */
+    --text-color: #800020;
+}
+
+body {
+    color: var(--burgundy-main) !important;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.h1,
+.h2,
+.h3,
+.h4,
+.h5,
+.h6 {
+    color: var(--burgundy-main) !important;
+}
+
+a {
+    color: var(--burgundy-main);
+    transition: color 0.3s ease;
+}
+
+a:hover {
+    color: var(--burgundy-light);
+}
+
+.text-dark {
+    color: var(--burgundy-main) !important;
+}
+
+.text-muted {
+    color: #A0153E !important;
+    /* Lighter burgundy */
 }
 
 /* ========================================
@@ -518,7 +559,7 @@ header form input[type="submit"] {
 
 .quick-add-btn i,
 .quick-view-btn i {
-    color: #1a1a1a;
+    color: var(--burgundy-main);
     font-size: 16px;
 }
 
@@ -559,7 +600,7 @@ header form input[type="submit"] {
 }
 
 .wishlist-btn i.fa-solid.fa-heart {
-    color: #1a1a1a;
+    color: var(--burgundy-main);
 }
 
 /* Product Info - Centered, Minimal Typography */
@@ -585,7 +626,7 @@ header form input[type="submit"] {
     font-weight: 500;
     text-transform: uppercase;
     letter-spacing: 0.8px;
-    color: #1a1a1a;
+    color: var(--burgundy-main);
     margin: 0 0 8px 0;
     line-height: 1.4;
 }
@@ -606,7 +647,7 @@ header form input[type="submit"] {
 .product-price-minimal {
     font-size: 13px;
     font-weight: 400;
-    color: #1a1a1a;
+    color: var(--burgundy-main);
     margin: 0 !important;
 }
 
