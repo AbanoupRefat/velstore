@@ -210,7 +210,7 @@
                 </a>
                 <style>
                     .logo-responsive {
-                        width: 150px; /* Mobile */
+                        width: 180px; /* Mobile (Same as PC) */
                     }
                     @media (min-width: 768px) {
                         .logo-responsive {
