@@ -363,59 +363,15 @@
 }
 
 /* ========================================
-   Sticky Header Mobile - Transparent to White on Scroll
+   Sticky Header Mobile
    ======================================== */
 @media (max-width: 991px) {
     header {
         position: sticky !important;
         top: 0;
         z-index: 1000;
-        background: transparent;
-        transition: background 0.3s ease, box-shadow 0.3s ease;
-    }
-
-    /* When scrolled, add white background */
-    header.scrolled {
         background: white;
         box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-    }
-
-    /* Shorter header on mobile */
-    header .container.py-3 {
-        padding-top: 8px !important;
-        padding-bottom: 8px !important;
-    }
-
-    /* Smaller logo on mobile */
-    header .logo-responsive {
-        width: 120px !important;
-    }
-}
-
-/* ========================================
-   Banner Image Contain (Full Image Visible)
-   ======================================== */
-.banner-slider .swiper-slide img,
-.banner-area img,
-.banner-image img {
-    object-fit: contain !important;
-    width: 100%;
-    height: 100%;
-}
-
-@media (max-width: 767px) {
-
-    .banner-slider .swiper-slide,
-    .banner-area,
-    .swiper-slide {
-        height: auto !important;
-        aspect-ratio: 16 / 9;
-    }
-
-    .banner-slider .swiper-slide img,
-    .banner-area img {
-        object-fit: cover !important;
-        object-position: center center;
     }
 }
 

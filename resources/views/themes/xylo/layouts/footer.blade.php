@@ -3,7 +3,7 @@
     <div class="row">
       <!-- Column 1: Logo -->
       <div class="col-12 col-md-3 mb-4">
-        <img src="{{ asset('uploads/website_logo.png') }}" alt="Bekabo Logo" class="img-fluid" style="max-width: 150px;">
+        <img src="{{ asset('uploads/footer_logo.png') }}" alt="Pekaboo Logo" class="img-fluid" style="max-width: 150px;">
       </div>
 
       <!-- Column 2: Account -->

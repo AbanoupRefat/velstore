@@ -1162,8 +1162,7 @@ img.blog-img.deactive {
 }
 
 .animate-on-scroll {
-    opacity: 1;
-    transition: opacity 0.3s ease, transform 0.3s ease;
+    opacity: 0;
 }
 
 .header-categories .dropdown-menu {
