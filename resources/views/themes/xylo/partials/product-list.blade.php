@@ -1,39 +1,50 @@
 @php $currency = activeCurrency(); @endphp
 @foreach($products as $product)
-<div class="col-6 col-md-4">
-    <div class="product-card clickable-product-card" onclick="window.location='{{ route('product.show', $product->slug) }}'">
-        <div class="product-img">
+<div class="col-6 col-md-4 col-lg-3">
+    <div class="product-card">
+        {{-- Image Wrapper Link --}}
+        <a href="{{ route('product.show', $product->slug) }}" class="product-img d-block">
+            
+            {{-- Primary Image --}}
             <img src="{{ asset('uploads/' . (optional($product->thumbnail)->image_url ?? 'default.jpg')) }}" 
-                 alt="{{ $product->translation->name ?? 'Product Name Not Available' }}">
-            <button class="wishlist-btn" data-product-id="{{ $product->id }}" onclick="event.stopPropagation();"><i class="fa-solid fa-heart"></i></button>
-            <button class="quick-view-btn" data-product-id="{{ $product->id }}" onclick="event.stopPropagation(); openQuickView({{ $product->id }});" title="{{ __('Quick View') }}">
-                <i class="fas fa-plus"></i>
+                 alt="{{ $product->translation->name ?? 'Product' }}" 
+                 class="img-primary">
+            
+            {{-- Secondary Image (Hover) --}}
+            @if($product->images && $product->images->count() > 0)
+                <img src="{{ asset('uploads/' . $product->images->first()->image_url) }}" 
+                     alt="{{ $product->translation->name ?? 'Product' }}" 
+                     class="img-secondary">
+            @endif
+
+            {{-- Quick Add Button (Bottom Right) --}}
+            <button class="quick-add-btn" 
+                    onclick="event.preventDefault(); openQuickView({{ $product->id }});" 
+                    title="{{ __('Quick View') }}">
+                <svg viewBox="0 0 12 12" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M6 0v12M0 6h12" fill="none" stroke="currentColor" stroke-width="1"></path>
+                </svg>
             </button>
-        </div>
-            <div class="product-info p-3">
-                <div class="reviews mb-2">
-                    <i class="fa-solid fa-star"></i> ({{ $product->reviews_count }} {{ __('store.category.reviews') }})
-                </div>
-                <h3>
-                    <a href="{{ route('product.show', $product->slug) }}" class="product-title" onclick="event.stopPropagation();">
-                        {{ $product->translation->name ?? 'Product Name Not Available' }}
-                    </a>
-                </h3>
-                <p class="price mb-3">
-                    @php
-                        $minPrice = $product->variants->min('converted_price');
-                        $maxPrice = $product->variants->max('converted_price');
-                    @endphp
-                    @if($minPrice != $maxPrice)
-                        {{ $currency->symbol }} {{ number_format($minPrice, 2) }} - {{ $currency->symbol }} {{ number_format($maxPrice, 2) }}
-                    @else
-                        {{ $currency->symbol }} {{ number_format($minPrice, 2) }}
-                    @endif
-                </p>
-                <button class="btn btn-dark w-100 rounded-pill text-uppercase" onclick="event.stopPropagation(); window.location='{{ route('product.show', $product->slug) }}'">
-                    {{ __('store.product_detail.add_to_cart') }}
-                </button>
+        </a>
+
+        {{-- Product Info --}}
+        <div class="product-info">
+            <a href="{{ route('product.show', $product->slug) }}" class="product-title">
+                {{ $product->translation->name ?? 'Product Name' }}
+            </a>
+            
+            <div class="product-price">
+                @php
+                    $minPrice = $product->variants->min('converted_price');
+                    $maxPrice = $product->variants->max('converted_price');
+                @endphp
+                @if($minPrice != $maxPrice)
+                    {{ $currency->symbol }} {{ number_format($minPrice, 2) }} - {{ number_format($maxPrice, 2) }}
+                @else
+                    {{ $currency->symbol }} {{ number_format($minPrice, 2) }}
+                @endif
             </div>
+        </div>
     </div>
 </div>
 @endforeach
@@ -53,65 +64,7 @@ document.addEventListener('DOMContentLoaded', function () {
         hideMethod: 'fadeOut'
     };
 
-    // Wishlist functionality
-    document.querySelectorAll('.wishlist-btn').forEach(button => {
-        button.addEventListener('click', function (e) {
-            e.stopPropagation();
-            
-            const productId = this.getAttribute('data-product-id');
-            const isAuthenticated = {{ auth('customer')->check() ? 'true' : 'false' }};
-            
-            // Check if user is logged in
-            if (!isAuthenticated) {
-                toastr.warning(
-                    '{{ __("Please login or create an account to save items to your wishlist.") }}',
-                    '{{ __("Login Required") }}',
-                    {
-                        timeOut: 5000,
-                        onclick: function() {
-                            window.location.href = '{{ route("customer.login") }}';
-                        }
-                    }
-                );
-                return;
-            }
-
-            // Send request to toggle wishlist
-            fetch('{{ route("customer.wishlist.toggle") }}', {
-                method: 'POST',
-                headers: {
-                    "Content-Type": "application/json",
-                    "X-CSRF-TOKEN": "{{ csrf_token() }}",
-                    "Accept": "application/json",
-                },
-                body: JSON.stringify({ product_id: productId })
-            })
-            .then(response => {
-                if (response.status === 401) {
-                    window.location.href = '{{ route("customer.login") }}';
-                    return;
-                }
-                return response.json();
-            })
-            .then(data => {
-                if (data) {
-                    // Toggle heart icon
-                    const icon = this.querySelector('i');
-                    if (data.status === 'added') {
-                        icon.style.color = '#800020';
-                        toastr.success(data.message || '{{ __("Added to wishlist!") }}');
-                    } else {
-                        icon.style.color = '';
-                        toastr.info(data.message || '{{ __("Removed from wishlist") }}');
-                    }
-                }
-            })
-            .catch(error => {
-                console.error('Wishlist Error:', error);
-                toastr.error('{{ __("Something went wrong. Please try again.") }}');
-            });
-        });
-    });
+    // Note: Wishlist functionality removed from UI for minimal design, 
+    // but logic kept if you decide to add the button back later.
 });
 </script>
-@endpush
