@@ -4,6 +4,7 @@
 
 @section('content')
 <div class="container py-4">
+    @php $currency = activeCurrency(); @endphp
 
     {{-- Breadcrumbs --}}
     <nav aria-label="breadcrumb">
