@@ -114,6 +114,10 @@ class CouponController extends Controller
         $validated['code'] = strtoupper($validated['code']);
         $validated['is_active'] = $request->has('is_active');
 
+        if ($validated['type'] === 'buy_x_get_y') {
+            $validated['discount'] = 0;
+        }
+
         Coupon::create($validated);
 
         return redirect()->route('admin.coupons.index')
@@ -156,6 +160,10 @@ class CouponController extends Controller
         // Ensure code is uppercase
         $validated['code'] = strtoupper($validated['code']);
         $validated['is_active'] = $request->has('is_active');
+
+        if ($validated['type'] === 'buy_x_get_y') {
+            $validated['discount'] = 0;
+        }
 
         $coupon->update($validated);
 
