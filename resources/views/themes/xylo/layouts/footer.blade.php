@@ -29,10 +29,9 @@
     <div class="col-12 col-md-3 mb-4">
     <h5>{{ __('store.footer.follow_us') }}</h5>
     <div class="d-flex gap-3">
-        <a href="#" class="text-dark fs-5"><i class="fab fa-facebook-f"></i></a>
-        <a href="#" class="text-dark fs-5"><i class="fab fa-twitter"></i></a>
-        <a href="#" class="text-dark fs-5"><i class="fab fa-instagram"></i></a>
-        <a href="#" class="text-dark fs-5"><i class="fab fa-linkedin-in"></i></a>
+        <a href="https://www.facebook.com/share/1Cp8y6SG2H/?mibextid=wwXIfr" target="_blank" class="text-dark fs-5"><i class="fab fa-facebook-f"></i></a>
+        <a href="https://www.instagram.com/bekabo.1?igsh=MWtzeGozNGc0N2hkMg%3D%3D&utm_source=qr" target="_blank" class="text-dark fs-5"><i class="fab fa-instagram"></i></a>
+        <a href="https://www.tiktok.com/@bekabo.1?_r=1&_t=ZS-926Wkbnq9Aq" target="_blank" class="text-dark fs-5"><i class="fab fa-tiktok"></i></a>
     </div>
     </div>
 
