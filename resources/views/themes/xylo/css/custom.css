@@ -433,195 +433,173 @@ header form input[type="submit"] {
 }
 
 /* ========================================
-   OUDIES-STYLE PRODUCT CARD (BEM Structure)
-   Matches the Oudies.com design exactly
+   OUDIES-STYLE PRODUCT CARD (Minimal Design)
+   Based on reference: 4:5 portrait ratio, 
+   white plus button, UPPERCASE centered title
    ======================================== */
 
-/* Product Card Container */
-.product-card {
+/* Product Card - No borders, clean white background */
+.product-card,
+.product-card-minimal {
     background: white;
     border: none;
     box-shadow: none;
     border-radius: 0;
     overflow: visible;
-    margin-bottom: 24px;
+    transition: none;
 }
 
-/* Figure - Image Container */
-.product-card__figure {
+.product-card:hover,
+.product-card-minimal:hover {
+    box-shadow: none;
+    transform: none;
+}
+
+/* Product Image Wrapper - 4:5 Portrait Aspect Ratio */
+.product-img,
+.product-img-wrapper {
     position: relative;
     width: 100%;
     aspect-ratio: 4 / 5;
     overflow: hidden;
-    background-color: #f5f5f5;
+    background-color: #f8f8f8;
+    cursor: pointer;
 }
 
-/* Media Link - Wraps Images */
-.product-card__media {
-    display: block;
-    width: 100%;
-    height: 100%;
-    position: relative;
-}
-
-/* Product Images */
-.product-card__image {
-    position: absolute;
-    top: 0;
-    left: 0;
+.product-img img,
+.product-img-wrapper img {
     width: 100%;
     height: 100%;
     object-fit: cover;
     object-position: center;
-    transition: opacity 0.4s ease, transform 0.4s ease;
+    display: block;
+    transition: transform 0.4s ease;
 }
 
-.product-card__image--primary {
-    z-index: 1;
-}
-
-.product-card__image--secondary {
-    z-index: 0;
-    opacity: 0;
-}
-
-/* Hover: show secondary image */
-.product-card__figure:hover .product-card__image--primary {
-    opacity: 0;
-}
-
-.product-card__figure:hover .product-card__image--secondary {
-    opacity: 1;
-}
-
-/* Hover zoom effect when only one image */
-.product-card__figure:hover .product-card__image--primary:only-of-type {
-    opacity: 1;
-    transform: scale(1.03);
-}
-
-/* Quick Add Button - White Square Bottom Right */
-.product-card__quick-add-button {
-    position: absolute;
-    bottom: 12px;
-    right: 12px;
-    width: 40px;
-    height: 40px;
-    background: white;
-    border: none;
-    padding: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    z-index: 10;
-    opacity: 0;
-    transition: all 0.25s ease;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-}
-
-.product-card__figure:hover .product-card__quick-add-button {
-    opacity: 1;
-}
-
-.product-card__quick-add-button:hover {
-    background: #f0f0f0;
+.product-img:hover img,
+.product-img-wrapper:hover img {
     transform: scale(1.05);
 }
 
-.product-card__quick-add-button .icon-plus {
-    width: 12px;
-    height: 12px;
-    stroke: #1a1a1a;
-}
-
-/* Screen Reader Only */
-.sr-only {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    padding: 0;
-    margin: -1px;
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-    white-space: nowrap;
-    border: 0;
-}
-
-/* Product Info - Centered Text */
-.product-card__info {
-    padding: 16px 4px 8px;
-    text-align: center;
-}
-
-/* Product Title - UPPERCASE, Tracked */
-.product-card__title {
-    display: block;
-    font-size: 11px;
-    font-weight: 400;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: #1a1a1a;
-    text-decoration: none;
-    line-height: 1.5;
-    margin-bottom: 6px;
-}
-
-.product-card__title:hover {
-    color: var(--burgundy-main, #800020);
-}
-
-/* Product Price */
-.product-card__price {
-    font-size: 12px;
-    font-weight: 400;
-    color: #6b6b6b;
-    letter-spacing: 0.02em;
-}
-
-/* Legacy classes for backwards compatibility */
-.product-img {
-    position: relative;
-    width: 100%;
-    aspect-ratio: 4 / 5;
-    overflow: hidden;
-    background-color: #f5f5f5;
-}
-
-.product-img img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: center;
-}
-
+/* Quick Add Button - White Square with Plus Icon at Bottom Right */
+.quick-add-btn,
 .quick-view-btn {
     position: absolute;
     bottom: 12px;
     right: 12px;
-    width: 40px;
-    height: 40px;
+    width: 44px;
+    height: 44px;
     background: white;
     border: none;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
+    transition: all 0.2s ease;
     z-index: 10;
-    opacity: 0;
-    transition: opacity 0.25s ease;
 }
 
-.product-img:hover .quick-view-btn {
+.quick-add-btn:hover,
+.quick-view-btn:hover {
+    background: #f5f5f5;
+    transform: scale(1.05);
+}
+
+.quick-add-btn i,
+.quick-view-btn i {
+    color: #1a1a1a;
+    font-size: 16px;
+}
+
+/* Change eye icon to plus icon programmatically via content */
+.quick-view-btn i.fas.fa-eye::before {
+    content: "\f067";
+    /* Plus icon */
+}
+
+/* Wishlist Button - Hidden by default in minimal design */
+.wishlist-btn {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 36px;
+    height: 36px;
+    background: white;
+    border: none;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: 10;
+}
+
+.product-img:hover .wishlist-btn,
+.product-img-wrapper:hover .wishlist-btn {
     opacity: 1;
 }
 
-.quick-view-btn i {
+.wishlist-btn i {
     color: #1a1a1a;
     font-size: 14px;
 }
 
-/* END OUDIES-STYLE PRODUCT CARD */
+/* Product Info - Centered, Minimal Typography */
+.product-info,
+.product-info-minimal {
+    padding: 16px 8px;
+    text-align: center;
+    background: white;
+}
+
+/* Hide reviews section in minimal design */
+.product-info .reviews,
+.product-info-minimal .reviews {
+    display: none;
+}
+
+/* Product Title - UPPERCASE, Letter Spacing */
+.product-info h3,
+.product-info-minimal h3,
+.product-title,
+.product-title-minimal {
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: #1a1a1a;
+    margin: 0 0 8px 0;
+    line-height: 1.4;
+}
+
+.product-info h3 a,
+.product-title,
+.product-title-minimal a {
+    color: inherit;
+    text-decoration: none;
+}
+
+.product-info h3 a:hover {
+    color: var(--burgundy-main);
+}
+
+/* Product Price - Simple, Centered */
+.product-info .price,
+.product-price-minimal {
+    font-size: 13px;
+    font-weight: 400;
+    color: #1a1a1a;
+    margin: 0;
+}
+
+/* Hide Add to Cart Button in minimal card design */
+.product-info .btn,
+.product-card .btn.btn-dark {
+    display: none;
+}
 
 /* Clickable Product Card Cursor */
 .clickable-product-card {
