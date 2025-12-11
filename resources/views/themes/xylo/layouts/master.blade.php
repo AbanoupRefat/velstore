@@ -166,17 +166,16 @@
                             <thead class="table-light">
                                 <tr>
                                     <th>Size</th>
-                                    <th>Chest (cm)</th>
-                                    <th>Length (cm)</th>
-                                    <th>Sleeve (cm)</th>
+                                    <th>Width (عرض)</th>
+                                    <th>Length (طول)</th>
+                                    <th>Sleeve</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr><td>S</td><td>50</td><td>68</td><td>60</td></tr>
-                                <tr><td>M</td><td>52</td><td>70</td><td>61</td></tr>
-                                <tr><td>L</td><td>54</td><td>72</td><td>62</td></tr>
-                                <tr><td>XL</td><td>56</td><td>74</td><td>63</td></tr>
-                                <tr><td>XXL</td><td>58</td><td>76</td><td>64</td></tr>
+                                <tr><td>M</td><td>56</td><td>58</td><td>18</td></tr>
+                                <tr><td>L</td><td>58</td><td>60</td><td>20</td></tr>
+                                <tr><td>XL</td><td>61</td><td>64</td><td>20</td></tr>
+                                <tr><td>XXL</td><td>63</td><td>66</td><td>22</td></tr>
                             </tbody>
                         </table>
                     </div>
