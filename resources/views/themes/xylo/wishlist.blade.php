@@ -54,15 +54,7 @@
                                     </a>
                                 </h3>
                                 <p class="price mb-3">
-                                    @php
-                                        $minPrice = $product->variants->min('converted_price');
-                                        $maxPrice = $product->variants->max('converted_price');
-                                    @endphp
-                                    @if($minPrice != $maxPrice)
-                                        {{ $currency->symbol }} {{ number_format($minPrice, 2) }} - {{ $currency->symbol }} {{ number_format($maxPrice, 2) }}
-                                    @else
-                                        {{ $currency->symbol }} {{ number_format($minPrice, 2) }}
-                                    @endif
+                                    @include('themes.xylo.partials.price-display', ['product' => $product])
                                 </p>
                                 <button class="btn btn-dark w-100 rounded-pill text-uppercase" onclick="event.stopPropagation(); window.location='{{ route('product.show', $product->slug) }}'">
                                     {{ __('View Product') }}

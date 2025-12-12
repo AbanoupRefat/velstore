@@ -126,6 +126,7 @@
                         <div class="col-md-4">
                             <label>{{ __('cms.products.price') }}</label>
                             <input type="number" step="0.01" name="variants[__INDEX__][price]" class="form-control" value="__PRICE__" />
+                            <small class="text-muted">Leave empty to inherit from first variant</small>
                             <div class="invalid-feedback d-block variant-price-error"></div>
                         </div>
                         <div class="col-md-4">

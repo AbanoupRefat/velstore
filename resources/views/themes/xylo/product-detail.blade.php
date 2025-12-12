@@ -179,7 +179,14 @@
 
             </div>
 
-                <h2><span id="currency-symbol">{{ $currency->symbol }}</span><span  id="variant-price" >{{ $product->primaryVariant->converted_price ?? 'N/A' }}</span></h2>
+                <h2>
+                    @if($product->primaryVariant && $product->primaryVariant->is_on_sale)
+                        <span class="price-original">{{ $currency->symbol }}{{ $product->primaryVariant->converted_price ?? 'N/A' }}</span>
+                        <span id="currency-symbol">{{ $currency->symbol }}</span><span id="variant-price" class="price-sale">{{ $product->primaryVariant->converted_discount_price ?? 'N/A' }}</span>
+                    @else
+                        <span id="currency-symbol">{{ $currency->symbol }}</span><span id="variant-price">{{ $product->primaryVariant->converted_display_price ?? 'N/A' }}</span>
+                    @endif
+                </h2>
                 <p>{{ $product->translation->short_description }}</p>
 
 

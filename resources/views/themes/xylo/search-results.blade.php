@@ -29,15 +29,7 @@
                                     </a>
                                 </h3>
                                 <p class="price mb-3">
-                                    @php
-                                        $minPrice = $product->variants->min('converted_price');
-                                        $maxPrice = $product->variants->max('converted_price');
-                                    @endphp
-                                    @if($minPrice != $maxPrice)
-                                        {{ $currency->symbol }} {{ number_format($minPrice, 0) }} - {{ $currency->symbol }} {{ number_format($maxPrice, 0) }}
-                                    @else
-                                        {{ $currency->symbol }} {{ number_format($minPrice, 0) }}
-                                    @endif
+                                    @include('themes.xylo.partials.price-display', ['product' => $product])
                                 </p>
                             </div>
                         </div>
