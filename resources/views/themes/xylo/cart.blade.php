@@ -38,6 +38,12 @@
     @foreach ($cart as $key => $item)
         @php
             $product = \App\Models\Product::with(['translations', 'thumbnail'])->find($item['product_id']);
+            
+            // Skip if product was deleted
+            if (!$product) {
+                continue;
+            }
+            
             $variant = isset($item['variant_id'])
                         ? \App\Models\ProductVariant::with('images')->find($item['variant_id'])
                         : \App\Models\ProductVariant::where('product_id', $item['product_id'])->where('is_primary', true)->first();
@@ -52,9 +58,17 @@
             </td>
             <td>
                 <div class="pr-imghead">
-                    <img src="{{ asset('uploads/' . (optional($variant->images->first() ?? $product->thumbnail)->image_url ?? 'default.jpg')) }}" 
-                         alt="{{ $variant->name ?? $product->translation->name }}">
-                    <p>{{ $variant->name ?? $product->translation->name }}</p>
+                    @php
+                        $imageUrl = 'default.jpg';
+                        if ($variant && $variant->images && $variant->images->first()) {
+                            $imageUrl = $variant->images->first()->image_url;
+                        } elseif ($product->thumbnail) {
+                            $imageUrl = $product->thumbnail->image_url;
+                        }
+                    @endphp
+                    <img src="{{ asset('uploads/' . $imageUrl) }}" 
+                         alt="{{ optional($variant)->name ?? optional($product->translation)->name ?? 'Product' }}">
+                    <p>{{ optional($variant)->name ?? optional($product->translation)->name ?? 'Product' }}</p>
                 </div>
                 
                 <div id="size-color-wrapper">
