@@ -95,12 +95,21 @@
                 quantity: 1
             })
         })
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                return response.json().then(data => {
+                    throw new Error(data.message || 'Failed to add to cart');
+                });
+            }
+            return response.json();
+        })
         .then(data => {
-            toastr.success(data.message || "Added to cart successfully!");
+            toastr.success(data.message || "Added to cart successfully!", "Added to Cart");
             updateCartCount(data.cart);
         })
-        .catch(error => console.error("Error:", error));
+        .catch(error => {
+            toastr.error(error.message || 'An error occurred', 'Cannot Add to Cart');
+        });
     }
 
     function updateCartCount(cart) {

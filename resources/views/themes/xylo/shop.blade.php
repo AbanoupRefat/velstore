@@ -174,17 +174,31 @@ function addToCart(productId) {
             quantity: 1
         })
     })
-    .then(response => response.json())
+    .then(response => {
+        if (!response.ok) {
+            return response.json().then(data => {
+                throw new Error(data.message || 'Failed to add to cart');
+            });
+        }
+        return response.json();
+    })
     .then(data => {
-        toastr.success("{{ session('success') }}", data.message, {
+        toastr.success(data.message, "Added to Cart", {
+            closeButton: true,
+            progressBar: true,
+            positionClass: "toast-top-right",
+            timeOut: 3000
+        });
+        updateCartCount(data.cart);
+    })
+    .catch(error => {
+        toastr.error(error.message || 'An error occurred', 'Cannot Add to Cart', {
             closeButton: true,
             progressBar: true,
             positionClass: "toast-top-right",
             timeOut: 5000
         });
-        updateCartCount(data.cart);
-    })
-    .catch(error => console.error("Error:", error));
+    });
 }
 
 function updateCartCount(cart) {

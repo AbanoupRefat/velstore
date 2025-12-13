@@ -62,6 +62,15 @@
                                 <button class="quick-view-btn" data-product-id="{{ $product->id }}" onclick="event.stopPropagation(); openQuickView({{ $product->id }});" title="{{ __('Quick View') }}">
                                     <i class="fas fa-plus"></i>
                                 </button>
+                                @php
+                                    $primaryVariant = $product->primaryVariant ?? $product->variants->first();
+                                    $stock = $primaryVariant ? $primaryVariant->stock : 0;
+                                @endphp
+                                @if($stock <= 0)
+                                    <span class="stock-badge out-of-stock">{{ __('Out of Stock') }}</span>
+                                @elseif($stock <= 5)
+                                    <span class="stock-badge low-stock">{{ __('Low Stock') }}</span>
+                                @endif
                         </div>
                         <div class="product-info p-3">
                             <h3>
@@ -151,17 +160,31 @@
                 quantity: 1
             })
         })
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                return response.json().then(data => {
+                    throw new Error(data.message || 'Failed to add to cart');
+                });
+            }
+            return response.json();
+        })
         .then(data => {
-            toastr.success("{{ session('success') }}", data.message, {
+            toastr.success(data.message, "Added to Cart", {
+                closeButton: true,
+                progressBar: true,
+                positionClass: "toast-top-right",
+                timeOut: 3000
+            });
+            updateCartCount(data.cart);
+        })
+        .catch(error => {
+            toastr.error(error.message || 'An error occurred', 'Cannot Add to Cart', {
                 closeButton: true,
                 progressBar: true,
                 positionClass: "toast-top-right",
                 timeOut: 5000
             });
-            updateCartCount(data.cart);
-        })
-        .catch(error => console.error("Error:", error));
+        });
     }
 
     function updateCartCount(cart) {

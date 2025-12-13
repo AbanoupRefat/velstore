@@ -1255,3 +1255,41 @@ input[type="radio"]:checked+.size-box {
         bottom: 15px;
     }
 }
+
+/* ========================================
+   STOCK BADGES
+   ======================================== */
+.stock-badge {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    padding: 4px 10px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    border-radius: 3px;
+    letter-spacing: 0.5px;
+    z-index: 10;
+}
+
+.stock-badge.out-of-stock {
+    background: #dc3545;
+    color: #fff;
+}
+
+.stock-badge.low-stock {
+    background: #ffc107;
+    color: #333;
+}
+
+/* Product card overlay for out of stock */
+.product-card.out-of-stock .product-img::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.3);
+    pointer-events: none;
+}

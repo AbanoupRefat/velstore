@@ -137,10 +137,16 @@
 
             </div>
             <div class="col-md-6 pro-textarea">
-                @if ($inStock)
-                    <div id="product-stock" class="mb-2 mt-3 btnss">{{ __('store.product_detail.in_stock') }}</div>
+                @php
+                    $primaryVariant = $product->primaryVariant ?? $product->variants->first();
+                    $stock = $primaryVariant ? $primaryVariant->stock : 0;
+                @endphp
+                @if ($stock <= 0)
+                    <div id="product-stock" class="mb-2 mt-3 btnss text-danger">{{ __('OUT OF STOCK') }}</div>
+                @elseif ($stock <= 5)
+                    <div id="product-stock" class="mb-2 mt-3 btnss text-warning">{{ __('Low Stock') }} - {{ __('Only :count left!', ['count' => $stock]) }}</div>
                 @else
-                    <div id="product-stock" class="mb-2 mt-3 btnss text-danger">OUT OF STOCK</div>
+                    <div id="product-stock" class="mb-2 mt-3 btnss">{{ __('store.product_detail.in_stock') }}</div>
                 @endif
                 @php
                     $averageRating = round($product->reviews_avg_rating, 1);
@@ -257,12 +263,16 @@
 
                 <!-- Quantity Selector and Cart Button -->
                 <div class="cart-actions mt-3 d-flex">
-                    <div class="quantity me-4">
-                        <button onclick="changeQty(-1)">-</button>
-                        <input type="text" id="qty" value="1">
-                        <button onclick="changeQty(1)">+</button>
-                    </div>
-                    <button class="add-to-cart read-more" onclick="addToCart({{ $product->id }}, '{{ $product->product_type }}')">{{ __('store.product_detail.add_to_cart') }}</button>
+                    @if($stock > 0)
+                        <div class="quantity me-4">
+                            <button onclick="changeQty(-1)">-</button>
+                            <input type="text" id="qty" value="1" max="{{ $stock }}">
+                            <button onclick="changeQty(1)">+</button>
+                        </div>
+                        <button class="add-to-cart read-more" onclick="addToCart({{ $product->id }}, '{{ $product->product_type }}')">{{ __('store.product_detail.add_to_cart') }}</button>
+                    @else
+                        <button class="add-to-cart read-more" disabled style="opacity: 0.5; cursor: not-allowed;">{{ __('Out of Stock') }}</button>
+                    @endif
                 </div>
 
             </div>
@@ -649,12 +659,21 @@
                     product_type: product_type
                 })
             })
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(data => {
+                        throw new Error(data.message || 'Failed to add to cart');
+                    });
+                }
+                return response.json();
+            })
             .then(data => {
                 toastr.success(data.message);
                 updateCartCount(data.cart);
             })
-            .catch(error => console.error("Error:", error));
+            .catch(error => {
+                toastr.error(error.message || 'An error occurred', 'Cannot Add to Cart');
+            });
         }
 
 
