@@ -99,9 +99,38 @@ class ProductController extends Controller
                     $path = $image->store('products', 'public');
                     $product->images()->create(['name' => $image->getClientOriginalName(), 'image_url' => $path, 'type' => 'thumb']);
                 }
-            } $variantIndex = 0;
-            foreach ($request->variants as $variantData) {
-                $variant = $product->variants()->create(['variant_slug' => Str::slug($variantData['name']).'-'.uniqid(), 'price' => $variantData['price'], 'discount_price' => $variantData['discount_price'] ?? null, 'stock' => $variantData['stock'], 'SKU' => $variantData['SKU'], 'barcode' => $variantData['barcode'] ?? null, 'weight' => $variantData['weight'] ?? null, 'dimensions' => $variantData['dimension'] ?? null, 'is_primary' => 1]);
+            } 
+            
+            // Get the first variant's price for inheritance
+            $firstVariantPrice = null;
+            $firstVariantDiscountPrice = null;
+            
+            foreach ($request->variants as $index => $variantData) {
+                // For the first variant, price is required (use it as base)
+                if ($index === 0) {
+                    $firstVariantPrice = $variantData['price'] ?? 0;
+                    $firstVariantDiscountPrice = $variantData['discount_price'] ?? null;
+                }
+                
+                // Use provided price or inherit from first variant
+                $price = (!empty($variantData['price']) && $variantData['price'] > 0) 
+                    ? $variantData['price'] 
+                    : $firstVariantPrice;
+                $discountPrice = (!empty($variantData['discount_price']) && $variantData['discount_price'] > 0) 
+                    ? $variantData['discount_price'] 
+                    : $firstVariantDiscountPrice;
+                
+                $variant = $product->variants()->create([
+                    'variant_slug' => Str::slug($variantData['name']).'-'.uniqid(), 
+                    'price' => $price, 
+                    'discount_price' => $discountPrice, 
+                    'stock' => $variantData['stock'], 
+                    'SKU' => $variantData['SKU'], 
+                    'barcode' => $variantData['barcode'] ?? null, 
+                    'weight' => $variantData['weight'] ?? null, 
+                    'dimensions' => $variantData['dimension'] ?? null, 
+                    'is_primary' => $index === 0 ? 1 : 0
+                ]);
                 $variant->translations()->create(['language_code' => $variantData['language_code'] ?? 'en', 'name' => $variantData['name']]);
                 if (! empty($variantData['size_id'])) {
                     DB::table('product_variant_attribute_values')->insert(['product_id' => $product->id, 'product_variant_id' => $variant->id, 'attribute_value_id' => $variantData['size_id'], 'created_at' => now(), 'updated_at' => now()]);
@@ -109,7 +138,7 @@ class ProductController extends Controller
                 } if (! empty($variantData['color_id'])) {
                     DB::table('product_variant_attribute_values')->insert(['product_id' => $product->id, 'product_variant_id' => $variant->id, 'attribute_value_id' => $variantData['color_id'], 'created_at' => now(), 'updated_at' => now()]);
                     ProductAttributeValue::firstOrCreate(['product_id' => $product->id, 'attribute_value_id' => $variantData['color_id']]);
-                } $variantIndex++;
+                }
             }
         });
 
@@ -218,8 +247,37 @@ class ProductController extends Controller
                 }
             } $product->variants()->delete();
             DB::table('product_variant_attribute_values')->where('product_id', $product->id)->delete();
-            foreach ($request->variants as $variantData) {
-                $variant = $product->variants()->create(['variant_slug' => Str::slug($variantData['name']).'-'.uniqid(), 'price' => $variantData['price'], 'discount_price' => $variantData['discount_price'] ?? null, 'stock' => $variantData['stock'], 'SKU' => $variantData['SKU'], 'barcode' => $variantData['barcode'] ?? null, 'weight' => $variantData['weight'] ?? null, 'dimensions' => $variantData['dimension'] ?? null, 'is_primary' => 1]);
+            
+            // Get the first variant's price for inheritance
+            $firstVariantPrice = null;
+            $firstVariantDiscountPrice = null;
+            
+            foreach ($request->variants as $index => $variantData) {
+                // For the first variant, price is required (use it as base)
+                if ($index === 0) {
+                    $firstVariantPrice = $variantData['price'] ?? 0;
+                    $firstVariantDiscountPrice = $variantData['discount_price'] ?? null;
+                }
+                
+                // Use provided price or inherit from first variant
+                $price = (!empty($variantData['price']) && $variantData['price'] > 0) 
+                    ? $variantData['price'] 
+                    : $firstVariantPrice;
+                $discountPrice = (!empty($variantData['discount_price']) && $variantData['discount_price'] > 0) 
+                    ? $variantData['discount_price'] 
+                    : $firstVariantDiscountPrice;
+                
+                $variant = $product->variants()->create([
+                    'variant_slug' => Str::slug($variantData['name']).'-'.uniqid(), 
+                    'price' => $price, 
+                    'discount_price' => $discountPrice, 
+                    'stock' => $variantData['stock'], 
+                    'SKU' => $variantData['SKU'], 
+                    'barcode' => $variantData['barcode'] ?? null, 
+                    'weight' => $variantData['weight'] ?? null, 
+                    'dimensions' => $variantData['dimension'] ?? null, 
+                    'is_primary' => $index === 0 ? 1 : 0
+                ]);
                 $variant->translations()->create(['language_code' => $variantData['language_code'] ?? $defaultLang, 'name' => $variantData['name']]);
                 foreach (['size_id', 'color_id'] as $attrType) {
                     if (! empty($variantData[$attrType])) {
