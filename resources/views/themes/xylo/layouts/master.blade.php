@@ -249,6 +249,22 @@
                 dots: true,
                 arrows: false,
             });
+            
+            // Cinematic banner slider with smooth crossfade
+            $('.banner-slider-cinematic').slick({
+                slidesToShow: 1,
+                slidesToScroll: 1,
+                autoplay: true,
+                fade: true,
+                speed: 1000,
+                cssEase: 'ease-in-out',
+                autoplaySpeed: 5000,
+                dots: true,
+                arrows: true,
+                prevArrow: '<button type="button" class="slick-prev" style="left: 20px; z-index: 10;"><i class="fa fa-chevron-left"></i></button>',
+                nextArrow: '<button type="button" class="slick-next" style="right: 20px; z-index: 10;"><i class="fa fa-chevron-right"></i></button>',
+                pauseOnHover: true,
+            });
             $('.product-slider').slick({
                 slidesToShow: 4,
                 slidesToScroll: 1,

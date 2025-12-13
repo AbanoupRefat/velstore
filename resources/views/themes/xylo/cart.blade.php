@@ -422,15 +422,30 @@ document.addEventListener("DOMContentLoaded", function() {
         })
         .then(response => response.json())
         .then(data => {
-            toastr.success(data.message, "Applied", {
+            if (data.success) {
+                toastr.success(data.message, "Applied", {
+                    closeButton: true,
+                    progressBar: true,
+                    positionClass: "toast-top-right",
+                    timeOut: 3000
+                });
+                setTimeout(() => location.reload(), 1000);
+            } else {
+                toastr.warning(data.message, "Cannot Apply", {
+                    closeButton: true,
+                    progressBar: true,
+                    positionClass: "toast-top-right",
+                    timeOut: 5000
+                });
+            }
+        })
+        .catch(error => {
+            toastr.error("Something went wrong. Please try again.", "Error", {
                 closeButton: true,
                 progressBar: true,
                 positionClass: "toast-top-right",
-                timeOut: 5000
+                timeOut: 3000
             });
-            setTimeout(() => {
-                if (data.success) location.reload();
-            }, 1000);
         });
     });
 
