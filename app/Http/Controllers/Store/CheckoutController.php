@@ -248,7 +248,7 @@ class CheckoutController extends Controller
             'order_date' => now(),
         ]);
 
-        // Save Order Items
+        // Save Order Items and deduct stock
         foreach ($cart as $item) {
             \App\Models\OrderDetail::create([
                 'order_id' => $order->id,
@@ -257,6 +257,12 @@ class CheckoutController extends Controller
                 'quantity' => $item['quantity'],
                 'price' => $item['price'],
             ]);
+            
+            // Deduct stock from variant
+            if (isset($item['variant_id']) && $item['variant_id']) {
+                ProductVariant::where('id', $item['variant_id'])
+                    ->decrement('stock', $item['quantity']);
+            }
         }
 
         // Record coupon usage if a coupon was applied

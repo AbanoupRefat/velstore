@@ -144,7 +144,7 @@
 
                         <div class="row border-bottom pb-2 mb-2 mt-4">
                             <div class="col-6 col-md-4">{{ __('store.checkout.subtotal') }}</div>
-                            <div class="col-6 col-md-8 text-end">${{ number_format($subtotal, 2) }}</div>
+                            <div class="col-6 col-md-8 text-end">{{ number_format($subtotal, 2) }} EGP</div>
                         </div>
                         <div class="d-flex justify-content-between mb-2">
                             <span>{{ __('store.checkout.shipping') }}</span>
@@ -161,7 +161,7 @@
                         <hr>
                         <div class="d-flex justify-content-between mb-2">
                             <span class="fw-bold">{{ __('store.checkout.total') }}</span>
-                            <span class="fw-bold text-primary" id="total-cost-display">{{ number_format($subtotal, 2) }} EGP</span>
+                            <span class="fw-bold text-primary" id="total-cost-display">{{ number_format($total, 2) }} EGP</span>
                         </div>
                     </div>
                 </div>

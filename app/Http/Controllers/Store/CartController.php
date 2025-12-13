@@ -39,6 +39,33 @@ class CartController extends Controller
             ], 422);
         }
 
+        // Check if item is in stock
+        if ($variant->stock <= 0) {
+            return response()->json([
+                'message' => __('This item is currently out of stock.'),
+            ], 422);
+        }
+
+        // Calculate total quantity that would be in cart
+        $cart = Session::get('cart', []);
+        $attributeValueIdsSorted = collect($attributeValueIds)->sort()->values()->implode('_');
+        $key = "cart_{$productId}_{$attributeValueIdsSorted}";
+        $currentQtyInCart = isset($cart[$key]) ? $cart[$key]['quantity'] : 0;
+        $totalRequestedQty = $currentQtyInCart + $quantity;
+
+        // Check if sufficient stock is available
+        if ($totalRequestedQty > $variant->stock) {
+            $available = $variant->stock - $currentQtyInCart;
+            if ($available <= 0) {
+                return response()->json([
+                    'message' => __('You have already added the maximum available quantity to your cart.'),
+                ], 422);
+            }
+            return response()->json([
+                'message' => __('Only :count item(s) available in stock.', ['count' => $available]),
+            ], 422);
+        }
+
         $attributePairs = [];
         foreach ($attributeValueIds as $attributeValueId) {
             $attributeValue = \App\Models\AttributeValue::with('attribute')->find($attributeValueId);
@@ -46,11 +73,6 @@ class CartController extends Controller
                 $attributePairs[$attributeValue->attribute->id] = $attributeValue->id;
             }
         }
-
-        $cart = Session::get('cart', []);
-
-        $attributeValueIdsSorted = collect($attributeValueIds)->sort()->values()->implode('_');
-        $key = "cart_{$productId}_{$attributeValueIdsSorted}";
 
         if (isset($cart[$key])) {
             $cart[$key]['quantity'] += $quantity;
