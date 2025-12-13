@@ -274,11 +274,15 @@ function populateQuickView(product) {
         thumbnailsContainer.innerHTML = '';
     }
     
-    // Set price
-    if (product.price_range) {
-        document.getElementById('quickViewPrice').textContent = product.price_range;
+    // Set price (with discount support)
+    const priceEl = document.getElementById('quickViewPrice');
+    if (product.is_on_sale) {
+        priceEl.innerHTML = '<span style="text-decoration: line-through; color: #999; font-size: 0.65em; margin-right: 8px; font-weight: 400;">' + product.original_price + '</span>' +
+                           '<span style="color: #800020; font-weight: 700;">' + product.discount_price + '</span>';
+    } else if (product.price_range) {
+        priceEl.textContent = product.price_range;
     } else {
-        document.getElementById('quickViewPrice').textContent = product.price;
+        priceEl.textContent = product.price;
     }
     
     // Populate sizes if available

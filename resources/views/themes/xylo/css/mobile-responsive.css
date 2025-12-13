@@ -559,53 +559,71 @@
    Discount Price Mobile Optimization
    ======================================== */
 @media (max-width: 767px) {
-    /* Product detail page price */
+
+    /* Product detail page price - MUCH smaller on mobile */
     .pro-textarea h2,
     .main-detail h2 {
-        font-size: 18px !important;
+        font-size: 16px !important;
         word-wrap: break-word;
         overflow-wrap: break-word;
+        line-height: 1.5 !important;
     }
-    
+
     .pro-textarea h2 .price-original,
     .main-detail h2 .price-original {
-        font-size: 0.65em !important;
+        font-size: 14px !important;
         display: block !important;
         margin-bottom: 4px !important;
         margin-right: 0 !important;
     }
-    
+
     .pro-textarea h2 .price-sale,
-    .main-detail h2 .price-sale {
-        font-size: 1em !important;
-        display: inline !important;
+    .main-detail h2 .price-sale,
+    .pro-textarea h2 #variant-price,
+    .main-detail h2 #variant-price {
+        font-size: 20px !important;
+        display: block !important;
     }
-    
+
     /* Product cards price */
     .product-card .price {
         font-size: 14px !important;
         flex-wrap: wrap;
     }
-    
+
     .product-card .price .price-original {
-        font-size: 0.8em !important;
+        font-size: 11px !important;
         display: block !important;
         margin-bottom: 2px;
     }
-    
+
     .product-card .price .price-sale {
         display: block !important;
+        font-size: 14px !important;
+    }
+
+    /* Quick view modal price */
+    .quick-view-price #quickViewPrice {
+        font-size: 18px !important;
     }
 }
 
 @media (max-width: 480px) {
+
     .pro-textarea h2,
     .main-detail h2 {
-        font-size: 16px !important;
+        font-size: 14px !important;
     }
-    
+
     .pro-textarea h2 .price-original,
     .main-detail h2 .price-original {
-        font-size: 0.6em !important;
+        font-size: 12px !important;
+    }
+
+    .pro-textarea h2 .price-sale,
+    .main-detail h2 .price-sale,
+    .pro-textarea h2 #variant-price,
+    .main-detail h2 #variant-price {
+        font-size: 18px !important;
     }
 }

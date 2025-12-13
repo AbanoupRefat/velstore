@@ -29,10 +29,11 @@
 @endphp
 
 @if($hasDiscount && $primaryVariant && $primaryVariant->is_on_sale)
-    <span class="price-original">{{ $currency->symbol }} {{ number_format($originalPrice, 2) }}</span>
-    <span class="price-sale">{{ $currency->symbol }} {{ number_format($salePrice, 2) }}</span>
+    <span class="price-original" style="text-decoration: line-through; color: #999; font-size: 0.8em; margin-right: 6px; font-weight: 400;">{{ $currency->symbol }} {{ number_format($originalPrice, 2) }}</span>
+    <span class="price-sale" style="color: #800020; font-weight: 700;">{{ $currency->symbol }} {{ number_format($salePrice, 2) }}</span>
 @elseif(isset($hasRange) && $hasRange)
     {{ $currency->symbol }} {{ number_format($minPrice, 2) }} - {{ $currency->symbol }} {{ number_format($maxPrice, 2) }}
 @else
     {{ $currency->symbol }} {{ number_format($minPrice ?? $primaryVariant->converted_display_price, 2) }}
 @endif
+

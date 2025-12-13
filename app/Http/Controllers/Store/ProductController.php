@@ -124,11 +124,22 @@ class ProductController extends Controller
             }
         }
 
-        // Get price range
+        // Get price range and discount info
         $minPrice = $product->variants->min('converted_price');
         $maxPrice = $product->variants->max('converted_price');
+        $primaryVariant = $product->primaryVariant ?? $product->variants->first();
         
-        if ($minPrice != $maxPrice) {
+        // Check for discount
+        $isOnSale = $primaryVariant && $primaryVariant->is_on_sale;
+        $originalPrice = null;
+        $discountPrice = null;
+        
+        if ($isOnSale) {
+            $originalPrice = $currency->symbol . ' ' . number_format($primaryVariant->converted_price, 2);
+            $discountPrice = $currency->symbol . ' ' . number_format($primaryVariant->converted_discount_price, 2);
+            $price = $discountPrice;
+            $priceRange = null;
+        } elseif ($minPrice != $maxPrice) {
             $priceRange = $currency->symbol . ' ' . number_format($minPrice, 2) . ' - ' . $currency->symbol . ' ' . number_format($maxPrice, 2);
             $price = null;
         } else {
@@ -159,7 +170,10 @@ class ProductController extends Controller
             $attrIds = $variant->attributeValues->pluck('id')->sort()->values()->toArray();
             $variantMap[] = [
                 'attributes' => $attrIds,
-                'price' => $currency->symbol . ' ' . number_format($variant->converted_price, 2),
+                'price' => $currency->symbol . ' ' . number_format($variant->converted_display_price, 2),
+                'original_price' => $currency->symbol . ' ' . number_format($variant->converted_price, 2),
+                'discount_price' => $variant->converted_discount_price ? $currency->symbol . ' ' . number_format($variant->converted_discount_price, 2) : null,
+                'is_on_sale' => $variant->is_on_sale,
                 'id' => $variant->id
             ];
         }
@@ -171,6 +185,9 @@ class ProductController extends Controller
             'images' => $images,
             'price' => $price,
             'price_range' => $priceRange,
+            'is_on_sale' => $isOnSale,
+            'original_price' => $originalPrice,
+            'discount_price' => $discountPrice,
             'reviews_count' => $product->reviews_count,
             'sizes' => $sizes,
             'colors' => $colors,
