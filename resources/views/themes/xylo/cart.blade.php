@@ -182,21 +182,37 @@
                     </div>
 
                     @php
-                        $coupon = session('cart_coupon');
+                        $couponData = session('cart_coupon');
                         $discountAmount = 0;
-                        if ($coupon) {
-                            if ($coupon['type'] === 'percentage') {
-                                $discountAmount = $total * ($coupon['discount'] / 100);
+                        $couponValid = false;
+                        
+                        if ($couponData) {
+                            $couponModel = \App\Models\Coupon::find($couponData['id']);
+                            
+                            if ($couponModel) {
+                                // Revalidate min_order_amount against current cart total
+                                if ($couponModel->min_order_amount !== null && $total < $couponModel->min_order_amount) {
+                                    // Cart no longer meets minimum - remove coupon
+                                    session()->forget('cart_coupon');
+                                    $couponData = null;
+                                } else {
+                                    // Calculate discount using the proper model method (handles all types)
+                                    $discountAmount = $couponModel->calculateDiscount($total, $cart);
+                                    $couponValid = true;
+                                }
                             } else {
-                                $discountAmount = $coupon['discount'];
+                                // Coupon was deleted - remove from session
+                                session()->forget('cart_coupon');
+                                $couponData = null;
                             }
                         }
+                        
                         $finalTotal = max(0, $total - $discountAmount);
                     @endphp
 
-                    @if($coupon)
+                    @if($couponData)
                         <div class="row border-bottom pb-2 mb-2 d-flex align-items-center">
-                            <div class="col-8 d-flex align-items-center">Discount ({{ $coupon['code'] }})</div>
+                            <div class="col-8 d-flex align-items-center">Discount ({{ $couponData['code'] }})</div>
                             <div class="col-4 d-flex justify-content-end align-items-center">
                                     -{{ $currency->symbol }}{{ number_format($discountAmount, 2) }}
                                 <form id="removeCouponForm" class="ms-2">

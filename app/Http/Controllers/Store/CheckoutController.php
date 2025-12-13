@@ -198,8 +198,24 @@ class CheckoutController extends Controller
         $couponCode = null;
         
         if ($couponData) {
-            $discountAmount = $cartService->getDiscountAmount($total);
-            $couponCode = $couponData['code'];
+            // Revalidate coupon before applying at checkout
+            $coupon = \App\Models\Coupon::find($couponData['id']);
+            
+            if ($coupon) {
+                // Check min_order_amount
+                if ($coupon->min_order_amount !== null && $total < $coupon->min_order_amount) {
+                    // Cart no longer meets minimum - remove coupon and continue without it
+                    $cartService->removeCoupon();
+                    $couponData = null;
+                } else {
+                    $discountAmount = $cartService->getDiscountAmount($total);
+                    $couponCode = $couponData['code'];
+                }
+            } else {
+                // Coupon was deleted - remove from session
+                $cartService->removeCoupon();
+                $couponData = null;
+            }
         }
         
         $finalTotal = $total - $discountAmount + $shippingFee;
