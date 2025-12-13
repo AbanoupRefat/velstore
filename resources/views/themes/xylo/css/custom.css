@@ -1093,16 +1093,32 @@ input[type="radio"]:checked+.size-box {
    DISCOUNT PRICE DISPLAY STYLES
    ======================================== */
 .price-original {
-    text-decoration: line-through;
-    color: #999;
-    font-size: 0.85em;
-    margin-right: 8px;
-    font-weight: 400;
+    text-decoration: line-through !important;
+    color: #999 !important;
+    font-size: 0.85em !important;
+    margin-right: 8px !important;
+    font-weight: 400 !important;
+    display: inline-block !important;
 }
 
 .price-sale {
-    color: var(--burgundy-main);
-    font-weight: 700;
+    color: var(--burgundy-main) !important;
+    font-weight: 700 !important;
+}
+
+/* Product detail page specific */
+.pro-textarea h2 .price-original,
+.main-detail h2 .price-original {
+    text-decoration: line-through !important;
+    color: #999 !important;
+    font-size: 0.75em !important;
+    font-weight: 400 !important;
+}
+
+.pro-textarea h2 .price-sale,
+.main-detail h2 .price-sale {
+    color: var(--burgundy-main) !important;
+    font-weight: 700 !important;
 }
 
 .product-card .price .price-original {

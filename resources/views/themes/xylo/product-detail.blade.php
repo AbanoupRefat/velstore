@@ -181,8 +181,8 @@
 
                 <h2>
                     @if($product->primaryVariant && $product->primaryVariant->is_on_sale)
-                        <span class="price-original">{{ $currency->symbol }}{{ $product->primaryVariant->converted_price ?? 'N/A' }}</span>
-                        <span id="currency-symbol">{{ $currency->symbol }}</span><span id="variant-price" class="price-sale">{{ $product->primaryVariant->converted_discount_price ?? 'N/A' }}</span>
+                        <span class="price-original" style="text-decoration: line-through; color: #999; font-size: 0.75em; margin-right: 8px; font-weight: 400;">{{ $currency->symbol }}{{ $product->primaryVariant->converted_price ?? 'N/A' }}</span>
+                        <span id="currency-symbol">{{ $currency->symbol }}</span><span id="variant-price" class="price-sale" style="color: #800020; font-weight: 700;">{{ $product->primaryVariant->converted_discount_price ?? 'N/A' }}</span>
                     @else
                         <span id="currency-symbol">{{ $currency->symbol }}</span><span id="variant-price">{{ $product->primaryVariant->converted_display_price ?? 'N/A' }}</span>
                     @endif
@@ -583,9 +583,9 @@
                         // Handle discount price display
                         if (response.is_on_sale) {
                             // Show strikethrough original price + sale price
-                            var priceHtml = '<span class="price-original">' + response.currency_symbol + response.original_price + '</span>' +
+                            var priceHtml = '<span class="price-original" style="text-decoration: line-through; color: #999; font-size: 0.75em; margin-right: 8px; font-weight: 400;">' + response.currency_symbol + response.original_price + '</span>' +
                                            '<span id="currency-symbol">' + response.currency_symbol + '</span>' +
-                                           '<span id="variant-price" class="price-sale">' + response.discount_price + '</span>';
+                                           '<span id="variant-price" class="price-sale" style="color: #800020; font-weight: 700;">' + response.discount_price + '</span>';
                             $('#variant-price').parent().html(priceHtml);
                         } else {
                             // Show regular price
