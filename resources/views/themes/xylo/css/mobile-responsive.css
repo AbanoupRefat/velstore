@@ -554,3 +554,58 @@
 .price-filters-dropdown button:hover {
     background: #000;
 }
+
+/* ========================================
+   Discount Price Mobile Optimization
+   ======================================== */
+@media (max-width: 767px) {
+    /* Product detail page price */
+    .pro-textarea h2,
+    .main-detail h2 {
+        font-size: 18px !important;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+    }
+    
+    .pro-textarea h2 .price-original,
+    .main-detail h2 .price-original {
+        font-size: 0.65em !important;
+        display: block !important;
+        margin-bottom: 4px !important;
+        margin-right: 0 !important;
+    }
+    
+    .pro-textarea h2 .price-sale,
+    .main-detail h2 .price-sale {
+        font-size: 1em !important;
+        display: inline !important;
+    }
+    
+    /* Product cards price */
+    .product-card .price {
+        font-size: 14px !important;
+        flex-wrap: wrap;
+    }
+    
+    .product-card .price .price-original {
+        font-size: 0.8em !important;
+        display: block !important;
+        margin-bottom: 2px;
+    }
+    
+    .product-card .price .price-sale {
+        display: block !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .pro-textarea h2,
+    .main-detail h2 {
+        font-size: 16px !important;
+    }
+    
+    .pro-textarea h2 .price-original,
+    .main-detail h2 .price-original {
+        font-size: 0.6em !important;
+    }
+}
