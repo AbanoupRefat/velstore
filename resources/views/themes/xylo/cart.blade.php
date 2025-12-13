@@ -195,10 +195,33 @@
                                     // Cart no longer meets minimum - remove coupon
                                     session()->forget('cart_coupon');
                                     $couponData = null;
+                                } 
+                                // For Buy X Get Y, check item count
+                                elseif ($couponModel->type === 'buy_x_get_y') {
+                                    $totalItems = 0;
+                                    foreach ($cart as $item) {
+                                        $totalItems += $item['quantity'];
+                                    }
+                                    $minRequired = $couponModel->buy_qty + $couponModel->get_qty;
+                                    
+                                    if ($totalItems < $minRequired) {
+                                        // Not enough items - remove coupon
+                                        session()->forget('cart_coupon');
+                                        $couponData = null;
+                                    } else {
+                                        $discountAmount = $couponModel->calculateDiscount($total, $cart);
+                                        $couponValid = true;
+                                    }
                                 } else {
                                     // Calculate discount using the proper model method (handles all types)
                                     $discountAmount = $couponModel->calculateDiscount($total, $cart);
                                     $couponValid = true;
+                                }
+                                
+                                // If discount is 0, remove coupon (shouldn't apply)
+                                if ($couponData && $discountAmount <= 0) {
+                                    session()->forget('cart_coupon');
+                                    $couponData = null;
                                 }
                             } else {
                                 // Coupon was deleted - remove from session
@@ -210,7 +233,7 @@
                         $finalTotal = max(0, $total - $discountAmount);
                     @endphp
 
-                    @if($couponData)
+                    @if($couponData && $discountAmount > 0)
                         <div class="row border-bottom pb-2 mb-2 d-flex align-items-center">
                             <div class="col-8 d-flex align-items-center">Discount ({{ $couponData['code'] }})</div>
                             <div class="col-4 d-flex justify-content-end align-items-center">

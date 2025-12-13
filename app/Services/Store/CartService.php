@@ -19,7 +19,9 @@ class CartService
             return ['success' => false, 'message' => 'Invalid coupon code.'];
         }
 
-        // Get cart total if not provided
+        // Get cart and calculate total if not provided
+        $cart = Session::get('cart', []);
+        
         if ($cartTotal === null) {
             $cartTotal = $this->getCartSubtotal();
         }
@@ -31,9 +33,33 @@ class CartService
             return ['success' => false, 'message' => $validation['message']];
         }
 
+        // For Buy X Get Y coupons, check if cart has enough items
+        if ($coupon->type === 'buy_x_get_y') {
+            $totalItems = 0;
+            foreach ($cart as $item) {
+                $totalItems += $item['quantity'];
+            }
+            
+            $minRequired = $coupon->buy_qty + $coupon->get_qty;
+            
+            if ($totalItems < $minRequired) {
+                return [
+                    'success' => false, 
+                    'message' => "You need at least {$minRequired} items in your cart for this offer. Currently you have {$totalItems} item(s)."
+                ];
+            }
+        }
+
         // Calculate discount amount
-        $cart = Session::get('cart', []);
         $discountAmount = $coupon->calculateDiscount($cartTotal, $cart);
+
+        // Don't apply coupon if discount is 0
+        if ($discountAmount <= 0) {
+            return [
+                'success' => false, 
+                'message' => 'This coupon cannot be applied to your current cart.'
+            ];
+        }
 
         // Store coupon in session
         Session::put('cart_coupon', [
@@ -47,7 +73,7 @@ class CartService
 
         return [
             'success' => true, 
-            'message' => 'Coupon applied successfully!', 
+            'message' => 'Coupon applied successfully! You saved ' . number_format($discountAmount, 2) . ' EGP.', 
             'discount' => $coupon->discount, 
             'type' => $coupon->type,
             'discount_amount' => $discountAmount
