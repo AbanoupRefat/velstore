@@ -71,10 +71,14 @@ class ProductController extends Controller
         if ($variant) {
             $stockStatus = $variant->stock > 0 ? __('store.product_detail.in_stock') : 'OUT OF STOCK';
             $isOutOfStock = $variant->stock <= 0;
-
+            $isOnSale = $variant->is_on_sale;
+            
             return response()->json([
                 'success' => true,
-                'price' => number_format($variant->converted_price, 2),
+                'price' => number_format($variant->converted_display_price, 2),
+                'original_price' => number_format($variant->converted_price, 2),
+                'discount_price' => $variant->converted_discount_price ? number_format($variant->converted_discount_price, 2) : null,
+                'is_on_sale' => $isOnSale,
                 'stock' => $stockStatus,
                 'is_out_of_stock' => $isOutOfStock,
                 'currency_symbol' => activeCurrency()->symbol,

@@ -580,9 +580,21 @@
                 },
                 success: function (response) {
                     if (response.success) {
-                        $('#variant-price').text(response.price);
+                        // Handle discount price display
+                        if (response.is_on_sale) {
+                            // Show strikethrough original price + sale price
+                            var priceHtml = '<span class="price-original">' + response.currency_symbol + response.original_price + '</span>' +
+                                           '<span id="currency-symbol">' + response.currency_symbol + '</span>' +
+                                           '<span id="variant-price" class="price-sale">' + response.discount_price + '</span>';
+                            $('#variant-price').parent().html(priceHtml);
+                        } else {
+                            // Show regular price
+                            var priceHtml = '<span id="currency-symbol">' + response.currency_symbol + '</span>' +
+                                           '<span id="variant-price">' + response.price + '</span>';
+                            $('#variant-price').parent().html(priceHtml);
+                        }
+                        
                         $('#product-stock').text(response.stock);
-                        $('#currency-symbol').text(response.currency_symbol);
 
                         if (response.is_out_of_stock) {
                             $('#product-stock').addClass('text-danger');
