@@ -275,21 +275,32 @@ class CheckoutController extends Controller
             );
         }
 
-        // Send emails
+        // Send emails - wrapped in try-catch to ensure order completion even if email fails
+        // Gmail limits: 500 emails/day for regular, 2000/day for Workspace
+        
+        // Send confirmation email to customer
         try {
-            // Send confirmation email to customer
             if ($request->payment_method === 'instapay') {
                 \Mail::to($request->email)->send(new InstapayOrderConfirmation($order));
             } else {
                 \Mail::to($request->email)->send(new OrderConfirmation($order));
             }
-            
-            // Send notification email to admin
+        } catch (\Swift_TransportException $e) {
+            // SMTP connection issues (quota exceeded, server down, timeout)
+            \Log::warning('Customer order email failed (SMTP issue): Order #' . $order->id . ' - ' . $e->getMessage());
+        } catch (\Exception $e) {
+            // Any other email error
+            \Log::warning('Customer order email failed: Order #' . $order->id . ' - ' . $e->getMessage());
+        }
+        
+        // Send notification email to admin (separate try-catch so customer email failure doesn't affect admin)
+        try {
             $adminEmail = config('mail.admin_email', env('ADMIN_EMAIL', 'admin@example.com'));
             \Mail::to($adminEmail)->send(new NewOrderNotification($order));
+        } catch (\Swift_TransportException $e) {
+            \Log::warning('Admin order notification failed (SMTP issue): Order #' . $order->id . ' - ' . $e->getMessage());
         } catch (\Exception $e) {
-            // Log email error but don't fail the order
-            \Log::error('Order email failed: ' . $e->getMessage());
+            \Log::warning('Admin order notification failed: Order #' . $order->id . ' - ' . $e->getMessage());
         }
 
         // Clear the session cart
