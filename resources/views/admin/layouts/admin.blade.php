@@ -19,6 +19,9 @@
 <body>
     @include('admin.layouts.sidebar')
     
+    <!-- Sidebar Overlay for Mobile -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    
     <!-- Content Area -->
     <div id="content" class="w-100">
         <nav class="navbar navbar-expand navbar-light bg-light p-3">
@@ -154,6 +157,61 @@
     </script>
     <!-- Toastr JS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    
+    <!-- Sidebar Toggle Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const sidebar = document.getElementById('sidebar');
+            const sidebarToggle = document.getElementById('sidebarToggle');
+            const sidebarOverlay = document.getElementById('sidebarOverlay');
+            
+            function isMobile() {
+                return window.innerWidth < 992;
+            }
+            
+            // Sidebar toggle button click
+            if (sidebarToggle) {
+                sidebarToggle.addEventListener('click', function() {
+                    if (isMobile()) {
+                        // Mobile: use overlay style
+                        sidebar.classList.toggle('mobile-open');
+                        sidebarOverlay.classList.toggle('active');
+                    } else {
+                        // Desktop: use collapsed style
+                        sidebar.classList.toggle('collapsed');
+                    }
+                });
+            }
+            
+            // Close sidebar when clicking overlay
+            if (sidebarOverlay) {
+                sidebarOverlay.addEventListener('click', function() {
+                    sidebar.classList.remove('mobile-open');
+                    sidebarOverlay.classList.remove('active');
+                });
+            }
+            
+            // Close sidebar when clicking a nav link on mobile
+            const navLinks = sidebar.querySelectorAll('.nav-link');
+            navLinks.forEach(function(link) {
+                link.addEventListener('click', function(e) {
+                    // Don't close if it's a collapse toggle
+                    if (!link.hasAttribute('data-bs-toggle') && isMobile()) {
+                        sidebar.classList.remove('mobile-open');
+                        sidebarOverlay.classList.remove('active');
+                    }
+                });
+            });
+            
+            // Handle window resize
+            window.addEventListener('resize', function() {
+                if (!isMobile()) {
+                    sidebar.classList.remove('mobile-open');
+                    sidebarOverlay.classList.remove('active');
+                }
+            });
+        });
+    </script>
     @yield('js')
 </body>
 </html>
