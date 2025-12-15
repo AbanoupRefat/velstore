@@ -176,6 +176,15 @@
                 timeOut: 3000
             });
             updateCartCount(data.cart);
+            
+            // Meta Pixel: Track AddToCart event
+            if (typeof fbq !== 'undefined') {
+                fbq('track', 'AddToCart', {
+                    content_ids: [productId],
+                    content_type: 'product',
+                    currency: 'EGP'
+                });
+            }
         })
         .catch(error => {
             toastr.error(error.message || 'An error occurred', 'Cannot Add to Cart', {

@@ -670,6 +670,17 @@
             .then(data => {
                 toastr.success(data.message);
                 updateCartCount(data.cart);
+                
+                // Meta Pixel: Track AddToCart event
+                if (typeof fbq !== 'undefined') {
+                    fbq('track', 'AddToCart', {
+                        content_name: '{{ $product->translation->name ?? "Product" }}',
+                        content_ids: ['{{ $product->id }}'],
+                        content_type: 'product',
+                        value: {{ $product->primaryVariant->display_price ?? 0 }},
+                        currency: 'EGP'
+                    });
+                }
             })
             .catch(error => {
                 toastr.error(error.message || 'An error occurred', 'Cannot Add to Cart');

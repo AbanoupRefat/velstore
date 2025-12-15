@@ -183,6 +183,15 @@ document.addEventListener("DOMContentLoaded", function () {
     const placeOrderBtn = document.getElementById("place-order-btn");
     let isSubmitting = false; // Prevent double submission
     
+    // Meta Pixel: Track InitiateCheckout event
+    if (typeof fbq !== 'undefined') {
+        fbq('track', 'InitiateCheckout', {
+            value: {{ $total ?? 0 }},
+            currency: 'EGP',
+            num_items: {{ count($cart) }}
+        });
+    }
+    
     // PayPal Setup (if needed)
     const paypalContainer = document.getElementById("paypal-button-container");
     if (paypalContainer && typeof paypal !== "undefined") {

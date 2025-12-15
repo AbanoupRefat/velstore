@@ -93,3 +93,18 @@
     </div>
 </div>
 @endsection
+
+@section('js')
+<script>
+    // Meta Pixel: Track Purchase event
+    if (typeof fbq !== 'undefined') {
+        fbq('track', 'Purchase', {
+            value: {{ $order->total_price }},
+            currency: 'EGP',
+            content_ids: [@foreach($order->details as $item)'{{ $item->product_id }}'@if(!$loop->last), @endif @endforeach],
+            content_type: 'product',
+            num_items: {{ $order->details->sum('quantity') }}
+        });
+    }
+</script>
+@endsection
