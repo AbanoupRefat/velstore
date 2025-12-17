@@ -149,7 +149,7 @@ class CheckoutController extends Controller
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
             'email' => 'required|email',
-            'phone' => 'required|string',
+            'phone' => 'required|string|min:8|max:20',
             'address' => 'required|string|max:255',
             'governorate' => 'required|string',
             'city' => 'required|string',
@@ -172,16 +172,37 @@ class CheckoutController extends Controller
         $customer = null;
         if (Auth::guard('customer')->check()) {
             $customer = Auth::guard('customer')->user();
+            // Update phone if provided
+            if ($request->phone && $customer->phone !== $request->phone) {
+                $customer->update(['phone' => $request->phone]);
+            }
         } else {
-            // Create guest customer record
-            $customer = \App\Models\Customer::firstOrCreate(
-                ['email' => $request->email],
-                [
-                    'name' => $request->first_name . ' ' . $request->last_name,
-                    'phone' => $request->phone,
-                    'password' => bcrypt(Str::random(16)), // Random password for guest
-                ]
-            );
+            // Create guest customer record - use email if provided, otherwise phone as identifier
+            if ($request->email) {
+                $customer = \App\Models\Customer::where('email', $request->email)->first();
+                if ($customer) {
+                    // Update phone for existing customer
+                    $customer->update(['phone' => $request->phone]);
+                } else {
+                    $customer = \App\Models\Customer::create([
+                        'name' => $request->first_name . ' ' . $request->last_name,
+                        'email' => $request->email,
+                        'phone' => $request->phone,
+                        'password' => bcrypt(Str::random(16)),
+                    ]);
+                }
+            } else {
+                // No email - find by phone or create new
+                $customer = \App\Models\Customer::where('phone', $request->phone)->first();
+                if (!$customer) {
+                    $customer = \App\Models\Customer::create([
+                        'name' => $request->first_name . ' ' . $request->last_name,
+                        'email' => null,
+                        'phone' => $request->phone,
+                        'password' => bcrypt(Str::random(16)),
+                    ]);
+                }
+            }
         }
 
         // Get governorate shipping fee
